@@ -1,7 +1,10 @@
-#include <FTDebouncer.h>
+#include "arduino_secrets.h"
 
+#include <FTDebouncer.h>
 #include <Arduino_WiFiConnectionHandler.h>
-Arduino_WiFiConnectionHandler *conMan = new Arduino_WiFiConnectionHandler("Cilento Mare", "DonEmilioGatto");
+
+/*		SECRET_ fields are in arduino_secrets.h included above		*/
+WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 
 
 #define PIN_CONNECT 2
@@ -17,14 +20,15 @@ void setup(){
 	deb.addPin(PIN_CONNECT, HIGH, INPUT_PULLUP);
 	deb.addPin(PIN_DISCONNECT, HIGH, INPUT_PULLUP);
 	deb.init();
-	conMan->addCallback(NetworkConnectionEvent::CONNECTED, &onNetworkConnect);
-	conMan->addCallback(NetworkConnectionEvent::DISCONNECTED, &onNetworkDisconnect);
+	//conMan.addCallback(NetworkConnectionEvent::CONNECTED, &onNetworkConnect);
+	conMan.addConnectCallback(onNetworkConnect);
+	conMan.addDisconnectCallback(onNetworkDisconnect);
 }
 
 
 void loop(){
 	deb.update();
-	conMan->update();
+	conMan.update();
 }
 
 void connectionStateChanged(NetworkConnectionState _newState){
@@ -36,10 +40,10 @@ void onPinActivated(uint8_t _pinNr){
 	Serial.println(_pinNr);
 	switch(_pinNr){
 		case PIN_CONNECT:
-		conMan->connect();
+		conMan.connect();
 		break;
 		case PIN_DISCONNECT:
-		conMan->disconnect();
+		conMan.disconnect();
 		break;
 	}
 }

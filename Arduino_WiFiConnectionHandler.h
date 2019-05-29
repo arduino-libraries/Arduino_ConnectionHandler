@@ -33,9 +33,9 @@ extern void connectionStateChanged(NetworkConnectionState _newState);
    CLASS DECLARATION
  ******************************************************************************/
 
-class Arduino_WiFiConnectionHandler : public Arduino_ConnectionHandler {
+class WiFiConnectionHandler : public ConnectionHandler {
   public:
-    Arduino_WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
+    WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
 
     virtual void init();
     virtual unsigned long getTime();
@@ -51,6 +51,9 @@ class Arduino_WiFiConnectionHandler : public Arduino_ConnectionHandler {
     virtual void connect();
 
     virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
+    virtual void addConnectCallback(OnNetworkEventCallback callback);
+    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
+    virtual void addErrorCallback(OnNetworkEventCallback callback);
     WiFiUDP udp;
     
   private:

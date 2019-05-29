@@ -53,7 +53,7 @@ typedef void (*OnNetworkEventCallback)(void * /* arg */);
    CLASS DECLARATION
  ******************************************************************************/
 
-class Arduino_ConnectionHandler {
+class ConnectionHandler {
   public:
     virtual void init() = 0;
     virtual void check() = 0;
@@ -68,7 +68,9 @@ class Arduino_ConnectionHandler {
     virtual void connect();
     virtual void disconnect();
     virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-
+    virtual void addConnectCallback(OnNetworkEventCallback callback);
+    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
+    virtual void addErrorCallback(OnNetworkEventCallback callback);
     
   private:
     OnNetworkEventCallback  _on_connect_event_callback,

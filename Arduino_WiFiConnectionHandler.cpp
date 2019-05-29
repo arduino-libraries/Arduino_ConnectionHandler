@@ -33,7 +33,7 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED
    CTOR/DTOR
  ******************************************************************************/
 
-Arduino_WiFiConnectionHandler::Arduino_WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive) :
+WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive) :
   ssid(_ssid),
   pass(_pass),
   lastConnectionTickTime(millis()),
@@ -48,10 +48,10 @@ Arduino_WiFiConnectionHandler::Arduino_WiFiConnectionHandler(const char *_ssid, 
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void Arduino_WiFiConnectionHandler::init() {
+void WiFiConnectionHandler::init() {
 }
 
-void Arduino_WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback){
+void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback){
   switch (event) {
     case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
     case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
@@ -59,13 +59,23 @@ void Arduino_WiFiConnectionHandler::addCallback(NetworkConnectionEvent const eve
   }
 }
 
-void Arduino_WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg){
+void WiFiConnectionHandler::addConnectCallback(OnNetworkEventCallback callback){
+    _on_connect_event_callback = callback;
+}
+void WiFiConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback){
+    _on_disconnect_event_callback = callback;
+}
+void WiFiConnectionHandler::addErrorCallback(OnNetworkEventCallback callback){
+    _on_error_event_callback = callback;
+}
+
+void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg){
   if(callback){
     (*callback)(callback_arg);
   }
 }
 
-unsigned long Arduino_WiFiConnectionHandler::getTime() {
+unsigned long WiFiConnectionHandler::getTime() {
 #ifdef GETTIME_MISSING
   return 0;
 #else
@@ -73,7 +83,7 @@ unsigned long Arduino_WiFiConnectionHandler::getTime() {
 #endif
 }
 
-void Arduino_WiFiConnectionHandler::update() {
+void WiFiConnectionHandler::update() {
 
   unsigned long const now = millis();
   int networkStatus = 0;
@@ -187,7 +197,7 @@ void Arduino_WiFiConnectionHandler::update() {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void Arduino_WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
+void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
   if(_newState == netConnectionState) return;
   int newInterval = CHECK_INTERVAL_INIT;
   switch (_newState) {
@@ -245,7 +255,7 @@ void Arduino_WiFiConnectionHandler::changeConnectionState(NetworkConnectionState
   connectionStateChanged(netConnectionState);
 }
 
-void Arduino_WiFiConnectionHandler::connect() {
+void WiFiConnectionHandler::connect() {
   if(netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING){
     return;
   }
@@ -253,7 +263,7 @@ void Arduino_WiFiConnectionHandler::connect() {
   changeConnectionState(NetworkConnectionState::INIT);
 
 }
-void Arduino_WiFiConnectionHandler::disconnect() {
+void WiFiConnectionHandler::disconnect() {
   //WiFi.end();
   
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
