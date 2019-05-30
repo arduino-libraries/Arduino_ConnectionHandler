@@ -25,7 +25,7 @@
 #include "Arduino_ConnectionHandler.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-
+#pragma message("Board has wifi")
 extern void connectionStateChanged(NetworkConnectionState _newState);
 
 

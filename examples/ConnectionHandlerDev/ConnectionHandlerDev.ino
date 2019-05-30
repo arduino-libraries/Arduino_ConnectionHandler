@@ -15,7 +15,8 @@ FTDebouncer deb;
 void setup(){
 	Serial.begin(9600);
 	unsigned long serialBeginTime = millis();
-	while(millis() - serialBeginTime < 4000 || !Serial){}
+	//while(millis() - serialBeginTime < 4000 || !Serial){}
+	delay(4000);
 	setDebugMessageLevel(4);
 	deb.addPin(PIN_CONNECT, HIGH, INPUT_PULLUP);
 	deb.addPin(PIN_DISCONNECT, HIGH, INPUT_PULLUP);

@@ -51,11 +51,16 @@ WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pas
 void WiFiConnectionHandler::init() {
 }
 
+// INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
 void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback){
   switch (event) {
     case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
     case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
     case NetworkConnectionEvent::ERROR:           _on_error_event_callback         = callback; break;
+    case NetworkConnectionEvent::INIT:                                                       ; break;
+    case NetworkConnectionEvent::CONNECTING:                                                 ; break;
+    case NetworkConnectionEvent::DISCONNECTING:                                              ; break;
+    case NetworkConnectionEvent::CLOSED:                                                     ; break;
   }
 }
 
@@ -92,7 +97,7 @@ void WiFiConnectionHandler::update() {
     switch (netConnectionState) {
     case NetworkConnectionState::INIT: {
       debugMessage(DebugLevel::Verbose, "::INIT");
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32)
+#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
       networkStatus = WiFi.status();
       
       debugMessage(DebugLevel::Info, "WiFi.status(): %d", networkStatus);
@@ -111,7 +116,9 @@ void WiFiConnectionHandler::update() {
 #else
       debugMessage(DebugLevel::Error, "WiFi status ESP: %d", WiFi.status());
       WiFi.disconnect();
+      delay(300);
       networkStatus = WiFi.begin(ssid, pass);
+      delay(1000);
 #endif
       
       changeConnectionState(NetworkConnectionState::CONNECTING);
@@ -121,7 +128,7 @@ void WiFiConnectionHandler::update() {
       debugMessage(DebugLevel::Verbose, "::CONNECTING");
       networkStatus = WiFi.status();
 
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32)
+#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
 
       if (networkStatus != WL_CONNECTED) {
         networkStatus = WiFi.begin(ssid, pass);
@@ -168,7 +175,7 @@ void WiFiConnectionHandler::update() {
     }
     break;
     case NetworkConnectionState::DISCONNECTED: {
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32)
+#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
       WiFi.end();
 #endif
       if (keepAlive) {
@@ -229,13 +236,16 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
     debugMessage(DebugLevel::Verbose, "WiFi.status(): %d", WiFi.status());
 
     debugMessage(DebugLevel::Error, "Connection to \"%s\" lost.", ssid);
-    debugMessage(DebugLevel::Error, "Attempting reconnection");
+    if(keepAlive){
+      debugMessage(DebugLevel::Error, "Attempting reconnection");      
+    }
+
     newInterval = CHECK_INTERVAL_DISCONNECTED;
   }
   break;
   case NetworkConnectionState::CLOSED: {
     
-    #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32)
+    #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
       WiFi.end();
     #endif
     

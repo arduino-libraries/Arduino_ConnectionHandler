@@ -114,7 +114,7 @@ class ConnectionHandler {
   #define NETWORK_CONNECTED GSM3_NetworkStatus_t::GPRS_READY
 #endif
 
-#if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32)
+#if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
 #ifdef ARDUINO_ESP8266_ESP12
   #include <ESP8266WiFi.h>
   
