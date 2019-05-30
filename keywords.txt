@@ -5,18 +5,18 @@
 ####################################################
 # Datatypes (KEYWORD1)
 ####################################################
-Client							KEYWORD1
-ConnectionHandler				KEYWORD1
-WiFiConnectionHandler			KEYWORD1
-GSMConnectionHandler			KEYWORD1
-EthernetConnectionHandler		KEYWORD1
+Client	KEYWORD1
+ConnectionHandler	KEYWORD1
+WiFiConnectionHandler	KEYWORD1
+GSMConnectionHandler	KEYWORD1
+EthernetConnectionHandler	KEYWORD1
 
 ####################################################
 # Methods and Functions (KEYWORD2)
 ####################################################
 
-ConnectionHandler				KEYWORD2
-begin							KEYWORD2
+ConnectionHandler	KEYWORD2
+begin	KEYWORD2
 
 ####################################################
 # Constants (LITERAL1)
