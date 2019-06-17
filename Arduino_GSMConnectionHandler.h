@@ -15,8 +15,8 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef ARDUINO_WIFI_CONNECTION_HANDLER_H_
-#define ARDUINO_WIFI_CONNECTION_HANDLER_H_
+#ifndef GSM_CONNECTION_MANAGER_H_
+#define GSM_CONNECTION_MANAGER_H_
 
 /******************************************************************************
    INCLUDE
@@ -24,29 +24,32 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-#ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-#pragma message("Board has wifi")
-//extern void connectionStateChanged(NetworkConnectionState _newState);
-
+#ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandler : public ConnectionHandler {
+class GSMConnectionHandler : public ConnectionHandler {
   public:
-    WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
+    GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
     virtual void init();
     virtual unsigned long getTime();
     virtual void check() { update();}
     virtual void update();
     virtual Client &getClient() {
-      return wifiClient;
+      return networkClient;
     };
     virtual UDP &getUDP() {
       return udp;
     };
+
+    GSMClient networkClient;
+    GSM gsmAccess;
+    GPRS gprs;
+    GSMUDP udp;
+
     virtual void disconnect();
     virtual void connect();
 
@@ -54,8 +57,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     virtual void addConnectCallback(OnNetworkEventCallback callback);
     virtual void addDisconnectCallback(OnNetworkEventCallback callback);
     virtual void addErrorCallback(OnNetworkEventCallback callback);
-    WiFiUDP udp;
-    
+
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);
@@ -65,16 +67,14 @@ class WiFiConnectionHandler : public ConnectionHandler {
     const int CHECK_INTERVAL_CONNECTING = 500;
     const int CHECK_INTERVAL_CONNECTED = 10000;
     const int CHECK_INTERVAL_RETRYING = 5000;
-    const int CHECK_INTERVAL_DISCONNECTING = 500;
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
     const int CHECK_INTERVAL_ERROR = 500;
 
-    const char *ssid, *pass;
+    const char *pin, *apn, *login, *pass;
     unsigned long lastConnectionTickTime;
-
-    WiFiClient wifiClient;
     int connectionTickTimeInterval;
 
+    
     bool keepAlive;
 
     OnNetworkEventCallback  _on_connect_event_callback,
@@ -82,9 +82,8 @@ class WiFiConnectionHandler : public ConnectionHandler {
                             _on_error_event_callback;
 
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
-
 };
 
-#endif /* #ifdef BOARD_HAS_WIFI */
+#endif /* #ifdef BOARD_HAS_GSM  */
 
-#endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */
+#endif /* GSM_CONNECTION_MANAGER_H_ */

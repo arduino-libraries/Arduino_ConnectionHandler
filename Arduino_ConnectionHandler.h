@@ -26,7 +26,7 @@
 #include <Udp.h>
 
 //#include "NTPUtils.h"
-#include "DebugUtils.h"
+#include <Arduino_DebugUtils.h>
 
 /******************************************************************************
    TYPEDEFS
