@@ -112,6 +112,7 @@ void GSMConnectionHandler::update() {
       init();
     }
     break;
+
     case NetworkConnectionState::CONNECTING: {
       // NOTE: Blocking Call when 4th parameter == true
       GSM3_NetworkStatus_t networkStatus;
@@ -216,7 +217,7 @@ void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newStat
 
 
 void GSMConnectionHandler::connect() {
-  if(netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING){
+  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
   keepAlive = true;
@@ -225,7 +226,7 @@ void GSMConnectionHandler::connect() {
 }
 void GSMConnectionHandler::disconnect() {
   //WiFi.end();
-  
+
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
   keepAlive = false;
 }
