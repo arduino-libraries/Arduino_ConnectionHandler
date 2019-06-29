@@ -25,7 +25,6 @@
 #include <Client.h>
 #include <Udp.h>
 
-//#include "NTPUtils.h"
 #include <Arduino_DebugUtils.h>
 
 /******************************************************************************
@@ -129,6 +128,12 @@ class ConnectionHandler {
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
+#endif
+
+#ifdef BOARD_HAS_WIFI
+#include "Arduino_WiFiConnectionHandler.h"
+#elif define(BOARD_HAS_GSM)
+#include "Arduino_GSMConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

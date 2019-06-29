@@ -4,7 +4,21 @@
 #include <FTDebouncer.h>
 
 /*		SECRET_ fields are in arduino_secrets.h included above
- */
+      if using a WiFi board (Arduino MKR1000, MKR WiFi 1010, Nano 33 IoT, UNO
+   WiFi Rev 2 or ESP8266/32), create a WiFiConnectionHandler object by adding
+   Network Name (SECRET_SSID) and password (SECRET_PASS) in the
+   arduino_secrets.h file (or Secrets tab in Create Web Editor). (This example
+   defaults to WiFi)
+
+      WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
+
+      If using a MKR GSM 1400 or other GSM boards supporting the same API you'll
+   need a GSMConnectionHandler object as follows
+
+      GSMConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER,
+   SECRET_GSM_PASS)
+*/
+
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 
 #define PIN_CONNECT 2
@@ -14,54 +28,36 @@ FTDebouncer deb;
 
 void setup() {
   Serial.begin(9600);
-  unsigned long serialBeginTime = millis();
-  // while(millis() - serialBeginTime < 4000 || !Serial){}
+  // give a few seconds for the Serial connection to be available
   delay(4000);
-  setDebugMessageLevel(4);
+
+  setDebugMessageLevel(2);
+
   deb.addPin(PIN_CONNECT, HIGH, INPUT_PULLUP);
   deb.addPin(PIN_DISCONNECT, HIGH, INPUT_PULLUP);
   deb.init();
-  // conMan.addCallback(NetworkConnectionEvent::CONNECTED, &onNetworkConnect);
-  conMan.addConnectCallback(onNetworkConnect);
-  conMan.addDisconnectCallback(onNetworkDisconnect);
+
+  // the following methods allow the sketch to be notified when connected or
+  // disconnected to the network
+
+  conMan.addConnectCallback(onNetworkConnect); // look at function onNetworkConnect towards the end of this sketch
+  conMan.addDisconnectCallback(onNetworkDisconnect); // look at function onNetworkDisconnect towards the end of this sketch
 }
 
 void loop() {
-  deb.update();
+  // the following code keeps on running connection workflows on our ConnectionHandler object,
+  // hence allowing reconnection in case of failure and notification of connect/disconnect event if enabled (see addConnectCallback/addDisconnectCallback)
+  // NOTE: any use of delay() within the loop or methods called from it will delay the execution of .update(),
+  // which might not guarantee the correct functioning of the ConnectionHandler object.
+  
   conMan.update();
-}
 
-void connectionStateChanged(NetworkConnectionState _newState) {
-  Serial.println((int)_newState);
-}
-
-void onPinActivated(uint8_t _pinNr) {
-  Serial.print("activated ");
-  Serial.println(_pinNr);
-  switch (_pinNr) {
-  case PIN_CONNECT:
-    conMan.connect();
-    break;
-  case PIN_DISCONNECT:
-    conMan.disconnect();
-    break;
-  }
-}
-void onPinDeactivated(uint8_t _pinNr) {
-  Serial.print("deactivated ");
-  Serial.println(_pinNr);
-  switch (_pinNr) {
-  default: {
-  } break;
-  }
 }
 
 void onNetworkConnect(void *_arg) {
-  Serial.println(">>>> CALLBACK!!!");
   Serial.println(">>>> CONNECTED to network");
 }
 
 void onNetworkDisconnect(void *_arg) {
-  Serial.println(">>>> CALLBACK!!!");
   Serial.println(">>>> DISCONNECTED from network");
 }
