@@ -132,7 +132,7 @@ class ConnectionHandler {
 
 #ifdef BOARD_HAS_WIFI
 #include "Arduino_WiFiConnectionHandler.h"
-#elif define(BOARD_HAS_GSM)
+#elif defined(BOARD_HAS_GSM)
 #include "Arduino_GSMConnectionHandler.h"
 #endif
 
