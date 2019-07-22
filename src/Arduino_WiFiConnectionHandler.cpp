@@ -19,14 +19,14 @@
    INCLUDE
  ******************************************************************************/
 
-  
+
 /*
-static int const DBG_NONE    = -1;
-static int const DBG_ERROR   =  0;
-static int const DBG_WARNING =  1;
-static int const DBG_INFO    =  2;
-static int const DBG_DEBUG   =  3;
-static int const DBG_VERBOSE =  4;
+  static int const DBG_NONE    = -1;
+  static int const DBG_ERROR   =  0;
+  static int const DBG_WARNING =  1;
+  static int const DBG_INFO    =  2;
+  static int const DBG_DEBUG   =  3;
+  static int const DBG_VERBOSE =  4;
 */
 
 #include "Arduino_WiFiConnectionHandler.h"
@@ -62,7 +62,7 @@ void WiFiConnectionHandler::init() {
 }
 
 // INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
-void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback){
+void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
   switch (event) {
     case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
     case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
@@ -74,28 +74,28 @@ void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNe
   }
 }
 
-void WiFiConnectionHandler::addConnectCallback(OnNetworkEventCallback callback){
-    _on_connect_event_callback = callback;
+void WiFiConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
+  _on_connect_event_callback = callback;
 }
-void WiFiConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback){
-    _on_disconnect_event_callback = callback;
+void WiFiConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
+  _on_disconnect_event_callback = callback;
 }
-void WiFiConnectionHandler::addErrorCallback(OnNetworkEventCallback callback){
-    _on_error_event_callback = callback;
+void WiFiConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
+  _on_error_event_callback = callback;
 }
 
-void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg){
-  if(callback){
+void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
+  if (callback) {
     (*callback)(callback_arg);
   }
 }
 
 unsigned long WiFiConnectionHandler::getTime() {
-#ifdef GETTIME_MISSING
+  #ifdef GETTIME_MISSING
   return 0;
-#else
+  #else
   return WiFi.getTime();
-#endif
+  #endif
 }
 
 void WiFiConnectionHandler::update() {
@@ -105,105 +105,105 @@ void WiFiConnectionHandler::update() {
   if (now - lastConnectionTickTime > connectionTickTimeInterval) { /*  time bracket  */
 
     switch (netConnectionState) {
-    case NetworkConnectionState::INIT: {
-      Debug.print(DBG_VERBOSE, "::INIT");
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
-      networkStatus = WiFi.status();
-      
-      Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
-      if (networkStatus == NETWORK_HARDWARE_ERROR) {
-        // NO FURTHER ACTION WILL FOLLOW THIS
-        changeConnectionState(NetworkConnectionState::ERROR);
-        lastConnectionTickTime = now;
-        return;
-      }
-      Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
-      if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
-        Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
-        Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
-        delay(5000);
-      }
-#else
-      Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
-      WiFi.disconnect();
-      delay(300);
-      networkStatus = WiFi.begin(ssid, pass);
-      delay(1000);
-#endif
-      
-      changeConnectionState(NetworkConnectionState::CONNECTING);
-    }
-    break;
-    case NetworkConnectionState::CONNECTING: {
-      Debug.print(DBG_VERBOSE, "::CONNECTING");
-      networkStatus = WiFi.status();
+      case NetworkConnectionState::INIT: {
+          Debug.print(DBG_VERBOSE, "::INIT");
+          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+          networkStatus = WiFi.status();
 
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
+          Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
+          if (networkStatus == NETWORK_HARDWARE_ERROR) {
+            // NO FURTHER ACTION WILL FOLLOW THIS
+            changeConnectionState(NetworkConnectionState::ERROR);
+            lastConnectionTickTime = now;
+            return;
+          }
+          Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
+          if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
+            Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
+            Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
+            delay(5000);
+          }
+          #else
+          Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
+          WiFi.disconnect();
+          delay(300);
+          networkStatus = WiFi.begin(ssid, pass);
+          delay(1000);
+          #endif
 
-      if (networkStatus != WL_CONNECTED) {
-        networkStatus = WiFi.begin(ssid, pass);
-      }
+          changeConnectionState(NetworkConnectionState::CONNECTING);
+        }
+        break;
+      case NetworkConnectionState::CONNECTING: {
+          Debug.print(DBG_VERBOSE, "::CONNECTING");
+          networkStatus = WiFi.status();
 
-#else
+          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
 
-      networkStatus = WiFi.status();
+          if (networkStatus != WL_CONNECTED) {
+            networkStatus = WiFi.begin(ssid, pass);
+          }
 
-#endif
+          #else
 
-      Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-      if (networkStatus != NETWORK_CONNECTED) {
-        Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
-        Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
+          networkStatus = WiFi.status();
 
-        return;
-      } else {
-        Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
-        changeConnectionState(NetworkConnectionState::CONNECTED);
-        return;
-      }
-    }
-    break;
-    case NetworkConnectionState::CONNECTED: {
-      
-      networkStatus = WiFi.status();
-      Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-      if (networkStatus != WL_CONNECTED) {
-        changeConnectionState(NetworkConnectionState::DISCONNECTED);
-        return;
-      }
-      Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
-    }
-    break;
-    case NetworkConnectionState::GETTIME: {
+          #endif
 
-    }
-    break;
-    case NetworkConnectionState::DISCONNECTING: {
-      if (networkStatus != WL_CONNECTED) {
-        changeConnectionState(NetworkConnectionState::DISCONNECTED);
-      }
-    }
-    break;
-    case NetworkConnectionState::DISCONNECTED: {
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
-      WiFi.end();
-#endif
-      if (keepAlive) {
-        changeConnectionState(NetworkConnectionState::INIT);
-      }else{
-        changeConnectionState(NetworkConnectionState::CLOSED);
-      }
+          Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
+          if (networkStatus != NETWORK_CONNECTED) {
+            Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
+            Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
 
-    }
-    break;
-    case NetworkConnectionState::ERROR: {
+            return;
+          } else {
+            Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
+            changeConnectionState(NetworkConnectionState::CONNECTED);
+            return;
+          }
+        }
+        break;
+      case NetworkConnectionState::CONNECTED: {
 
-    }
-    break;
-    case NetworkConnectionState::CLOSED: {
+          networkStatus = WiFi.status();
+          Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
+          if (networkStatus != WL_CONNECTED) {
+            changeConnectionState(NetworkConnectionState::DISCONNECTED);
+            return;
+          }
+          Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
+        }
+        break;
+      case NetworkConnectionState::GETTIME: {
 
-    }
-    break;
+        }
+        break;
+      case NetworkConnectionState::DISCONNECTING: {
+          if (networkStatus != WL_CONNECTED) {
+            changeConnectionState(NetworkConnectionState::DISCONNECTED);
+          }
+        }
+        break;
+      case NetworkConnectionState::DISCONNECTED: {
+          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+          WiFi.end();
+          #endif
+          if (keepAlive) {
+            changeConnectionState(NetworkConnectionState::INIT);
+          } else {
+            changeConnectionState(NetworkConnectionState::CLOSED);
+          }
+
+        }
+        break;
+      case NetworkConnectionState::ERROR: {
+
+        }
+        break;
+      case NetworkConnectionState::CLOSED: {
+
+        }
+        break;
     }
     lastConnectionTickTime = now;
 
@@ -215,59 +215,61 @@ void WiFiConnectionHandler::update() {
  ******************************************************************************/
 
 void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
-  if(_newState == netConnectionState) return;
+  if (_newState == netConnectionState) {
+    return;
+  }
   int newInterval = CHECK_INTERVAL_INIT;
   switch (_newState) {
-  case NetworkConnectionState::INIT: {
-    Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
-    newInterval = CHECK_INTERVAL_INIT;
-  }
-  break;
-  case NetworkConnectionState::CONNECTING: {
-    Debug.print(DBG_INFO, "Connecting to \"%s\"", ssid);
-    newInterval = CHECK_INTERVAL_CONNECTING;
-  }
-  break;
-  case NetworkConnectionState::CONNECTED: {
-    execNetworkEventCallback(_on_connect_event_callback,0);
-    newInterval = CHECK_INTERVAL_CONNECTED;
-  }
-  break;
-  case NetworkConnectionState::GETTIME: {
-  }
-  break;
-  case NetworkConnectionState::DISCONNECTING: {
-    Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
-    WiFi.disconnect();
-  }
-  break;
-  case NetworkConnectionState::DISCONNECTED: {
-    execNetworkEventCallback(_on_disconnect_event_callback,0);
-    Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+    case NetworkConnectionState::INIT: {
+        Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
+        newInterval = CHECK_INTERVAL_INIT;
+      }
+      break;
+    case NetworkConnectionState::CONNECTING: {
+        Debug.print(DBG_INFO, "Connecting to \"%s\"", ssid);
+        newInterval = CHECK_INTERVAL_CONNECTING;
+      }
+      break;
+    case NetworkConnectionState::CONNECTED: {
+        execNetworkEventCallback(_on_connect_event_callback, 0);
+        newInterval = CHECK_INTERVAL_CONNECTED;
+      }
+      break;
+    case NetworkConnectionState::GETTIME: {
+      }
+      break;
+    case NetworkConnectionState::DISCONNECTING: {
+        Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
+        WiFi.disconnect();
+      }
+      break;
+    case NetworkConnectionState::DISCONNECTED: {
+        execNetworkEventCallback(_on_disconnect_event_callback, 0);
+        Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
 
-    Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
-    if(keepAlive){
-      Debug.print(DBG_ERROR, "Attempting reconnection");      
-    }
+        Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
+        if (keepAlive) {
+          Debug.print(DBG_ERROR, "Attempting reconnection");
+        }
 
-    newInterval = CHECK_INTERVAL_DISCONNECTED;
-  }
-  break;
-  case NetworkConnectionState::CLOSED: {
-    
-    #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
-      WiFi.end();
-    #endif
-    
-    Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
-  }
-  break;
-  case NetworkConnectionState::ERROR: {
-    execNetworkEventCallback(_on_error_event_callback,0);
-    Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
-    Debug.print(DBG_ERROR, "Then reset and retry.");
-  }
-  break;
+        newInterval = CHECK_INTERVAL_DISCONNECTED;
+      }
+      break;
+    case NetworkConnectionState::CLOSED: {
+
+        #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
+        WiFi.end();
+        #endif
+
+        Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
+      }
+      break;
+    case NetworkConnectionState::ERROR: {
+        execNetworkEventCallback(_on_error_event_callback, 0);
+        Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
+        Debug.print(DBG_ERROR, "Then reset and retry.");
+      }
+      break;
   }
   connectionTickTimeInterval = newInterval;
   lastConnectionTickTime = millis();
@@ -276,7 +278,7 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
 }
 
 void WiFiConnectionHandler::connect() {
-  if(netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING){
+  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
   keepAlive = true;
@@ -285,7 +287,7 @@ void WiFiConnectionHandler::connect() {
 }
 void WiFiConnectionHandler::disconnect() {
   //WiFi.end();
-  
+
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
   keepAlive = false;
 }

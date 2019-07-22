@@ -38,7 +38,9 @@ class WiFiConnectionHandler : public ConnectionHandler {
 
     virtual void init();
     virtual unsigned long getTime();
-    virtual void check() { update();}
+    virtual void check() {
+      update();
+    }
     virtual void update();
     virtual Client &getClient() {
       return wifiClient;
@@ -54,7 +56,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     virtual void addDisconnectCallback(OnNetworkEventCallback callback);
     virtual void addErrorCallback(OnNetworkEventCallback callback);
     WiFiUDP udp;
-    
+
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);

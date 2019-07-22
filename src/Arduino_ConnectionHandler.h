@@ -70,17 +70,17 @@ class ConnectionHandler {
     virtual void addConnectCallback(OnNetworkEventCallback callback);
     virtual void addDisconnectCallback(OnNetworkEventCallback callback);
     virtual void addErrorCallback(OnNetworkEventCallback callback);
-    
+
   private:
     OnNetworkEventCallback  _on_connect_event_callback,
                             _on_disconnect_event_callback,
                             _on_error_event_callback;
 
   protected:
-    
+
     unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
     NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
-    
+
 };
 
 #ifdef ARDUINO_SAMD_MKR1000
@@ -114,13 +114,13 @@ class ConnectionHandler {
 #endif
 
 #if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
-#ifdef ARDUINO_ESP8266_ESP12
-  #include <ESP8266WiFi.h>
-  
-#else
-  #include <WiFi.h>
-#endif
-  
+  #ifdef ARDUINO_ESP8266_ESP12
+    #include <ESP8266WiFi.h>
+
+  #else
+    #include <WiFi.h>
+  #endif
+
   #include <WiFiUdp.h>
   #define BOARD_HAS_WIFI
   #define GETTIME_MISSING
@@ -131,9 +131,9 @@ class ConnectionHandler {
 #endif
 
 #ifdef BOARD_HAS_WIFI
-#include "Arduino_WiFiConnectionHandler.h"
+  #include "Arduino_WiFiConnectionHandler.h"
 #elif defined(BOARD_HAS_GSM)
-#include "Arduino_GSMConnectionHandler.h"
+  #include "Arduino_GSMConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

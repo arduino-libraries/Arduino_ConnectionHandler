@@ -40,18 +40,24 @@ void setup() {
   // the following methods allow the sketch to be notified when connected or
   // disconnected to the network
 
-  conMan.addConnectCallback(onNetworkConnect); // look at function onNetworkConnect towards the end of this sketch
-  conMan.addDisconnectCallback(onNetworkDisconnect); // look at function onNetworkDisconnect towards the end of this sketch
+  conMan.addConnectCallback(
+    onNetworkConnect); // look at function onNetworkConnect towards the end of
+  // this sketch
+  conMan.addDisconnectCallback(
+    onNetworkDisconnect); // look at function onNetworkDisconnect towards the
+  // end of this sketch
 }
 
 void loop() {
-  // the following code keeps on running connection workflows on our ConnectionHandler object,
-  // hence allowing reconnection in case of failure and notification of connect/disconnect event if enabled (see addConnectCallback/addDisconnectCallback)
-  // NOTE: any use of delay() within the loop or methods called from it will delay the execution of .update(),
-  // which might not guarantee the correct functioning of the ConnectionHandler object.
-  
-  conMan.update();
+  // the following code keeps on running connection workflows on our
+  // ConnectionHandler object, hence allowing reconnection in case of failure
+  // and notification of connect/disconnect event if enabled (see
+  // addConnectCallback/addDisconnectCallback) NOTE: any use of delay() within
+  // the loop or methods called from it will delay the execution of .update(),
+  // which might not guarantee the correct functioning of the ConnectionHandler
+  // object.
 
+  conMan.update();
 }
 
 void onNetworkConnect(void *_arg) {

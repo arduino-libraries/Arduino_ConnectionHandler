@@ -36,7 +36,9 @@ class GSMConnectionHandler : public ConnectionHandler {
 
     virtual void init();
     virtual unsigned long getTime();
-    virtual void check() { update();}
+    virtual void check() {
+      update();
+    }
     virtual void update();
     virtual Client &getClient() {
       return networkClient;
@@ -74,7 +76,7 @@ class GSMConnectionHandler : public ConnectionHandler {
     unsigned long lastConnectionTickTime;
     int connectionTickTimeInterval;
 
-    
+
     bool keepAlive;
 
     OnNetworkEventCallback  _on_connect_event_callback,
