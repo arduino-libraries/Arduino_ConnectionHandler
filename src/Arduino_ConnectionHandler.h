@@ -116,14 +116,12 @@ class ConnectionHandler {
 #if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
   #ifdef ARDUINO_ESP8266_ESP12
     #include <ESP8266WiFi.h>
-
   #else
     #include <WiFi.h>
   #endif
 
   #include <WiFiUdp.h>
   #define BOARD_HAS_WIFI
-  #define GETTIME_MISSING
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED

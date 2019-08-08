@@ -91,11 +91,11 @@ void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & ca
 }
 
 unsigned long WiFiConnectionHandler::getTime() {
-  #ifdef GETTIME_MISSING
-  return 0;
-  #else
+#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
   return WiFi.getTime();
-  #endif
+#else
+  return 0;
+#endif
 }
 
 void WiFiConnectionHandler::update() {
@@ -158,7 +158,7 @@ void WiFiConnectionHandler::update() {
             return;
           } else {
             Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
-            changeConnectionState(NetworkConnectionState::CONNECTED);
+            changeConnectionState(NetworkConnectionState::GETTIME);
             return;
           }
         }
@@ -175,7 +175,11 @@ void WiFiConnectionHandler::update() {
         }
         break;
       case NetworkConnectionState::GETTIME: {
-
+#if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
+        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+        changeConnectionState(NetworkConnectionState::CONNECTED);
+        Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
+#endif
         }
         break;
       case NetworkConnectionState::DISCONNECTING: {
