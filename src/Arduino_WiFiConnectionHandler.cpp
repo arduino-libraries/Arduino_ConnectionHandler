@@ -175,11 +175,11 @@ void WiFiConnectionHandler::update() {
         }
         break;
       case NetworkConnectionState::GETTIME: {
+        Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
         configTime(0, 0, "pool.ntp.org", "time.nist.gov");
-        changeConnectionState(NetworkConnectionState::CONNECTED);
-        Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #endif
+        changeConnectionState(NetworkConnectionState::CONNECTED);
         }
         break;
       case NetworkConnectionState::DISCONNECTING: {
