@@ -177,7 +177,7 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::GETTIME: {
         Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
-        configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+        configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
         changeConnectionState(NetworkConnectionState::CONNECTED);
         }
