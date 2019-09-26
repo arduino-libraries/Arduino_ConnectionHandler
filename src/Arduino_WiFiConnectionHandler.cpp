@@ -104,6 +104,8 @@ void WiFiConnectionHandler::update() {
   int networkStatus = 0;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) { /*  time bracket  */
 
+    lastConnectionTickTime = now;
+
     switch (netConnectionState) {
       case NetworkConnectionState::INIT: {
           Debug.print(DBG_VERBOSE, "::INIT");
@@ -114,7 +116,6 @@ void WiFiConnectionHandler::update() {
           if (networkStatus == NETWORK_HARDWARE_ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
             changeConnectionState(NetworkConnectionState::ERROR);
-            lastConnectionTickTime = now;
             return;
           }
           Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
@@ -209,8 +210,6 @@ void WiFiConnectionHandler::update() {
         }
         break;
     }
-    lastConnectionTickTime = now;
-
   } /*  time bracket  */
 }
 
