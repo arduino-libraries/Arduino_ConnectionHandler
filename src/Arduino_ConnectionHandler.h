@@ -114,7 +114,7 @@ class ConnectionHandler {
 #endif
 
 #if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
-  #ifdef ARDUINO_ESP8266_ESP12
+  #if defined(ARDUINO_ESP8266_ESP12) || defined(ESP8266)
     #include <ESP8266WiFi.h>
   #else
     #include <WiFi.h>
