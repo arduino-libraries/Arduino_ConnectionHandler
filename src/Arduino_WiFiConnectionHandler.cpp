@@ -91,7 +91,7 @@ void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & ca
 }
 
 unsigned long WiFiConnectionHandler::getTime() {
-#if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+#if !defined(BOARD_ESP8266)
   return WiFi.getTime();
 #else
   return 0;
@@ -109,7 +109,7 @@ void WiFiConnectionHandler::update() {
     switch (netConnectionState) {
       case NetworkConnectionState::INIT: {
           Debug.print(DBG_VERBOSE, "::INIT");
-          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+          #if !defined(BOARD_ESP8266)
           networkStatus = WiFi.status();
 
           Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
@@ -139,7 +139,7 @@ void WiFiConnectionHandler::update() {
           Debug.print(DBG_VERBOSE, "::CONNECTING");
           networkStatus = WiFi.status();
 
-          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
+          #if !defined(BOARD_ESP8266)
 
           if (networkStatus != WL_CONNECTED) {
             networkStatus = WiFi.begin(ssid, pass);
@@ -177,7 +177,7 @@ void WiFiConnectionHandler::update() {
         break;
       case NetworkConnectionState::GETTIME: {
         Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
-#if defined(ARDUINO_ESP8266_ESP12) || defined(ARDUINO_ARCH_ESP32) || defined(ESP8266)
+#if defined(BOARD_ESP8266)
         configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
         changeConnectionState(NetworkConnectionState::CONNECTED);
@@ -190,7 +190,7 @@ void WiFiConnectionHandler::update() {
         }
         break;
       case NetworkConnectionState::DISCONNECTED: {
-          #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) && !defined(ESP8266)
+          #if !defined(BOARD_ESP8266)
           WiFi.end();
           #endif
           if (keepAlive) {
@@ -260,7 +260,7 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
       break;
     case NetworkConnectionState::CLOSED: {
 
-        #if !defined(ARDUINO_ESP8266_ESP12) && !defined(ARDUINO_ARCH_ESP32) &&  !defined(ESP8266)
+        #if !defined(BOARD_ESP8266)
         WiFi.end();
         #endif
 
