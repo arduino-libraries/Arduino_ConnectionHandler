@@ -84,6 +84,8 @@ class WiFiConnectionHandler : public ConnectionHandler {
 
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
+    void update_handleInit(int & networkStatus);
+
 };
 
 #endif /* #ifdef BOARD_HAS_WIFI */

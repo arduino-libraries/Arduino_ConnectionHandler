@@ -107,34 +107,7 @@ void WiFiConnectionHandler::update() {
     lastConnectionTickTime = now;
 
     switch (netConnectionState) {
-      case NetworkConnectionState::INIT: {
-          Debug.print(DBG_VERBOSE, "::INIT");
-          #if !defined(BOARD_ESP8266)
-          networkStatus = WiFi.status();
-
-          Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
-          if (networkStatus == NETWORK_HARDWARE_ERROR) {
-            // NO FURTHER ACTION WILL FOLLOW THIS
-            changeConnectionState(NetworkConnectionState::ERROR);
-            return;
-          }
-          Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
-          if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
-            Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
-            Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
-            delay(5000);
-          }
-          #else
-          Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
-          WiFi.disconnect();
-          delay(300);
-          networkStatus = WiFi.begin(ssid, pass);
-          delay(1000);
-          #endif
-
-          changeConnectionState(NetworkConnectionState::CONNECTING);
-        }
-        break;
+      case NetworkConnectionState::INIT: update_handleInit(networkStatus); break;
       case NetworkConnectionState::CONNECTING: {
           Debug.print(DBG_VERBOSE, "::CONNECTING");
           networkStatus = WiFi.status();
@@ -294,4 +267,35 @@ void WiFiConnectionHandler::disconnect() {
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
   keepAlive = false;
 }
+
+void WiFiConnectionHandler::update_handleInit(int & networkStatus) {
+  Debug.print(DBG_VERBOSE, "::INIT");
+
+#ifndef BOARD_ESP8266
+  networkStatus = WiFi.status();
+
+  Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
+  if (networkStatus == NETWORK_HARDWARE_ERROR) {
+    // NO FURTHER ACTION WILL FOLLOW THIS
+    changeConnectionState(NetworkConnectionState::ERROR);
+    return;
+  }
+
+  Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
+
+  if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
+    Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
+    Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
+    delay(5000);
+  }
+#else
+  Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
+  WiFi.disconnect();
+  delay(300);
+  networkStatus = WiFi.begin(ssid, pass);
+  delay(1000);
+#endif /* ifndef BOARD_ESP8266 */
+  changeConnectionState(NetworkConnectionState::CONNECTING);
+}
+
 #endif /* #ifdef BOARD_HAS_WIFI */
