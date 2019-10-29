@@ -59,8 +59,6 @@ class WiFiConnectionHandler : public ConnectionHandler {
 
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
-
     const int CHECK_INTERVAL_IDLE = 100;
     const int CHECK_INTERVAL_INIT = 100;
     const int CHECK_INTERVAL_CONNECTING = 500;
