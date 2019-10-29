@@ -85,7 +85,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
     void update_handleInit         (int & networkStatus);
-    void update_handleConnecting   (int & networkStatus);
+    NetworkConnectionState update_handleConnecting   (int & networkStatus);
     void update_handleConnected    (int & networkStatus);
     NetworkConnectionState update_handleGetTime      ();
     void update_handleDisconnecting(int const networkStatus);
