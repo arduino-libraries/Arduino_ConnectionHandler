@@ -125,7 +125,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
 
 #ifndef BOARD_ESP8266
   Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
-  if (networkStatus == NETWORK_HARDWARE_ERROR) {
+  if (WiFi.status() == NETWORK_HARDWARE_ERROR) {
     execNetworkEventCallback(_on_error_event_callback, 0);
     Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
     Debug.print(DBG_ERROR, "Then reset and retry.");
