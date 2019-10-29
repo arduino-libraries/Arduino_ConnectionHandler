@@ -109,7 +109,7 @@ void WiFiConnectionHandler::update() {
     switch (netConnectionState) {
       case NetworkConnectionState::INIT:          update_handleInit         (networkStatus); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (networkStatus); break;
-      case NetworkConnectionState::CONNECTED:     update_handleConnected    (networkStatus); break;
+      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (networkStatus); break;
       case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
       case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
@@ -258,15 +258,26 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting(int & netw
   }
 }
 
-void WiFiConnectionHandler::update_handleConnected(int & networkStatus) {
+NetworkConnectionState WiFiConnectionHandler::update_handleConnected(int & networkStatus) {
   networkStatus = WiFi.status();
   
   Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-  if (networkStatus != WL_CONNECTED) {
-    changeConnectionState(NetworkConnectionState::DISCONNECTED);
-    return;
+  if (networkStatus != WL_CONNECTED)
+  {
+    execNetworkEventCallback(_on_disconnect_event_callback, 0);
+   
+    Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+    Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
+  
+    if (keepAlive) {
+      Debug.print(DBG_ERROR, "Attempting reconnection");
+    }
+  
+    connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
+    return NetworkConnectionState::DISCONNECTED;
   }
   Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
+  return NetworkConnectionState::CONNECTED;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
