@@ -112,18 +112,7 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::CONNECTED:     update_handleConnected    (networkStatus); break;
       case NetworkConnectionState::GETTIME:       update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
-      case NetworkConnectionState::DISCONNECTED: {
-          #if !defined(BOARD_ESP8266)
-          WiFi.end();
-          #endif
-          if (keepAlive) {
-            changeConnectionState(NetworkConnectionState::INIT);
-          } else {
-            changeConnectionState(NetworkConnectionState::CLOSED);
-          }
-
-        }
-        break;
+      case NetworkConnectionState::DISCONNECTED:  update_handleDisconnected ();              break;
       case NetworkConnectionState::ERROR: {
 
         }
@@ -297,6 +286,18 @@ void WiFiConnectionHandler::update_handleGetTime() {
 void WiFiConnectionHandler::update_handleDisconnecting(int const networkStatus) {
   if (networkStatus != WL_CONNECTED) {
     changeConnectionState(NetworkConnectionState::DISCONNECTED);
+  }
+}
+
+void WiFiConnectionHandler::update_handleDisconnected() {
+#ifndef BOARD_ESP8266
+  WiFi.end();
+#endif /* ifndef BOARD_ESP8266 */
+  if (keepAlive) {
+    changeConnectionState(NetworkConnectionState::INIT);
+  }
+  else {
+    changeConnectionState(NetworkConnectionState::CLOSED);
   }
 }
 
