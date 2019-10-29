@@ -113,14 +113,8 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::GETTIME:       update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
       case NetworkConnectionState::DISCONNECTED:  update_handleDisconnected ();              break;
-      case NetworkConnectionState::ERROR: {
-
-        }
-        break;
-      case NetworkConnectionState::CLOSED: {
-
-        }
-        break;
+      case NetworkConnectionState::ERROR:                                                    break;
+      case NetworkConnectionState::CLOSED:                                                   break;
     }
   } /*  time bracket  */
 }
