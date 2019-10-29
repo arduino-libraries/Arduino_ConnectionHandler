@@ -109,7 +109,7 @@ void WiFiConnectionHandler::update() {
     switch (netConnectionState) {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (networkStatus); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (networkStatus); break;
-      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (networkStatus); break;
+      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    ();              break;
       case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting();              break;
       case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
@@ -197,11 +197,10 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting(int & netw
   }
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleConnected(int & networkStatus) {
-  networkStatus = WiFi.status();
-  
-  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-  if (networkStatus != WL_CONNECTED)
+NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
+
+  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+  if (WiFi.status() != WL_CONNECTED)
   {
     execNetworkEventCallback(_on_disconnect_event_callback, 0);
    
