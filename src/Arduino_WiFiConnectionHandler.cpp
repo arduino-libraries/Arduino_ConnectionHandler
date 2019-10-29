@@ -108,7 +108,7 @@ void WiFiConnectionHandler::update() {
 
     switch (netConnectionState) {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (networkStatus); break;
-      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (networkStatus); break;
+      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   ();              break;
       case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    ();              break;
       case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting();              break;
@@ -170,21 +170,17 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit(int & networkSta
   return NetworkConnectionState::CONNECTING;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleConnecting(int & networkStatus) {
+NetworkConnectionState WiFiConnectionHandler::update_handleConnecting() {
   Debug.print(DBG_VERBOSE, "::CONNECTING");
   
-  networkStatus = WiFi.status();
-
 #ifndef BOARD_ESP8266
-  if (networkStatus != WL_CONNECTED) {
-    networkStatus = WiFi.begin(ssid, pass);
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin(ssid, pass);
   }
-#else
-    networkStatus = WiFi.status();
 #endif /* ifndef BOARD_ESP8266 */
 
-  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-  if (networkStatus != NETWORK_CONNECTED) {
+  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+  if (WiFi.status() != NETWORK_CONNECTED) {
     Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
     Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
     return NetworkConnectionState::CONNECTING;
