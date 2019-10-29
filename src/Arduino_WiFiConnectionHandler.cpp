@@ -253,6 +253,8 @@ void WiFiConnectionHandler::update_handleConnecting(int & networkStatus) {
   }
   else {
     Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
+    execNetworkEventCallback(_on_connect_event_callback, 0);
+    connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
     changeConnectionState(NetworkConnectionState::GETTIME);
     return;
   }
@@ -274,9 +276,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
-  /* Transition to NetworkConnectionState::CONNECTED */
-  execNetworkEventCallback(_on_connect_event_callback, 0);
-  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
   return NetworkConnectionState::CONNECTED;
 }
 
