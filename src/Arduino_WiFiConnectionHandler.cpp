@@ -107,7 +107,7 @@ void WiFiConnectionHandler::update() {
     lastConnectionTickTime = now;
 
     switch (netConnectionState) {
-      case NetworkConnectionState::INIT:          update_handleInit         (networkStatus); break;
+      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (networkStatus); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (networkStatus); break;
       case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (networkStatus); break;
       case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
@@ -201,7 +201,7 @@ void WiFiConnectionHandler::disconnect() {
   keepAlive = false;
 }
 
-void WiFiConnectionHandler::update_handleInit(int & networkStatus) {
+NetworkConnectionState WiFiConnectionHandler::update_handleInit(int & networkStatus) {
   Debug.print(DBG_VERBOSE, "::INIT");
 
 #ifndef BOARD_ESP8266
@@ -209,9 +209,10 @@ void WiFiConnectionHandler::update_handleInit(int & networkStatus) {
 
   Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
   if (networkStatus == NETWORK_HARDWARE_ERROR) {
-    // NO FURTHER ACTION WILL FOLLOW THIS
-    changeConnectionState(NetworkConnectionState::ERROR);
-    return;
+    execNetworkEventCallback(_on_error_event_callback, 0);
+    Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
+    Debug.print(DBG_ERROR, "Then reset and retry.");
+    return NetworkConnectionState::ERROR;
   }
 
   Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
@@ -228,7 +229,9 @@ void WiFiConnectionHandler::update_handleInit(int & networkStatus) {
   networkStatus = WiFi.begin(ssid, pass);
   delay(1000);
 #endif /* ifndef BOARD_ESP8266 */
-  changeConnectionState(NetworkConnectionState::CONNECTING);
+
+  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
+  return NetworkConnectionState::CONNECTING;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting(int & networkStatus) {
