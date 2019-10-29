@@ -113,6 +113,14 @@ class ConnectionHandler {
   #define NETWORK_CONNECTED GSM3_NetworkStatus_t::GPRS_READY
 #endif
 
+#ifdef ARDUINO_SAMD_MKRNB1500
+  #include <MKRNB.h>
+  #define BOARD_HAS_NB
+  #define NETWORK_HARDWARE_ERROR
+  #define NETWORK_IDLE_STATUS NB_NetworkStatus_t::IDLE
+  #define NETWORK_CONNECTED NB_NetworkStatus_t::GPRS_READY
+#endif
+
 #if    defined(ARDUINO_ESP8266_ESP12)    \
     || defined(ESP8266)                  \
     || defined(ESP8266_ESP01)            \
@@ -159,6 +167,8 @@ class ConnectionHandler {
   #include "Arduino_WiFiConnectionHandler.h"
 #elif defined(BOARD_HAS_GSM)
   #include "Arduino_GSMConnectionHandler.h"
+#elif defined(BOARD_HAS_NB)
+  #include "Arduino_NBConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */
