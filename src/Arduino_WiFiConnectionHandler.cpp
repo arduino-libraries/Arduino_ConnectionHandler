@@ -110,7 +110,7 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::INIT:          update_handleInit         (networkStatus); break;
       case NetworkConnectionState::CONNECTING:    update_handleConnecting   (networkStatus); break;
       case NetworkConnectionState::CONNECTED:     update_handleConnected    (networkStatus); break;
-      case NetworkConnectionState::GETTIME:       update_handleGetTime      ();              break;
+      case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
       case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
       case NetworkConnectionState::ERROR:                                                    break;
@@ -269,12 +269,15 @@ void WiFiConnectionHandler::update_handleConnected(int & networkStatus) {
   Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
 }
 
-void WiFiConnectionHandler::update_handleGetTime() {
+NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
   Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
-  changeConnectionState(NetworkConnectionState::CONNECTED);
+  /* Transition to NetworkConnectionState::CONNECTED */
+  execNetworkEventCallback(_on_connect_event_callback, 0);
+  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
+  return NetworkConnectionState::CONNECTED;
 }
 
 void WiFiConnectionHandler::update_handleDisconnecting(int const networkStatus) {
