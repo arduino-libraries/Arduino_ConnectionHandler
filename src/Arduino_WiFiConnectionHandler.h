@@ -25,8 +25,6 @@
 #include "Arduino_ConnectionHandler.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-//extern void connectionStateChanged(NetworkConnectionState _newState);
-
 
 /******************************************************************************
    CLASS DECLARATION
@@ -63,10 +61,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     const int CHECK_INTERVAL_INIT = 100;
     const int CHECK_INTERVAL_CONNECTING = 500;
     const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 5000;
-    const int CHECK_INTERVAL_DISCONNECTING = 500;
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
 
     const char *ssid, *pass;
     unsigned long lastConnectionTickTime;
