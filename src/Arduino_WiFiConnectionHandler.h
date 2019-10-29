@@ -87,7 +87,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     void update_handleInit         (int & networkStatus);
     void update_handleConnecting   (int & networkStatus);
     void update_handleConnected    (int & networkStatus);
-    void update_handleGetTime      ();
+    NetworkConnectionState update_handleGetTime      ();
     void update_handleDisconnecting(int const networkStatus);
     NetworkConnectionState update_handleDisconnected ();
 
