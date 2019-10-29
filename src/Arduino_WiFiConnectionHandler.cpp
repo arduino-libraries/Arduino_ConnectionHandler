@@ -111,10 +111,10 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (networkStatus); break;
       case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (networkStatus); break;
       case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
-      case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
+      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting();              break;
       case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
-      case NetworkConnectionState::ERROR:                                                    break;
-      case NetworkConnectionState::CLOSED:                                                   break;
+      case NetworkConnectionState::ERROR:                                                                         break;
+      case NetworkConnectionState::CLOSED:                                                                        break;
     }
   } /*  time bracket  */
 }
@@ -291,10 +291,10 @@ NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
   return NetworkConnectionState::CONNECTED;
 }
 
-void WiFiConnectionHandler::update_handleDisconnecting(int const networkStatus) {
-  if (networkStatus != WL_CONNECTED) {
-    changeConnectionState(NetworkConnectionState::DISCONNECTED);
-  }
+NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting() {
+  Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
+  WiFi.disconnect();
+  return NetworkConnectionState::DISCONNECTED;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected() {
