@@ -123,82 +123,18 @@ void WiFiConnectionHandler::update() {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
-  if (_newState == netConnectionState) {
-    return;
-  }
-  int newInterval = CHECK_INTERVAL_INIT;
-  switch (_newState) {
-    case NetworkConnectionState::INIT: {
-        Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
-        newInterval = CHECK_INTERVAL_INIT;
-      }
-      break;
-    case NetworkConnectionState::CONNECTING: {
-        Debug.print(DBG_INFO, "Connecting to \"%s\"", ssid);
-        newInterval = CHECK_INTERVAL_CONNECTING;
-      }
-      break;
-    case NetworkConnectionState::CONNECTED: {
-        execNetworkEventCallback(_on_connect_event_callback, 0);
-        newInterval = CHECK_INTERVAL_CONNECTED;
-      }
-      break;
-    case NetworkConnectionState::GETTIME: {
-      }
-      break;
-    case NetworkConnectionState::DISCONNECTING: {
-        Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
-        WiFi.disconnect();
-      }
-      break;
-    case NetworkConnectionState::DISCONNECTED: {
-        execNetworkEventCallback(_on_disconnect_event_callback, 0);
-        Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
-
-        Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
-        if (keepAlive) {
-          Debug.print(DBG_ERROR, "Attempting reconnection");
-        }
-
-        newInterval = CHECK_INTERVAL_DISCONNECTED;
-      }
-      break;
-    case NetworkConnectionState::CLOSED: {
-
-        #if !defined(BOARD_ESP8266)
-        WiFi.end();
-        #endif
-
-        Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
-      }
-      break;
-    case NetworkConnectionState::ERROR: {
-        execNetworkEventCallback(_on_error_event_callback, 0);
-        Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
-        Debug.print(DBG_ERROR, "Then reset and retry.");
-      }
-      break;
-  }
-  connectionTickTimeInterval = newInterval;
-  lastConnectionTickTime = millis();
-  netConnectionState = _newState;
-  //connectionStateChanged(netConnectionState);
-}
-
 void WiFiConnectionHandler::connect() {
   if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
   keepAlive = true;
-  changeConnectionState(NetworkConnectionState::INIT);
-
+  connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+  netConnectionState = NetworkConnectionState::INIT;
 }
-void WiFiConnectionHandler::disconnect() {
-  //WiFi.end();
 
-  changeConnectionState(NetworkConnectionState::DISCONNECTING);
+void WiFiConnectionHandler::disconnect() {
   keepAlive = false;
+  netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit(int & networkStatus) {
