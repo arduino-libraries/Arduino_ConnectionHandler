@@ -101,20 +101,20 @@ unsigned long WiFiConnectionHandler::getTime() {
 void WiFiConnectionHandler::update() {
 
   unsigned long const now = millis();
-  int networkStatus = 0;
+
   if (now - lastConnectionTickTime > connectionTickTimeInterval) { /*  time bracket  */
 
     lastConnectionTickTime = now;
 
     switch (netConnectionState) {
-      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (networkStatus); break;
-      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   ();              break;
-      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    ();              break;
-      case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      ();              break;
-      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting();              break;
-      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
-      case NetworkConnectionState::ERROR:                                                                         break;
-      case NetworkConnectionState::CLOSED:                                                                        break;
+      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (); break;
+      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (); break;
+      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (); break;
+      case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      (); break;
+      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
+      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected (); break;
+      case NetworkConnectionState::ERROR:                                                            break;
+      case NetworkConnectionState::CLOSED:                                                           break;
     }
   } /*  time bracket  */
 }
@@ -137,13 +137,11 @@ void WiFiConnectionHandler::disconnect() {
   netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleInit(int & networkStatus) {
+NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
   Debug.print(DBG_VERBOSE, "::INIT");
 
 #ifndef BOARD_ESP8266
-  networkStatus = WiFi.status();
-
-  Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
+  Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
   if (networkStatus == NETWORK_HARDWARE_ERROR) {
     execNetworkEventCallback(_on_error_event_callback, 0);
     Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
@@ -162,7 +160,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit(int & networkSta
   Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
   WiFi.disconnect();
   delay(300);
-  networkStatus = WiFi.begin(ssid, pass);
+  WiFi.begin(ssid, pass);
   delay(1000);
 #endif /* ifndef BOARD_ESP8266 */
 
