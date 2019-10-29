@@ -112,7 +112,7 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::CONNECTED:     update_handleConnected    (networkStatus); break;
       case NetworkConnectionState::GETTIME:       update_handleGetTime      ();              break;
       case NetworkConnectionState::DISCONNECTING: update_handleDisconnecting(networkStatus); break;
-      case NetworkConnectionState::DISCONNECTED:  update_handleDisconnected ();              break;
+      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected ();              break;
       case NetworkConnectionState::ERROR:                                                    break;
       case NetworkConnectionState::CLOSED:                                                   break;
     }
@@ -283,15 +283,17 @@ void WiFiConnectionHandler::update_handleDisconnecting(int const networkStatus) 
   }
 }
 
-void WiFiConnectionHandler::update_handleDisconnected() {
+NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected() {
 #ifndef BOARD_ESP8266
   WiFi.end();
 #endif /* ifndef BOARD_ESP8266 */
   if (keepAlive) {
-    changeConnectionState(NetworkConnectionState::INIT);
+    connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+    return NetworkConnectionState::INIT;
   }
   else {
-    changeConnectionState(NetworkConnectionState::CLOSED);
+    Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
+    return NetworkConnectionState::CLOSED;
   }
 }
 
