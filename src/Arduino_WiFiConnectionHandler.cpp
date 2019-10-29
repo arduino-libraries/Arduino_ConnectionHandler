@@ -98,6 +98,7 @@ unsigned long WiFiConnectionHandler::getTime() {
 #endif
 }
 
+
 void WiFiConnectionHandler::update() {
 
   unsigned long const now = millis();
@@ -107,36 +108,8 @@ void WiFiConnectionHandler::update() {
     lastConnectionTickTime = now;
 
     switch (netConnectionState) {
-      case NetworkConnectionState::INIT: update_handleInit(networkStatus); break;
-      case NetworkConnectionState::CONNECTING: {
-          Debug.print(DBG_VERBOSE, "::CONNECTING");
-          networkStatus = WiFi.status();
-
-          #if !defined(BOARD_ESP8266)
-
-          if (networkStatus != WL_CONNECTED) {
-            networkStatus = WiFi.begin(ssid, pass);
-          }
-
-          #else
-
-          networkStatus = WiFi.status();
-
-          #endif
-
-          Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-          if (networkStatus != NETWORK_CONNECTED) {
-            Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
-            Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-
-            return;
-          } else {
-            Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
-            changeConnectionState(NetworkConnectionState::GETTIME);
-            return;
-          }
-        }
-        break;
+      case NetworkConnectionState::INIT:       update_handleInit      (networkStatus); break;
+      case NetworkConnectionState::CONNECTING: update_handleConnecting(networkStatus); break;
       case NetworkConnectionState::CONNECTED: {
 
           networkStatus = WiFi.status();
@@ -296,6 +269,33 @@ void WiFiConnectionHandler::update_handleInit(int & networkStatus) {
   delay(1000);
 #endif /* ifndef BOARD_ESP8266 */
   changeConnectionState(NetworkConnectionState::CONNECTING);
+}
+
+void WiFiConnectionHandler::update_handleConnecting(int & networkStatus) {
+  Debug.print(DBG_VERBOSE, "::CONNECTING");
+  
+  networkStatus = WiFi.status();
+
+#ifndef BOARD_ESP8266
+
+  if (networkStatus != WL_CONNECTED) {
+    networkStatus = WiFi.begin(ssid, pass);
+  }
+#else
+    networkStatus = WiFi.status();
+#endif /* ifndef BOARD_ESP8266 */
+
+  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
+  if (networkStatus != NETWORK_CONNECTED) {
+    Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
+    Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
+    return;
+  }
+  else {
+    Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
+    changeConnectionState(NetworkConnectionState::GETTIME);
+    return;
+  }
 }
 
 #endif /* #ifdef BOARD_HAS_WIFI */
