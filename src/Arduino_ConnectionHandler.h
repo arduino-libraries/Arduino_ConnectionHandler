@@ -22,8 +22,8 @@
    INCLUDES
  ******************************************************************************/
 
-#include <Client.h>
-#include <Udp.h>
+//#include <Client.h>
+//#include <Udp.h>
 
 #include <Arduino_DebugUtils.h>
 
@@ -57,9 +57,6 @@ class ConnectionHandler {
     virtual void init() = 0;
     virtual void check() = 0;
     virtual void update() = 0;
-    virtual unsigned long getTime() = 0;
-    virtual Client &getClient();
-    virtual UDP &getUDP();
 
     virtual NetworkConnectionState getStatus() {
       return netConnectionState;
