@@ -33,15 +33,17 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED
    CTOR/DTOR
  ******************************************************************************/
 
-LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey) :
+LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band band) :
   appeui(_appeui),
   appkey(_appkey),
+  band(band),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
   keepAlive(false),
   _on_connect_event_callback(NULL),
   _on_disconnect_event_callback(NULL),
   _on_error_event_callback(NULL) {
+    netConnectionState = NetworkConnectionState::INIT;
 }
 
 /******************************************************************************
@@ -89,13 +91,50 @@ void LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
     modem.beginPacket();
     modem.write(buf, size);
     err = modem.endPacket(true);
-    if (err > 0) {
-      Serial.println("Message sent correctly!");
-    } else {
-      Serial.println("Error sending message :(");
-      Serial.println("(you may send a limited amount of messages per minute, depending on the signal strength");
-      Serial.println("it may vary from 1 message every couple of seconds to 1 message every minute)");
-    }
+	if (err != size) {
+		switch (err) {
+			case -1: {
+				Serial.println("Message length is bigger than max LoRa packet!");
+				Serial.println(err);
+			}
+					 break;
+			case -2: {
+				Serial.println("Message ack was not recieved, the message could not be delivered");
+			}
+					 break;
+			case 2: {
+				Serial.println("LoRa generic error (LORA_ERROR)");
+			}
+					break;
+			case 3: {
+				Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");
+			}
+					break;
+			case 4: {
+				Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");
+			}
+					break;
+			case 5: {
+				Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");
+			}
+					break;
+			case 6: {
+				Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");
+			}
+					break;
+			case 7: {
+				Serial.println("LoRa rx error (LORA_ERROR_RX)");
+			}
+					break;
+			case 8: {
+				Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");
+			}
+					break;
+		}
+	}
+	else {
+		Serial.println("Message sent correctly!");
+	}
 }
 
 int LoRaConnectionHandler::read() {
@@ -117,7 +156,10 @@ void LoRaConnectionHandler::update() {
     switch (netConnectionState) {
       case NetworkConnectionState::INIT: {
           Debug.print(DBG_VERBOSE, "::INIT");
-
+          if (!modem.begin(band)) {
+            Debug.print(DBG_VERBOSE, "Failed to start module");
+            changeConnectionState(NetworkConnectionState::ERROR);
+          };
           delay(1000);
 
           changeConnectionState(NetworkConnectionState::CONNECTING);
@@ -125,8 +167,7 @@ void LoRaConnectionHandler::update() {
         break;
       case NetworkConnectionState::CONNECTING: {
           Debug.print(DBG_VERBOSE, "::CONNECTING");
-          networkStatus = modem.joinOTAA(appeui, appkey);;
-
+          networkStatus = modem.joinOTAA(appeui, appkey);
           if (networkStatus != true) {
             changeConnectionState(NetworkConnectionState::ERROR);
             return;

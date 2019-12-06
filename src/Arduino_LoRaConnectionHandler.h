@@ -32,7 +32,7 @@
 
 class LoRaConnectionHandler : public LPWANConnectionHandler {
   public:
-    LoRaConnectionHandler(const char *_appeui, const char *_appkey);
+    LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = EU868);
 
     void init();
     unsigned long getTime();
@@ -68,6 +68,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
     LoRaModem modem;
     const char *appeui, *appkey;
+    _lora_band band;
     unsigned long lastConnectionTickTime;
 
     int connectionTickTimeInterval;
