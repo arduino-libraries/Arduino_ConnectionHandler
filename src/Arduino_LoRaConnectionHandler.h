@@ -15,46 +15,43 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef ARDUINO_WIFI_CONNECTION_HANDLER_H_
-#define ARDUINO_WIFI_CONNECTION_HANDLER_H_
+#ifndef ARDUINO_LORA_CONNECTION_HANDLER_H_
+#define ARDUINO_LORA_CONNECTION_HANDLER_H_
+
+//#ifdef defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
 
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
-//#if defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT)
-//#ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-//extern void connectionStateChanged(NetworkConnectionState _newState);
 
-#include "Arduino_TcpIpConnectionHandler.h"
+#include "Arduino_LPWANConnectionHandler.h"
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandler : public TcpIpConnectionHandler {
+class LoRaConnectionHandler : public LPWANConnectionHandler {
   public:
-    WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
+    LoRaConnectionHandler(const char *_appeui, const char *_appkey);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual void check() {
+    void init();
+    unsigned long getTime();
+    void check() {
       update();
     }
-    virtual void update();
-    virtual Client &getClient() {
-      return wifiClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
-    virtual void disconnect();
-    virtual void connect();
+    void update();
+
+    void write(const uint8_t *buf, size_t size);
+    int read();
+    bool available();
+
+    void disconnect();
+    void connect();
 
     virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
     virtual void addConnectCallback(OnNetworkEventCallback callback);
     virtual void addDisconnectCallback(OnNetworkEventCallback callback);
     virtual void addErrorCallback(OnNetworkEventCallback callback);
-    WiFiUDP udp;
 
   private:
 
@@ -69,10 +66,10 @@ class WiFiConnectionHandler : public TcpIpConnectionHandler {
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
     const int CHECK_INTERVAL_ERROR = 500;
 
-    const char *ssid, *pass;
+    LoRaModem modem;
+    const char *appeui, *appkey;
     unsigned long lastConnectionTickTime;
 
-    WiFiClient wifiClient;
     int connectionTickTimeInterval;
 
     bool keepAlive;
@@ -85,6 +82,6 @@ class WiFiConnectionHandler : public TcpIpConnectionHandler {
 
 };
 
-//#endif /* #ifdef BOARD_HAS_WIFI */
+//#endif
 
-#endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */
+#endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */

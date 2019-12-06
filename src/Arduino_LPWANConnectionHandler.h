@@ -15,40 +15,40 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef TCPIP_CONNECTION_HANDLER_H_
-#define TCPIP_CONNECTION_HANDLER_H_
+#ifndef ARDUINO_LPWAN_CONNECTION_HANDLER_H_
+#define ARDUINO_LPWAN_CONNECTION_HANDLER_H_
 
 /******************************************************************************
    INCLUDES
  ******************************************************************************/
 
-#include <Client.h>
-#include <Udp.h>
-
 #include <Arduino_DebugUtils.h>
+#include <Arduino_ConnectionHandler.h>
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class TCPIPConnectionHandler : public ConnectionHandler {
+class LPWANConnectionHandler : public ConnectionHandler {
   public:
     virtual void init() = 0;
     virtual void check() = 0;
     virtual void update() = 0;
     virtual unsigned long getTime() = 0;
-    virtual Client &getClient() = 0;
-    virtual UDP &getUDP() = 0;
+
+    virtual void write(const uint8_t *buf, size_t size) = 0;
+    virtual int read() = 0;
+    virtual bool available() = 0;
 
     virtual void connect() = 0;
     virtual void disconnect() = 0;
 
 };
 
-#ifdef BOARD_HAS_WIFI
-  #include "Arduino_WiFiConnectionHandler.h"
-#elif defined(BOARD_HAS_GSM)
-  #include "Arduino_GSMConnectionHandler.h"
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  //#error BOARD_HAS_LORA
+  #include "Arduino_LoRaConnectionHandler.h"
 #endif
 
-#endif /* TCPIP_CONNECTION_HANDLER_H_ */
+
+#endif /* LPWAN_CONNECTION_HANDLER_H_ */

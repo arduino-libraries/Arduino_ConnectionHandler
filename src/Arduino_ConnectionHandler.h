@@ -118,6 +118,11 @@ class ConnectionHandler {
   #define NETWORK_CONNECTED NB_NetworkStatus_t::GPRS_READY
 #endif
 
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  #include <MKRWAN.h>
+  #define BOARD_HAS_LORA
+#endif
+
 #if    defined(ARDUINO_ESP8266_ESP12)    \
     || defined(ESP8266)                  \
     || defined(ESP8266_ESP01)            \
@@ -160,12 +165,13 @@ class ConnectionHandler {
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
-#ifdef BOARD_HAS_WIFI
-  #include "Arduino_WiFiConnectionHandler.h"
-#elif defined(BOARD_HAS_GSM)
-  #include "Arduino_GSMConnectionHandler.h"
-#elif defined(BOARD_HAS_NB)
-  #include "Arduino_NBConnectionHandler.h"
+
+#if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
+  #include "Arduino_TcpIpConnectionHandler.h"
+#endif
+
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  #include "Arduino_LPWANConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

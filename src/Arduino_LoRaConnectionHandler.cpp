@@ -19,19 +19,9 @@
    INCLUDE
  ******************************************************************************/
 
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) /* Only compile if the board has WiFi */
 
-/*
-  static int const DBG_NONE    = -1;
-  static int const DBG_ERROR   =  0;
-  static int const DBG_WARNING =  1;
-  static int const DBG_INFO    =  2;
-  static int const DBG_DEBUG   =  3;
-  static int const DBG_VERBOSE =  4;
-*/
-
-#if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_NANO_33_IOT)
-
-#include "Arduino_WiFiConnectionHandler.h"
+#include "Arduino_LoRaConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS
@@ -43,12 +33,12 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED
    CTOR/DTOR
  ******************************************************************************/
 
-WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive) :
-  ssid(_ssid),
-  pass(_pass),
+LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey) :
+  appeui(_appeui),
+  appkey(_appkey),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(_keepAlive),
+  keepAlive(false),
   _on_connect_event_callback(NULL),
   _on_disconnect_event_callback(NULL),
   _on_error_event_callback(NULL) {
@@ -58,11 +48,11 @@ WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pas
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandler::init() {
+void LoRaConnectionHandler::init() {
 }
 
 // INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
-void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
+void LoRaConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
   switch (event) {
     case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
     case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
@@ -74,31 +64,49 @@ void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNe
   }
 }
 
-void WiFiConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
+void LoRaConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
   _on_connect_event_callback = callback;
 }
-void WiFiConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
+void LoRaConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
   _on_disconnect_event_callback = callback;
 }
-void WiFiConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
+void LoRaConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
   _on_error_event_callback = callback;
 }
 
-void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
+void LoRaConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
   if (callback) {
     (*callback)(callback_arg);
   }
 }
 
-unsigned long WiFiConnectionHandler::getTime() {
-#if !defined(BOARD_ESP8266)
-  return WiFi.getTime();
-#else
+unsigned long LoRaConnectionHandler::getTime() {
   return 0;
-#endif
 }
 
-void WiFiConnectionHandler::update() {
+void LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
+    int err;
+    modem.beginPacket();
+    modem.write(buf, size);
+    err = modem.endPacket(true);
+    if (err > 0) {
+      Serial.println("Message sent correctly!");
+    } else {
+      Serial.println("Error sending message :(");
+      Serial.println("(you may send a limited amount of messages per minute, depending on the signal strength");
+      Serial.println("it may vary from 1 message every couple of seconds to 1 message every minute)");
+    }
+}
+
+int LoRaConnectionHandler::read() {
+  return modem.read();
+}
+
+bool LoRaConnectionHandler::available() {
+  return modem.available();
+}
+
+void LoRaConnectionHandler::update() {
 
   unsigned long const now = millis();
   int networkStatus = 0;
@@ -109,96 +117,47 @@ void WiFiConnectionHandler::update() {
     switch (netConnectionState) {
       case NetworkConnectionState::INIT: {
           Debug.print(DBG_VERBOSE, "::INIT");
-          #if !defined(BOARD_ESP8266)
-          networkStatus = WiFi.status();
 
-          Debug.print(DBG_INFO, "WiFi.status(): %d", networkStatus);
-          if (networkStatus == NETWORK_HARDWARE_ERROR) {
-            // NO FURTHER ACTION WILL FOLLOW THIS
-            changeConnectionState(NetworkConnectionState::ERROR);
-            return;
-          }
-          Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
-          if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
-            Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
-            Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
-            delay(5000);
-          }
-          #else
-          Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
-          WiFi.disconnect();
-          delay(300);
-          networkStatus = WiFi.begin(ssid, pass);
           delay(1000);
-          #endif
 
           changeConnectionState(NetworkConnectionState::CONNECTING);
         }
         break;
       case NetworkConnectionState::CONNECTING: {
           Debug.print(DBG_VERBOSE, "::CONNECTING");
-          networkStatus = WiFi.status();
+          networkStatus = modem.joinOTAA(appeui, appkey);;
 
-          #if !defined(BOARD_ESP8266)
-
-          if (networkStatus != WL_CONNECTED) {
-            networkStatus = WiFi.begin(ssid, pass);
-          }
-
-          #else
-
-          networkStatus = WiFi.status();
-
-          #endif
-
-          Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-          if (networkStatus != NETWORK_CONNECTED) {
-            Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
-            Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-
-            return;
-          } else {
-            Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
-            changeConnectionState(NetworkConnectionState::GETTIME);
+          if (networkStatus != true) {
+            changeConnectionState(NetworkConnectionState::ERROR);
             return;
           }
+
+          Debug.print(DBG_INFO, "Connected to the network");
+          changeConnectionState(NetworkConnectionState::CONNECTED);
+          return;
         }
         break;
       case NetworkConnectionState::CONNECTED: {
 
-          networkStatus = WiFi.status();
-          Debug.print(DBG_VERBOSE, "WiFi.status(): %d", networkStatus);
-          if (networkStatus != WL_CONNECTED) {
+          networkStatus = modem.connected();
+          Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
+          if (networkStatus != true) {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
             return;
           }
-          Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
-        }
-        break;
-      case NetworkConnectionState::GETTIME: {
-        Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
-#if defined(BOARD_ESP8266)
-        configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
-#endif
-        changeConnectionState(NetworkConnectionState::CONNECTED);
+          Debug.print(DBG_VERBOSE, "Connected to the network");
         }
         break;
       case NetworkConnectionState::DISCONNECTING: {
-          if (networkStatus != WL_CONNECTED) {
-            changeConnectionState(NetworkConnectionState::DISCONNECTED);
-          }
+          changeConnectionState(NetworkConnectionState::DISCONNECTED);
         }
         break;
       case NetworkConnectionState::DISCONNECTED: {
-          #if !defined(BOARD_ESP8266)
-          WiFi.end();
-          #endif
           if (keepAlive) {
             changeConnectionState(NetworkConnectionState::INIT);
           } else {
             changeConnectionState(NetworkConnectionState::CLOSED);
           }
-
         }
         break;
       case NetworkConnectionState::ERROR: {
@@ -217,7 +176,7 @@ void WiFiConnectionHandler::update() {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
+void LoRaConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
   if (_newState == netConnectionState) {
     return;
   }
@@ -229,7 +188,7 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
       }
       break;
     case NetworkConnectionState::CONNECTING: {
-        Debug.print(DBG_INFO, "Connecting to \"%s\"", ssid);
+        Debug.print(DBG_INFO, "Connecting to the network");
         newInterval = CHECK_INTERVAL_CONNECTING;
       }
       break;
@@ -242,15 +201,14 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
       }
       break;
     case NetworkConnectionState::DISCONNECTING: {
-        Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
-        WiFi.disconnect();
+        Debug.print(DBG_VERBOSE, "Disconnecting from the network");
       }
       break;
     case NetworkConnectionState::DISCONNECTED: {
         execNetworkEventCallback(_on_disconnect_event_callback, 0);
-        Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+        //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
 
-        Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
+        Debug.print(DBG_ERROR, "Connection to the network lost.");
         if (keepAlive) {
           Debug.print(DBG_ERROR, "Attempting reconnection");
         }
@@ -260,17 +218,12 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
       break;
     case NetworkConnectionState::CLOSED: {
 
-        #if !defined(BOARD_ESP8266)
-        WiFi.end();
-        #endif
-
-        Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
+        Debug.print(DBG_VERBOSE, "Connection to the network terminated");
       }
       break;
     case NetworkConnectionState::ERROR: {
         execNetworkEventCallback(_on_error_event_callback, 0);
-        Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
-        Debug.print(DBG_ERROR, "Then reset and retry.");
+        Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
       }
       break;
   }
@@ -280,7 +233,7 @@ void WiFiConnectionHandler::changeConnectionState(NetworkConnectionState _newSta
   //connectionStateChanged(netConnectionState);
 }
 
-void WiFiConnectionHandler::connect() {
+void LoRaConnectionHandler::connect() {
   if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
@@ -288,10 +241,8 @@ void WiFiConnectionHandler::connect() {
   changeConnectionState(NetworkConnectionState::INIT);
 
 }
-void WiFiConnectionHandler::disconnect() {
-  //WiFi.end();
-
-  changeConnectionState(NetworkConnectionState::DISCONNECTING);
-  keepAlive = false;
+void LoRaConnectionHandler::disconnect() {
+  // do nothing
+    return;
 }
-#endif /* #ifdef BOARD_HAS_WIFI */
+#endif 
