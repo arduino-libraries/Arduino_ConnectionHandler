@@ -86,55 +86,29 @@ unsigned long LoRaConnectionHandler::getTime() {
   return 0;
 }
 
-void LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
-    int err;
-    modem.beginPacket();
-    modem.write(buf, size);
-    err = modem.endPacket(true);
-	if (err != size) {
-		switch (err) {
-			case -1: {
-				Serial.println("Message length is bigger than max LoRa packet!");
-				Serial.println(err);
-			}
-					 break;
-			case -2: {
-				Serial.println("Message ack was not recieved, the message could not be delivered");
-			}
-					 break;
-			case 2: {
-				Serial.println("LoRa generic error (LORA_ERROR)");
-			}
-					break;
-			case 3: {
-				Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");
-			}
-					break;
-			case 4: {
-				Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");
-			}
-					break;
-			case 5: {
-				Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");
-			}
-					break;
-			case 6: {
-				Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");
-			}
-					break;
-			case 7: {
-				Serial.println("LoRa rx error (LORA_ERROR_RX)");
-			}
-					break;
-			case 8: {
-				Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");
-			}
-					break;
+int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
+  int err;
+  modem.beginPacket();
+  modem.write(buf, size);
+  err = modem.endPacket(true);
+  /*Error manager according pr #68 of MKRWAN repo*/
+  if (err != size) {
+	switch (err) { 
+		case -20: {Serial.println("Message length is bigger than max LoRa packet!");} break;
+		case -1: {Serial.println("Message ack was not received, the message could not be delivered");} break;
+		case -2: {Serial.println("LoRa generic error (LORA_ERROR)");} break;
+		case -3: {Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");} break;
+		case -4: {Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");} break;
+		case -5: {Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");} break;
+		case -6: {Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");} break;
+		case -7: {Serial.println("LoRa rx error (LORA_ERROR_RX)");} break;
+		case -8: {Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");} break;
 		}
 	}
 	else {
 		Serial.println("Message sent correctly!");
 	}
+	return err;
 }
 
 int LoRaConnectionHandler::read() {

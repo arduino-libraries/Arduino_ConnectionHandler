@@ -36,7 +36,7 @@ class LPWANConnectionHandler : public ConnectionHandler {
     virtual void update() = 0;
     virtual unsigned long getTime() = 0;
 
-    virtual void write(const uint8_t *buf, size_t size) = 0;
+    virtual int write(const uint8_t *buf, size_t size) = 0;
     virtual int read() = 0;
     virtual bool available() = 0;
 

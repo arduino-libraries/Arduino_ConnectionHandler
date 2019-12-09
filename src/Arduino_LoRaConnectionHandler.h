@@ -41,7 +41,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
     }
     void update();
 
-    void write(const uint8_t *buf, size_t size);
+    int write(const uint8_t *buf, size_t size);
     int read();
     bool available();
 
