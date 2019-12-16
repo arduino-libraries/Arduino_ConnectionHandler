@@ -22,14 +22,10 @@
    INCLUDE
  ******************************************************************************/
 
+#include "Arduino_TcpIpConnectionHandler.h"
 
 
 #ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
-
-#include "Arduino_TcpIpConnectionHandler.h"
-#ifdef ARDUINO_SAMD_MKRGSM1400
-  #include <MKRGSM.h>
-#endif
 
 /******************************************************************************
    CLASS DECLARATION
