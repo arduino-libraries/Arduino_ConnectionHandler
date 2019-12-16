@@ -21,11 +21,10 @@
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
-//#if defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT)
-//#ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-//extern void connectionStateChanged(NetworkConnectionState _newState);
 
 #include "Arduino_TcpIpConnectionHandler.h"
+
+#ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
 /******************************************************************************
    CLASS DECLARATION
@@ -58,16 +57,11 @@ class WiFiConnectionHandler : public TcpIpConnectionHandler {
 
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
-
     const int CHECK_INTERVAL_IDLE = 100;
     const int CHECK_INTERVAL_INIT = 100;
     const int CHECK_INTERVAL_CONNECTING = 500;
     const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 5000;
-    const int CHECK_INTERVAL_DISCONNECTING = 500;
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
 
     const char *ssid, *pass;
     unsigned long lastConnectionTickTime;
@@ -83,8 +77,15 @@ class WiFiConnectionHandler : public TcpIpConnectionHandler {
 
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
+    NetworkConnectionState update_handleInit         ();
+    NetworkConnectionState update_handleConnecting   ();
+    NetworkConnectionState update_handleConnected    ();
+    NetworkConnectionState update_handleGetTime      ();
+    NetworkConnectionState update_handleDisconnecting();
+    NetworkConnectionState update_handleDisconnected ();
+
 };
 
-//#endif /* #ifdef BOARD_HAS_WIFI */
+#endif /* #ifdef BOARD_HAS_WIFI */
 
 #endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */
