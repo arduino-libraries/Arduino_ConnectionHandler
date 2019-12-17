@@ -43,7 +43,7 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
   _on_connect_event_callback(NULL),
   _on_disconnect_event_callback(NULL),
   _on_error_event_callback(NULL) {
-    netConnectionState = NetworkConnectionState::INIT;
+  netConnectionState = NetworkConnectionState::INIT;
 }
 
 /******************************************************************************
@@ -93,22 +93,39 @@ int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
   err = modem.endPacket(true);
   /*Error manager according pr #68 of MKRWAN repo*/
   if (err != size) {
-	switch (err) { 
-		case -20: {Serial.println("Message length is bigger than max LoRa packet!");} break;
-		case -1: {Serial.println("Message ack was not received, the message could not be delivered");} break;
-		case -2: {Serial.println("LoRa generic error (LORA_ERROR)");} break;
-		case -3: {Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");} break;
-		case -4: {Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");} break;
-		case -5: {Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");} break;
-		case -6: {Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");} break;
-		case -7: {Serial.println("LoRa rx error (LORA_ERROR_RX)");} break;
-		case -8: {Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");} break;
-		}
-	}
-	else {
-		Serial.println("Message sent correctly!");
-	}
-	return err;
+    switch (err) {
+      case -20: {
+          Serial.println("Message length is bigger than max LoRa packet!");
+        } break;
+      case -1: {
+          Serial.println("Message ack was not received, the message could not be delivered");
+        } break;
+      case -2: {
+          Serial.println("LoRa generic error (LORA_ERROR)");
+        } break;
+      case -3: {
+          Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");
+        } break;
+      case -4: {
+          Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");
+        } break;
+      case -5: {
+          Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");
+        } break;
+      case -6: {
+          Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");
+        } break;
+      case -7: {
+          Serial.println("LoRa rx error (LORA_ERROR_RX)");
+        } break;
+      case -8: {
+          Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");
+        } break;
+    }
+  } else {
+    Serial.println("Message sent correctly!");
+  }
+  return err;
 }
 
 int LoRaConnectionHandler::read() {
@@ -126,126 +143,92 @@ void LoRaConnectionHandler::update() {
   if (now - lastConnectionTickTime > connectionTickTimeInterval) { /*  time bracket  */
 
     lastConnectionTickTime = now;
-
     switch (netConnectionState) {
-      case NetworkConnectionState::INIT: {
-          Debug.print(DBG_VERBOSE, "::INIT");
-          if (!modem.begin(band)) {
-            Debug.print(DBG_VERBOSE, "Failed to start module");
-            changeConnectionState(NetworkConnectionState::ERROR);
-          };
-          delay(1000);
-
-          changeConnectionState(NetworkConnectionState::CONNECTING);
-        }
-        break;
-      case NetworkConnectionState::CONNECTING: {
-          Debug.print(DBG_VERBOSE, "::CONNECTING");
-          networkStatus = modem.joinOTAA(appeui, appkey);
-          if (networkStatus != true) {
-            changeConnectionState(NetworkConnectionState::ERROR);
-            return;
-          }
-
-          Debug.print(DBG_INFO, "Connected to the network");
-          changeConnectionState(NetworkConnectionState::CONNECTED);
-          return;
-        }
-        break;
-      case NetworkConnectionState::CONNECTED: {
-
-          networkStatus = modem.connected();
-          Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
-          if (networkStatus != true) {
-            changeConnectionState(NetworkConnectionState::DISCONNECTED);
-            return;
-          }
-          Debug.print(DBG_VERBOSE, "Connected to the network");
-        }
-        break;
-      case NetworkConnectionState::DISCONNECTING: {
-          changeConnectionState(NetworkConnectionState::DISCONNECTED);
-        }
-        break;
-      case NetworkConnectionState::DISCONNECTED: {
-          if (keepAlive) {
-            changeConnectionState(NetworkConnectionState::INIT);
-          } else {
-            changeConnectionState(NetworkConnectionState::CLOSED);
-          }
-        }
-        break;
-      case NetworkConnectionState::ERROR: {
-
-        }
-        break;
-      case NetworkConnectionState::CLOSED: {
-
-        }
-        break;
+      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit(); break;
+      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting(); break;
+      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected(); break;
+      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
+      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected(); break;
+      case NetworkConnectionState::ERROR:                                                            break;
+      case NetworkConnectionState::CLOSED:                                                           break;
     }
-  } /*  time bracket  */
+  }
 }
 
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void LoRaConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
-  if (_newState == netConnectionState) {
-    return;
+NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
+  Debug.print(DBG_VERBOSE, "::INIT");
+  if (!modem.begin(band)) {
+    Debug.print(DBG_VERBOSE, "Failed to start module");
+    execNetworkEventCallback(_on_error_event_callback, 0);
+    Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
+  };
+  delay(1000);
+  Debug.print(DBG_INFO, "Connecting to the network");
+  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState LoRaConnectionHandler::update_handleConnecting() {
+  Debug.print(DBG_VERBOSE, "::CONNECTING");
+  bool networkStatus = modem.joinOTAA(appeui, appkey);
+  if (networkStatus != true) {
+    execNetworkEventCallback(_on_error_event_callback, 0);
+    Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
+    return NetworkConnectionState::ERROR;
   }
-  int newInterval = CHECK_INTERVAL_INIT;
-  switch (_newState) {
-    case NetworkConnectionState::INIT: {
-        Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
-        newInterval = CHECK_INTERVAL_INIT;
-      }
-      break;
-    case NetworkConnectionState::CONNECTING: {
-        Debug.print(DBG_INFO, "Connecting to the network");
-        newInterval = CHECK_INTERVAL_CONNECTING;
-      }
-      break;
-    case NetworkConnectionState::CONNECTED: {
-        execNetworkEventCallback(_on_connect_event_callback, 0);
-        newInterval = CHECK_INTERVAL_CONNECTED;
-      }
-      break;
-    case NetworkConnectionState::GETTIME: {
-      }
-      break;
-    case NetworkConnectionState::DISCONNECTING: {
-        Debug.print(DBG_VERBOSE, "Disconnecting from the network");
-      }
-      break;
-    case NetworkConnectionState::DISCONNECTED: {
-        execNetworkEventCallback(_on_disconnect_event_callback, 0);
-        //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
 
-        Debug.print(DBG_ERROR, "Connection to the network lost.");
-        if (keepAlive) {
-          Debug.print(DBG_ERROR, "Attempting reconnection");
-        }
+  Debug.print(DBG_INFO, "Connected to the network");
+  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
+  execNetworkEventCallback(_on_connect_event_callback, 0);
+  return NetworkConnectionState::CONNECTED;
+}
 
-        newInterval = CHECK_INTERVAL_DISCONNECTED;
-      }
-      break;
-    case NetworkConnectionState::CLOSED: {
+NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
 
-        Debug.print(DBG_VERBOSE, "Connection to the network terminated");
-      }
-      break;
-    case NetworkConnectionState::ERROR: {
-        execNetworkEventCallback(_on_error_event_callback, 0);
-        Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
-      }
-      break;
+  bool networkStatus = modem.connected();
+  Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
+  if (networkStatus != true) {
+    execNetworkEventCallback(_on_disconnect_event_callback, 0);
+    //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+
+    Debug.print(DBG_ERROR, "Connection to the network lost.");
+    if (keepAlive) {
+      Debug.print(DBG_ERROR, "Attempting reconnection");
+    }
+    connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
+    return NetworkConnectionState::DISCONNECTED;
   }
-  connectionTickTimeInterval = newInterval;
-  lastConnectionTickTime = millis();
-  netConnectionState = _newState;
-  //connectionStateChanged(netConnectionState);
+  Debug.print(DBG_VERBOSE, "Connected to the network");
+
+  return NetworkConnectionState::CONNECTED;
+}
+
+NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting() {
+  execNetworkEventCallback(_on_disconnect_event_callback, 0);
+  //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
+
+  Debug.print(DBG_ERROR, "Connection to the network lost.");
+  if (keepAlive) {
+    Debug.print(DBG_ERROR, "Attempting reconnection");
+  }
+  connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
+  return NetworkConnectionState::DISCONNECTED;
+}
+
+NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected() {
+  if (keepAlive) {
+    Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
+    connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+    return NetworkConnectionState::INIT;
+  } else {
+    Debug.print(DBG_VERBOSE, "Connection to the network terminated");
+    return NetworkConnectionState::CLOSED;
+  }
+
 }
 
 void LoRaConnectionHandler::connect() {
@@ -253,11 +236,12 @@ void LoRaConnectionHandler::connect() {
     return;
   }
   keepAlive = true;
-  changeConnectionState(NetworkConnectionState::INIT);
+  connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+  netConnectionState = NetworkConnectionState::INIT;
 
 }
 void LoRaConnectionHandler::disconnect() {
   // do nothing
-    return;
+  return;
 }
-#endif 
+#endif

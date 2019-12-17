@@ -55,8 +55,6 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
-
     const int CHECK_INTERVAL_IDLE = 100;
     const int CHECK_INTERVAL_INIT = 100;
     const int CHECK_INTERVAL_CONNECTING = 500;
@@ -80,6 +78,13 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
                             _on_error_event_callback;
 
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
+    NetworkConnectionState update_handleInit();
+    NetworkConnectionState update_handleConnecting();
+    NetworkConnectionState update_handleConnected();
+
+    NetworkConnectionState update_handleDisconnecting();
+    NetworkConnectionState update_handleDisconnected();
+
 
 };
 
