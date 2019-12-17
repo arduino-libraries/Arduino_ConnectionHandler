@@ -19,7 +19,7 @@
    INCLUDE
  ******************************************************************************/
 
-#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) /* Only compile if the board has WiFi */
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) /* Only compile if the board has LoRa */
 
 #include "Arduino_LoRaConnectionHandler.h"
 
