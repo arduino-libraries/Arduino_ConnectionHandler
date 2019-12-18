@@ -91,7 +91,6 @@ int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
   modem.beginPacket();
   modem.write(buf, size);
   err = modem.endPacket(true);
-  /*Error manager according pr #68 of MKRWAN repo*/
   if (err != size) {
     switch (err) {
       case -20: {
@@ -166,7 +165,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
     execNetworkEventCallback(_on_error_event_callback, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   };
-  delay(1000);
   Debug.print(DBG_INFO, "Connecting to the network");
   connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
   return NetworkConnectionState::CONNECTING;
@@ -193,7 +191,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
   Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
   if (networkStatus != true) {
     execNetworkEventCallback(_on_disconnect_event_callback, 0);
-    //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
 
     Debug.print(DBG_ERROR, "Connection to the network lost.");
     if (keepAlive) {
@@ -209,7 +206,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting() {
   execNetworkEventCallback(_on_disconnect_event_callback, 0);
-  //Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
 
   Debug.print(DBG_ERROR, "Connection to the network lost.");
   if (keepAlive) {

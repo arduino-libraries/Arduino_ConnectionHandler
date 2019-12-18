@@ -46,7 +46,6 @@ class LPWANConnectionHandler : public ConnectionHandler {
 };
 
 #if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
-  //#error BOARD_HAS_LORA
   #include "Arduino_LoRaConnectionHandler.h"
 #endif
 
