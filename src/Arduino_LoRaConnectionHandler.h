@@ -48,11 +48,6 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
     void disconnect();
     void connect();
 
-    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    virtual void addConnectCallback(OnNetworkEventCallback callback);
-    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
-    virtual void addErrorCallback(OnNetworkEventCallback callback);
-
   private:
 
     const int CHECK_INTERVAL_IDLE = 100;
@@ -73,11 +68,6 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
     bool keepAlive;
 
-    OnNetworkEventCallback  _on_connect_event_callback,
-                            _on_disconnect_event_callback,
-                            _on_error_event_callback;
-
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
     NetworkConnectionState update_handleInit();
     NetworkConnectionState update_handleConnecting();
     NetworkConnectionState update_handleConnected();

@@ -39,10 +39,7 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
   band(band),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(false),
-  _on_connect_event_callback(NULL),
-  _on_disconnect_event_callback(NULL),
-  _on_error_event_callback(NULL) {
+  keepAlive(false) {
   netConnectionState = NetworkConnectionState::INIT;
 }
 
@@ -51,35 +48,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
  ******************************************************************************/
 
 void LoRaConnectionHandler::init() {
-}
-
-// INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
-void LoRaConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
-  switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
-    case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
-    case NetworkConnectionEvent::ERROR:           _on_error_event_callback         = callback; break;
-    case NetworkConnectionEvent::INIT:                                                       ; break;
-    case NetworkConnectionEvent::CONNECTING:                                                 ; break;
-    case NetworkConnectionEvent::DISCONNECTING:                                              ; break;
-    case NetworkConnectionEvent::CLOSED:                                                     ; break;
-  }
-}
-
-void LoRaConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
-  _on_connect_event_callback = callback;
-}
-void LoRaConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
-  _on_disconnect_event_callback = callback;
-}
-void LoRaConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
-  _on_error_event_callback = callback;
-}
-
-void LoRaConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
-  if (callback) {
-    (*callback)(callback_arg);
-  }
 }
 
 unsigned long LoRaConnectionHandler::getTime() {

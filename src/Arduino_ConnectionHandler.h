@@ -60,20 +60,20 @@ class ConnectionHandler {
     }
     virtual void connect();
     virtual void disconnect();
-    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    virtual void addConnectCallback(OnNetworkEventCallback callback);
-    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
-    virtual void addErrorCallback(OnNetworkEventCallback callback);
-
-  private:
-    OnNetworkEventCallback  _on_connect_event_callback,
-                            _on_disconnect_event_callback,
-                            _on_error_event_callback;
+    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
+    void addConnectCallback(OnNetworkEventCallback callback);
+    void addDisconnectCallback(OnNetworkEventCallback callback);
+    void addErrorCallback(OnNetworkEventCallback callback);
 
   protected:
+    OnNetworkEventCallback  _on_connect_event_callback = NULL,
+                            _on_disconnect_event_callback = NULL,
+                            _on_error_event_callback = NULL;
 
     unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
     NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
+
+    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
 };
 

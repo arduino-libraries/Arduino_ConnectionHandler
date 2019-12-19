@@ -56,11 +56,6 @@ class GSMConnectionHandler : public TcpIpConnectionHandler {
     virtual void disconnect();
     virtual void connect();
 
-    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    virtual void addConnectCallback(OnNetworkEventCallback callback);
-    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
-    virtual void addErrorCallback(OnNetworkEventCallback callback);
-
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);
@@ -80,11 +75,6 @@ class GSMConnectionHandler : public TcpIpConnectionHandler {
 
     bool keepAlive;
 
-    OnNetworkEventCallback  _on_connect_event_callback,
-                            _on_disconnect_event_callback,
-                            _on_error_event_callback;
-
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 };
 
 #endif /* #ifdef BOARD_HAS_GSM  */
