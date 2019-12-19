@@ -18,8 +18,6 @@
 #ifndef ARDUINO_LORA_CONNECTION_HANDLER_H_
 #define ARDUINO_LORA_CONNECTION_HANDLER_H_
 
-//#ifdef defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
-
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
@@ -89,7 +87,5 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
 
 };
-
-//#endif
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */
