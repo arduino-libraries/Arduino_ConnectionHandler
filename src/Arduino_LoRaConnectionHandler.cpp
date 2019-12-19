@@ -133,6 +133,8 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
     execNetworkEventCallback(_on_error_event_callback, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   };
+  //A delay is required between modem.begin(band) and modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized befor the connection attempt
+  delay(100);
   Debug.print(DBG_INFO, "Connecting to the network");
   connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
   return NetworkConnectionState::CONNECTING;
