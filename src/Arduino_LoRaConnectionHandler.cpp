@@ -61,32 +61,32 @@ int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
   err = modem.endPacket(true);
   if (err != size) {
     switch (err) {
-      case -20: {
-          Serial.println("Message length is bigger than max LoRa packet!");
-        } break;
-      case -1: {
+      case LoRaCommunicationError::LORA_ERROR_ACK_NOT_RECEIVED: {
           Serial.println("Message ack was not received, the message could not be delivered");
         } break;
-      case -2: {
+      case LoRaCommunicationError::LORA_ERROR_GENERIC: {
           Serial.println("LoRa generic error (LORA_ERROR)");
         } break;
-      case -3: {
+      case LoRaCommunicationError::LORA_ERROR_WRONG_PARAM: {
           Serial.println("LoRa malformed param error (LORA_ERROR_PARAM");
         } break;
-      case -4: {
+      case LoRaCommunicationError::LORA_ERROR_COMMUNICATION_BUSY: {
           Serial.println("LoRa chip is busy (LORA_ERROR_BUSY)");
         } break;
-      case -5: {
+      case LoRaCommunicationError::LORA_ERROR_MESSAGE_OVERFLOW: {
           Serial.println("LoRa chip overflow error (LORA_ERROR_OVERFLOW)");
         } break;
-      case -6: {
+      case LoRaCommunicationError::LORA_ERROR_NO_NETWORK_AVAILABLE: {
           Serial.println("LoRa no network error (LORA_ERROR_NO_NETWORK)");
         } break;
-      case -7: {
+      case LoRaCommunicationError::LORA_ERROR_RX_PACKET: {
           Serial.println("LoRa rx error (LORA_ERROR_RX)");
         } break;
-      case -8: {
+      case LoRaCommunicationError::LORA_ERROR_REASON_UNKNOWN: {
           Serial.println("LoRa unknown error (LORA_ERROR_UNKNOWN)");
+        } break;
+      case LoRaCommunicationError::LORA_ERROR_MAX_PACKET_SIZE: {
+          Serial.println("Message length is bigger than max LoRa packet!");
         } break;
     }
   } else {

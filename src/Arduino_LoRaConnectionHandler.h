@@ -26,6 +26,18 @@
 
 #include "Arduino_LPWANConnectionHandler.h"
 
+typedef enum {
+  LORA_ERROR_ACK_NOT_RECEIVED = -1,
+  LORA_ERROR_GENERIC = -2,
+  LORA_ERROR_WRONG_PARAM = -3,
+  LORA_ERROR_COMMUNICATION_BUSY = -4,
+  LORA_ERROR_MESSAGE_OVERFLOW = -5,
+  LORA_ERROR_NO_NETWORK_AVAILABLE = -6,
+  LORA_ERROR_RX_PACKET = -7,
+  LORA_ERROR_REASON_UNKNOWN = -8,
+  LORA_ERROR_MAX_PACKET_SIZE = -20
+} LoRaCommunicationError;
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
