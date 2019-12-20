@@ -56,10 +56,7 @@ NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const
   pass(pass),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(_keepAlive),
-  _on_connect_event_callback(NULL),
-  _on_disconnect_event_callback(NULL),
-  _on_error_event_callback(NULL) {
+  keepAlive(_keepAlive) {
 }
 
 /******************************************************************************
@@ -75,34 +72,6 @@ void NBConnectionHandler::init() {
   } else {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
     while (1);
-  }
-}
-
-void NBConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
-  switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
-    case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
-    case NetworkConnectionEvent::ERROR:           _on_error_event_callback         = callback; break;
-    case NetworkConnectionEvent::INIT:                                                       ; break;
-    case NetworkConnectionEvent::CONNECTING:                                                 ; break;
-    case NetworkConnectionEvent::DISCONNECTING:                                              ; break;
-    case NetworkConnectionEvent::CLOSED:                                                     ; break;
-  }
-}
-
-void NBConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
-  _on_connect_event_callback = callback;
-}
-void NBConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
-  _on_disconnect_event_callback = callback;
-}
-void NBConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
-  _on_error_event_callback = callback;
-}
-
-void NBConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
-  if (callback) {
-    (*callback)(callback_arg);
   }
 }
 

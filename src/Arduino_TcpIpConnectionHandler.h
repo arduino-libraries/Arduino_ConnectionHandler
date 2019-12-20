@@ -50,6 +50,8 @@ class TcpIpConnectionHandler : public ConnectionHandler {
   #include "Arduino_WiFiConnectionHandler.h"
 #elif defined(ARDUINO_SAMD_MKRGSM1400)
   #include "Arduino_GSMConnectionHandler.h"
+#elif defined(BOARD_HAS_NB)
+  #include "Arduino_NBConnectionHandler.h"
 #endif
 
 #endif /* TCPIP_CONNECTION_HANDLER_H_ */
