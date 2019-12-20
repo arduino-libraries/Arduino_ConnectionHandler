@@ -15,8 +15,8 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef GSM_CONNECTION_MANAGER_H_
-#define GSM_CONNECTION_MANAGER_H_
+#ifndef NB_CONNECTION_MANAGER_H_
+#define NB_CONNECTION_MANAGER_H_
 
 /******************************************************************************
    INCLUDE
@@ -24,15 +24,15 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-#ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
+#ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public ConnectionHandler {
+class NBConnectionHandler : public ConnectionHandler {
   public:
-    GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
+    NBConnectionHandler(const char *pin, const bool keepAlive = true);
 
     virtual void init();
     virtual unsigned long getTime();
@@ -47,10 +47,10 @@ class GSMConnectionHandler : public ConnectionHandler {
       return udp;
     };
 
-    GSMClient networkClient;
-    GSM gsmAccess;
+    NBClient networkClient;
+    NB  nbAccess;
     GPRS gprs;
-    GSMUDP udp;
+    NBUDP udp;
 
     virtual void disconnect();
     virtual void connect();
@@ -86,6 +86,6 @@ class GSMConnectionHandler : public ConnectionHandler {
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 };
 
-#endif /* #ifdef BOARD_HAS_GSM  */
+#endif /* #ifdef BOARD_HAS_NB  */
 
-#endif /* #ifndef GSM_CONNECTION_MANAGER_H_ */
+#endif /* #ifndef NB_CONNECTION_MANAGER_H_ */

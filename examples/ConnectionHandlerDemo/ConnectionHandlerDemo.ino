@@ -16,7 +16,11 @@
    need a GSMConnectionHandler object as follows
 
       GSMConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER,
-   SECRET_GSM_PASS)
+   SECRET_GSM_PASS);
+
+      If using a MKR NB1500 you'll need a NBConnectionHandler object as follows
+
+      NBConnectionHandler conMan(SECRET_PIN);
 */
 
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);

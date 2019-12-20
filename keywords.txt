@@ -9,6 +9,7 @@ Client	KEYWORD1
 ConnectionHandler	KEYWORD1
 WiFiConnectionHandler	KEYWORD1
 GSMConnectionHandler	KEYWORD1
+NBConnectionHandler	KEYWORD1
 EthernetConnectionHandler	KEYWORD1
 
 ####################################################
