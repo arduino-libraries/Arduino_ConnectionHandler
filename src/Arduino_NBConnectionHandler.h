@@ -33,6 +33,8 @@
 class NBConnectionHandler : public ConnectionHandler {
   public:
     NBConnectionHandler(const char *pin, const bool keepAlive = true);
+    NBConnectionHandler(const char *pin, const char *apn, const bool keepAlive = true);
+    NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
     virtual void init();
     virtual unsigned long getTime();
