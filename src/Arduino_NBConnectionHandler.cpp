@@ -41,6 +41,16 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
+NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, bool _keepAlive) :
+  login(login),
+  pass(pass) {
+    NBConnectionHandler(pin, apn, _keepAlive);
+}
+
+NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, bool _keepAlive) :
+  apn(apn) {
+    NBConnectionHandler(pin, _keepAlive);
+}
 
 NBConnectionHandler::NBConnectionHandler(const char *pin, bool _keepAlive) :
   pin(pin),
@@ -58,7 +68,7 @@ NBConnectionHandler::NBConnectionHandler(const char *pin, bool _keepAlive) :
 
 void NBConnectionHandler::init() {
   char msgBuffer[120];
-  if (nbAccess.begin(pin) == NB_READY) {
+  if (nbAccess.begin(pin, apn, login, pass) == NB_READY) {
     Debug.print(DBG_INFO, "SIM card ok");
     nbAccess.setTimeout(CHECK_INTERVAL_RETRYING);
     changeConnectionState(NetworkConnectionState::CONNECTING);
@@ -113,7 +123,7 @@ void NBConnectionHandler::update() {
       case NetworkConnectionState::CONNECTING: {
           // NOTE: Blocking Call when 4th parameter == true
           NB_NetworkStatus_t networkStatus;
-          networkStatus = gprs.attachGPRS();
+          networkStatus = gprs.attachGPRS(true);
           Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", networkStatus);
           if (networkStatus == NB_NetworkStatus_t::ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
