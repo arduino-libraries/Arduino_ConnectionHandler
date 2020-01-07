@@ -41,19 +41,19 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
-NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, bool _keepAlive) :
-  login(login),
-  pass(pass) {
-    NBConnectionHandler(pin, apn, _keepAlive);
+NBConnectionHandler::NBConnectionHandler(const char *pin, bool _keepAlive) :
+  NBConnectionHandler(pin, "", _keepAlive) {
 }
 
 NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, bool _keepAlive) :
-  apn(apn) {
-    NBConnectionHandler(pin, _keepAlive);
+  NBConnectionHandler(pin, apn, "", "", _keepAlive) {
 }
 
-NBConnectionHandler::NBConnectionHandler(const char *pin, bool _keepAlive) :
+NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, bool _keepAlive) :
   pin(pin),
+  apn(apn),
+  login(login),
+  pass(pass),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
   keepAlive(_keepAlive),
