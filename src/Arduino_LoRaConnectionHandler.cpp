@@ -33,10 +33,11 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED
    CTOR/DTOR
  ******************************************************************************/
 
-LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band band) :
+LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band band, _lora_class deviceClass) :
   appeui(_appeui),
   appkey(_appkey),
   band(band),
+  deviceClass(deviceClass),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
   keepAlive(false) {
@@ -134,6 +135,8 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   };
   //A delay is required between modem.begin(band) and modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized befor the connection attempt
+  delay(100);
+  modem.configureClass(deviceClass);
   delay(100);
   Debug.print(DBG_INFO, "Connecting to the network");
   connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;

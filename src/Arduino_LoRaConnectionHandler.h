@@ -42,7 +42,7 @@ typedef enum {
 
 class LoRaConnectionHandler : public LPWANConnectionHandler {
   public:
-    LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = EU868);
+    LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = _lora_band::EU868, _lora_class = _lora_class::CLASS_A);
 
     void init();
     unsigned long getTime();
@@ -72,6 +72,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
     LoRaModem modem;
     const char *appeui, *appkey;
     _lora_band band;
+    _lora_class deviceClass;
     unsigned long lastConnectionTickTime;
 
     int connectionTickTimeInterval;
