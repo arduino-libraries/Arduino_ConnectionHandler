@@ -1,26 +1,24 @@
+/* SECRET_ fields are in arduino_secrets.h included above
+ * if using a WiFi board (Arduino MKR1000, MKR WiFi 1010, Nano 33 IoT, UNO
+ * WiFi Rev 2 or ESP8266/32), create a WiFiConnectionHandler object by adding
+ * Network Name (SECRET_SSID) and password (SECRET_PASS) in the arduino_secrets.h
+ * file (or Secrets tab in Create Web Editor).
+ *
+ *    WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
+ *
+ * If using a MKR GSM 1400 or other GSM boards supporting the same API you'll
+ * need a GSMConnectionHandler object as follows
+ *
+ *    GSMConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER, SECRET_GSM_PASS);
+ *
+ * If using a MKR NB1500 you'll need a NBConnectionHandler object as follows
+ *
+ *    NBConnectionHandler conMan(SECRET_PIN);
+ */
+
 #include "arduino_secrets.h"
 
 #include <Arduino_ConnectionHandler.h>
-
-/*		SECRET_ fields are in arduino_secrets.h included above
-      if using a WiFi board (Arduino MKR1000, MKR WiFi 1010, Nano 33 IoT, UNO
-   WiFi Rev 2 or ESP8266/32), create a WiFiConnectionHandler object by adding
-   Network Name (SECRET_SSID) and password (SECRET_PASS) in the
-   arduino_secrets.h file (or Secrets tab in Create Web Editor). (This example
-   defaults to WiFi)
-
-      WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
-
-      If using a MKR GSM 1400 or other GSM boards supporting the same API you'll
-   need a GSMConnectionHandler object as follows
-
-      GSMConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER,
-   SECRET_GSM_PASS);
-
-      If using a MKR NB1500 you'll need a NBConnectionHandler object as follows
-
-      NBConnectionHandler conMan(SECRET_PIN);
-*/
 
 #if defined(BOARD_HAS_WIFI)
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
