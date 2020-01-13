@@ -32,10 +32,10 @@ NBConnectionHandler conMan(SECRET_PIN);
 
 void setup() {
   Serial.begin(9600);
-  // give a few seconds for the Serial connection to be available
+  /* give a few seconds for the Serial connection to be available */
   delay(4000);
 
-  setDebugMessageLevel(2);
+  setDebugMessageLevel(DBG_INFO);
 
   // the following methods allow the sketch to be notified when connected or
   // disconnected to the network
