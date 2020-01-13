@@ -1,6 +1,6 @@
 #include "arduino_secrets.h"
 
-#include <Arduino_WiFiConnectionHandler.h>
+#include <Arduino_ConnectionHandler.h>
 
 /*		SECRET_ fields are in arduino_secrets.h included above
       if using a WiFi board (Arduino MKR1000, MKR WiFi 1010, Nano 33 IoT, UNO
@@ -22,7 +22,13 @@
       NBConnectionHandler conMan(SECRET_PIN);
 */
 
+#if defined(BOARD_HAS_WIFI)
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
+#elif defined(BOARD_HAS_GSM)
+GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
+#elif defined(BOARD_HAS_NB)
+NBConnectionHandler conMan(SECRET_PIN);
+#endif
 
 void setup() {
   Serial.begin(9600);
