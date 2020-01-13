@@ -1,7 +1,6 @@
 #include "arduino_secrets.h"
 
 #include <Arduino_WiFiConnectionHandler.h>
-#include <FTDebouncer.h>
 
 /*		SECRET_ fields are in arduino_secrets.h included above
       if using a WiFi board (Arduino MKR1000, MKR WiFi 1010, Nano 33 IoT, UNO
@@ -25,21 +24,12 @@
 
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 
-#define PIN_CONNECT 2
-#define PIN_DISCONNECT 4
-
-FTDebouncer deb;
-
 void setup() {
   Serial.begin(9600);
   // give a few seconds for the Serial connection to be available
   delay(4000);
 
   setDebugMessageLevel(2);
-
-  deb.addPin(PIN_CONNECT, HIGH, INPUT_PULLUP);
-  deb.addPin(PIN_DISCONNECT, HIGH, INPUT_PULLUP);
-  deb.init();
 
   // the following methods allow the sketch to be notified when connected or
   // disconnected to the network
