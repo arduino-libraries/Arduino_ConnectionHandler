@@ -18,65 +18,6 @@
 #ifndef ARDUINO_CONNECTION_HANDLER_H_
 #define ARDUINO_CONNECTION_HANDLER_H_
 
-/******************************************************************************
-   INCLUDES
- ******************************************************************************/
-
-#include <Arduino_DebugUtils.h>
-
-/******************************************************************************
-   TYPEDEFS
- ******************************************************************************/
-
-enum class NetworkConnectionState {
-  INIT,
-  CONNECTING,
-  CONNECTED,
-  GETTIME,
-  DISCONNECTING,
-  DISCONNECTED,
-  CLOSED,
-  ERROR
-};
-
-enum class NetworkConnectionEvent {
-  INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
-};
-
-typedef void (*OnNetworkEventCallback)(void * /* arg */);
-
-/******************************************************************************
-   CLASS DECLARATION
- ******************************************************************************/
-
-class ConnectionHandler {
-  public:
-    virtual void init() = 0;
-    virtual void check() = 0;
-    virtual void update() = 0;
-
-    virtual NetworkConnectionState getStatus() {
-      return netConnectionState;
-    }
-    virtual void connect();
-    virtual void disconnect();
-    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    void addConnectCallback(OnNetworkEventCallback callback);
-    void addDisconnectCallback(OnNetworkEventCallback callback);
-    void addErrorCallback(OnNetworkEventCallback callback);
-
-  protected:
-    OnNetworkEventCallback  _on_connect_event_callback = NULL,
-                            _on_disconnect_event_callback = NULL,
-                            _on_error_event_callback = NULL;
-
-    unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
-    NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
-
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
-
-};
-
 #ifdef ARDUINO_SAMD_MKR1000
   #include <WiFi101.h>
   #include <WiFiUdp.h>
@@ -162,6 +103,70 @@ class ConnectionHandler {
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
+/******************************************************************************
+   INCLUDES
+ ******************************************************************************/
+
+#include <Arduino_DebugUtils.h>
+
+/******************************************************************************
+   TYPEDEFS
+ ******************************************************************************/
+
+enum class NetworkConnectionState {
+  INIT,
+  CONNECTING,
+  CONNECTED,
+  GETTIME,
+  DISCONNECTING,
+  DISCONNECTED,
+  CLOSED,
+  ERROR
+};
+
+enum class NetworkConnectionEvent {
+  INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
+};
+
+typedef void (*OnNetworkEventCallback)(void * /* arg */);
+
+/******************************************************************************
+   CLASS DECLARATION
+ ******************************************************************************/
+
+class ConnectionHandler {
+  public:
+    virtual void init() = 0;
+    virtual void check() = 0;
+    virtual void update() = 0;
+
+    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
+      virtual unsigned long getTime() = 0;
+      virtual Client &getClient() = 0;
+      virtual UDP &getUDP() = 0;
+    #endif
+
+    virtual NetworkConnectionState getStatus() {
+      return netConnectionState;
+    }
+    virtual void connect();
+    virtual void disconnect();
+    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
+    void addConnectCallback(OnNetworkEventCallback callback);
+    void addDisconnectCallback(OnNetworkEventCallback callback);
+    void addErrorCallback(OnNetworkEventCallback callback);
+
+  protected:
+    OnNetworkEventCallback  _on_connect_event_callback = NULL,
+                            _on_disconnect_event_callback = NULL,
+                            _on_error_event_callback = NULL;
+
+    unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
+    NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
+
+    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
+
+};
 
 #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
   #include "Arduino_TcpIpConnectionHandler.h"
