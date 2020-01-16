@@ -22,9 +22,6 @@
    INCLUDES
  ******************************************************************************/
 
-#include <Client.h>
-#include <Udp.h>
-
 #include <Arduino_DebugUtils.h>
 
 /******************************************************************************
@@ -57,29 +54,26 @@ class ConnectionHandler {
     virtual void init() = 0;
     virtual void check() = 0;
     virtual void update() = 0;
-    virtual unsigned long getTime() = 0;
-    virtual Client &getClient();
-    virtual UDP &getUDP();
 
     virtual NetworkConnectionState getStatus() {
       return netConnectionState;
     }
     virtual void connect();
     virtual void disconnect();
-    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    virtual void addConnectCallback(OnNetworkEventCallback callback);
-    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
-    virtual void addErrorCallback(OnNetworkEventCallback callback);
-
-  private:
-    OnNetworkEventCallback  _on_connect_event_callback,
-                            _on_disconnect_event_callback,
-                            _on_error_event_callback;
+    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
+    void addConnectCallback(OnNetworkEventCallback callback);
+    void addDisconnectCallback(OnNetworkEventCallback callback);
+    void addErrorCallback(OnNetworkEventCallback callback);
 
   protected:
+    OnNetworkEventCallback  _on_connect_event_callback = NULL,
+                            _on_disconnect_event_callback = NULL,
+                            _on_error_event_callback = NULL;
 
     unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
     NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
+
+    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
 };
 
@@ -119,6 +113,11 @@ class ConnectionHandler {
   #define NETWORK_HARDWARE_ERROR
   #define NETWORK_IDLE_STATUS NB_NetworkStatus_t::IDLE
   #define NETWORK_CONNECTED NB_NetworkStatus_t::GPRS_READY
+#endif
+
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  #include <MKRWAN.h>
+  #define BOARD_HAS_LORA
 #endif
 
 #if    defined(ARDUINO_ESP8266_ESP12)    \
@@ -163,12 +162,13 @@ class ConnectionHandler {
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
-#ifdef BOARD_HAS_WIFI
-  #include "Arduino_WiFiConnectionHandler.h"
-#elif defined(BOARD_HAS_GSM)
-  #include "Arduino_GSMConnectionHandler.h"
-#elif defined(BOARD_HAS_NB)
-  #include "Arduino_NBConnectionHandler.h"
+
+#if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
+  #include "Arduino_TcpIpConnectionHandler.h"
+#endif
+
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  #include "Arduino_LPWANConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

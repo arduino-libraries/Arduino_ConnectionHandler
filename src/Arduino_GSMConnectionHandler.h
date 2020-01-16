@@ -22,7 +22,8 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_TcpIpConnectionHandler.h"
+
 
 #ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
 
@@ -30,7 +31,7 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public ConnectionHandler {
+class GSMConnectionHandler : public TcpIpConnectionHandler {
   public:
     GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
@@ -55,11 +56,6 @@ class GSMConnectionHandler : public ConnectionHandler {
     virtual void disconnect();
     virtual void connect();
 
-    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    virtual void addConnectCallback(OnNetworkEventCallback callback);
-    virtual void addDisconnectCallback(OnNetworkEventCallback callback);
-    virtual void addErrorCallback(OnNetworkEventCallback callback);
-
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);
@@ -79,11 +75,6 @@ class GSMConnectionHandler : public ConnectionHandler {
 
     bool keepAlive;
 
-    OnNetworkEventCallback  _on_connect_event_callback,
-                            _on_disconnect_event_callback,
-                            _on_error_event_callback;
-
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 };
 
 #endif /* #ifdef BOARD_HAS_GSM  */

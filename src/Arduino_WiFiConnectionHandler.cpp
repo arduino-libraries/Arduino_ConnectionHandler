@@ -32,10 +32,7 @@ WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pas
   pass(_pass),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(_keepAlive),
-  _on_connect_event_callback(NULL),
-  _on_disconnect_event_callback(NULL),
-  _on_error_event_callback(NULL) {
+  keepAlive(_keepAlive) {
 }
 
 /******************************************************************************
@@ -43,35 +40,6 @@ WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pas
  ******************************************************************************/
 
 void WiFiConnectionHandler::init() {
-}
-
-// INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
-void WiFiConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
-  switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
-    case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
-    case NetworkConnectionEvent::ERROR:           _on_error_event_callback         = callback; break;
-    case NetworkConnectionEvent::INIT:                                                       ; break;
-    case NetworkConnectionEvent::CONNECTING:                                                 ; break;
-    case NetworkConnectionEvent::DISCONNECTING:                                              ; break;
-    case NetworkConnectionEvent::CLOSED:                                                     ; break;
-  }
-}
-
-void WiFiConnectionHandler::addConnectCallback(OnNetworkEventCallback callback) {
-  _on_connect_event_callback = callback;
-}
-void WiFiConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
-  _on_disconnect_event_callback = callback;
-}
-void WiFiConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
-  _on_error_event_callback = callback;
-}
-
-void WiFiConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
-  if (callback) {
-    (*callback)(callback_arg);
-  }
 }
 
 unsigned long WiFiConnectionHandler::getTime() {
