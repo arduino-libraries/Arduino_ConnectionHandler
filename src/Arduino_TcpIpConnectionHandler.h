@@ -46,9 +46,9 @@ class TcpIpConnectionHandler : public ConnectionHandler {
 
 };
 
-#if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_NANO_33_IOT)
+#if defined(BOARD_HAS_WIFI)
   #include "Arduino_WiFiConnectionHandler.h"
-#elif defined(ARDUINO_SAMD_MKRGSM1400)
+#elif defined(BOARD_HAS_GSM)
   #include "Arduino_GSMConnectionHandler.h"
 #elif defined(BOARD_HAS_NB)
   #include "Arduino_NBConnectionHandler.h"
