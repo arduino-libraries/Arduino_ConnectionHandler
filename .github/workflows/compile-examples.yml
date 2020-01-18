@@ -4,6 +4,8 @@ jobs:
  build:
    runs-on: ubuntu-latest
 
+   env:
+     LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB
    strategy:
      matrix:
        fqbn: [
@@ -11,14 +13,24 @@ jobs:
          "arduino:samd:mkrwifi1010",
          "arduino:samd:nano_33_iot",
          "arduino:samd:mkrgsm1400",
-         "arduino:samd:mkrnb1500"
+         "arduino:samd:mkrnb1500",
+         '"esp8266:esp8266:huzzah" "https://arduino.esp8266.com/stable/package_esp8266com_index.json"'
        ]
 
    steps:
      - uses: actions/checkout@v1
        with:
          fetch-depth: 1
-     - uses: arduino/actions/libraries/compile-examples@master
+     - name: compile-examples for official Arduino boards
+       if: startsWith(matrix.fqbn, '"esp8266:esp8266') != true
+       uses: arduino/actions/libraries/compile-examples@master
        with:
          fqbn: ${{ matrix.fqbn }}
-         libraries: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB
+         libraries: ${{ env.LIBRARIES }}
+     - name: compile-examples for ESP8266 boards
+       if: startsWith(matrix.fqbn, '"esp8266:esp8266')
+       uses: arduino/actions/libraries/compile-examples@master
+       with:
+         fqbn: ${{ matrix.fqbn }}
+         libraries: ${{ env.LIBRARIES }}
+         entrypoint: /github/workspace/.github/workflows/install-python-wrapper.sh
