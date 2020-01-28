@@ -71,7 +71,6 @@ void NBConnectionHandler::init() {
     changeConnectionState(NetworkConnectionState::CONNECTING);
   } else {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
-    while (1);
   }
 }
 
