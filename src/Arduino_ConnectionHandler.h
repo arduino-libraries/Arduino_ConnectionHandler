@@ -162,7 +162,7 @@ class ConnectionHandler {
                             _on_error_event_callback = NULL;
 
     unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
-    NetworkConnectionState netConnectionState = NetworkConnectionState::DISCONNECTED;
+    NetworkConnectionState netConnectionState = NetworkConnectionState::INIT;
 
     static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
 
