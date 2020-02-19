@@ -39,7 +39,7 @@ class WiFiConnectionHandler : public TcpIpConnectionHandler {
     virtual void check() {
       update();
     }
-    virtual void update();
+    virtual void update() __attribute__((deprecated)); /* use 'update()' instead */
     virtual Client &getClient() {
       return wifiClient;
     };
