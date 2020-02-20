@@ -40,7 +40,7 @@ class GSMConnectionHandler : public TcpIpConnectionHandler {
     virtual void check() {
       update();
     }
-    virtual void update();
+    virtual void update() __attribute__((deprecated)); /* use 'check()' instead */
     virtual Client &getClient() {
       return networkClient;
     };

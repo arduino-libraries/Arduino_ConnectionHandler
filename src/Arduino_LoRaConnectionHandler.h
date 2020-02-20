@@ -49,7 +49,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
     void check() {
       update();
     }
-    void update();
+    void update() __attribute__((deprecated)); /* use 'check()' instead */
 
     int write(const uint8_t *buf, size_t size);
     int read();
