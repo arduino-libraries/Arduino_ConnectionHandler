@@ -1,4 +1,4 @@
-# Arduino Library for network connections management
+# Arduino Library for network connections management hello
 
 Library for handling and managing network connections by providing keepAlive functionalities and reconnection attempts. Initially for WiFi, GSM and NB, its goal is to be extended to more networking layers over diverse hardware (Ethernet, BlueTooth et al.)
 
