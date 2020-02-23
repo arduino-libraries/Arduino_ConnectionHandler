@@ -24,7 +24,7 @@ jobs:
          fetch-depth: 1
      - name: compile-examples for official Arduino boards
        if: startsWith(matrix.fqbn, '"esp8266:esp8266') != true
-       uses: arduino/actions/libraries/compile-examples@master
+       uses: per1234/actions/libraries/compile-examples@size
        with:
          fqbn: ${{ matrix.fqbn }}
          libraries: ${{ env.LIBRARIES }}
@@ -32,7 +32,7 @@ jobs:
          repoToken: ${{ secrets.GITHUB_TOKEN }}
      - name: compile-examples for ESP8266 boards
        if: startsWith(matrix.fqbn, '"esp8266:esp8266')
-       uses: arduino/actions/libraries/compile-examples@master
+       uses: per1234/actions/libraries/compile-examples@size
        with:
          fqbn: ${{ matrix.fqbn }}
          libraries: ${{ env.LIBRARIES }}
