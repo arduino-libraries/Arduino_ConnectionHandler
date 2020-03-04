@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_TcpIpConnectionHandler.h"
+#include "Arduino_ConnectionHandler.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
@@ -30,7 +30,7 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandler : public TcpIpConnectionHandler {
+class WiFiConnectionHandler : public ConnectionHandler {
   public:
     WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
 

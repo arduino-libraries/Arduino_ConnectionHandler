@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_TcpIpConnectionHandler.h"
+#include "Arduino_ConnectionHandler.h"
 
 
 #ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
@@ -31,7 +31,7 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public TcpIpConnectionHandler {
+class GSMConnectionHandler : public ConnectionHandler {
   public:
     GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 

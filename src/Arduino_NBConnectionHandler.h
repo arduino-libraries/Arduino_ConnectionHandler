@@ -30,7 +30,7 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class NBConnectionHandler : public TcpIpConnectionHandler {
+class NBConnectionHandler : public ConnectionHandler {
   public:
     NBConnectionHandler(const char *pin, const bool keepAlive = true);
     NBConnectionHandler(const char *pin, const char *apn, const bool keepAlive = true);
