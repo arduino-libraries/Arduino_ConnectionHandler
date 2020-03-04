@@ -38,7 +38,7 @@ class NBConnectionHandler : public TcpIpConnectionHandler {
 
     virtual void init();
     virtual unsigned long getTime();
-    virtual void check();
+    virtual NetworkConnectionState check();
     virtual Client &getClient() {
       return networkClient;
     };

@@ -46,7 +46,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
     void init();
     unsigned long getTime();
-    void check();
+    NetworkConnectionState check();
 
     int write(const uint8_t *buf, size_t size);
     int read();

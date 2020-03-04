@@ -71,7 +71,7 @@ unsigned long GSMConnectionHandler::getTime() {
   return gsmAccess.getTime();
 }
 
-void GSMConnectionHandler::check() {
+NetworkConnectionState GSMConnectionHandler::check() {
   unsigned long const now = millis();
   int gsmAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
@@ -89,7 +89,7 @@ void GSMConnectionHandler::check() {
           if (networkStatus == GSM3_NetworkStatus_t::ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
             changeConnectionState(NetworkConnectionState::ERROR);
-            return;
+            return netConnectionState;
           }
           Debug.print(DBG_INFO, "Sending PING to outer space...");
           int pingResult;
@@ -98,11 +98,11 @@ void GSMConnectionHandler::check() {
           if (pingResult < 0) {
             Debug.print(DBG_ERROR, "PING failed");
             Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-            return;
+            return netConnectionState;
           } else {
             Debug.print(DBG_INFO, "Connected to GPRS Network");
             changeConnectionState(NetworkConnectionState::CONNECTED);
-            return;
+            return netConnectionState;
           }
         }
         break;
@@ -111,7 +111,7 @@ void GSMConnectionHandler::check() {
           Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", gsmAccessAlive);
           if (gsmAccessAlive != 1) {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
-            return;
+            return netConnectionState;
           }
           Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
         }
@@ -130,6 +130,8 @@ void GSMConnectionHandler::check() {
     }
     lastConnectionTickTime = now;
   }
+
+  return netConnectionState;
 }
 
 /******************************************************************************

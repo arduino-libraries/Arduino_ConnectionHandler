@@ -104,7 +104,7 @@ bool LoRaConnectionHandler::available() {
   return modem.available();
 }
 
-void LoRaConnectionHandler::check() {
+NetworkConnectionState LoRaConnectionHandler::check() {
 
   unsigned long const now = millis();
   int networkStatus = 0;
@@ -121,6 +121,8 @@ void LoRaConnectionHandler::check() {
       case NetworkConnectionState::CLOSED:                                                           break;
     }
   }
+
+  return netConnectionState;
 }
 
 /******************************************************************************

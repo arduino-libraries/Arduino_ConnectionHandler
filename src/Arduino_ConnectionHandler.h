@@ -137,7 +137,7 @@ typedef void (*OnNetworkEventCallback)(void * /* arg */);
 class ConnectionHandler {
   public:
     virtual void init() = 0;
-    virtual void check() = 0;
+    virtual NetworkConnectionState check() = 0;
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
       virtual unsigned long getTime() = 0;
