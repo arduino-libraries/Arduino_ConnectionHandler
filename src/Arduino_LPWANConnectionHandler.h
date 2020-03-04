@@ -32,8 +32,7 @@
 class LPWANConnectionHandler : public ConnectionHandler {
   public:
     virtual void init() = 0;
-    virtual void check() = 0;
-    virtual void update() __attribute__((deprecated)) = 0; /* use 'check()' instead */
+    virtual void check();
     virtual unsigned long getTime() = 0;
 
     virtual int write(const uint8_t *buf, size_t size) = 0;

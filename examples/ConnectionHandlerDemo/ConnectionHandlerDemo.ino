@@ -51,7 +51,7 @@ void loop() {
    * object.
    */
 
-  conMan.update();
+  conMan.check();
 }
 
 void onNetworkConnect(void *_arg) {

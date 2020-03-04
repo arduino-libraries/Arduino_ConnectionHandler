@@ -71,7 +71,7 @@ unsigned long GSMConnectionHandler::getTime() {
   return gsmAccess.getTime();
 }
 
-void GSMConnectionHandler::update() {
+void GSMConnectionHandler::check() {
   unsigned long const now = millis();
   int gsmAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {

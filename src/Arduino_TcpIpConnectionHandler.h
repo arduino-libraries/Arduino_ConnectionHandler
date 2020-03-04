@@ -36,7 +36,6 @@ class TcpIpConnectionHandler : public ConnectionHandler {
   public:
     virtual void init() = 0;
     virtual void check() = 0;
-    virtual void update() __attribute__((deprecated)) = 0; /* use 'update()' instead */
     virtual unsigned long getTime() = 0;
     virtual Client &getClient() = 0;
     virtual UDP &getUDP() = 0;

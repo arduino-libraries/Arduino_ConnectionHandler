@@ -78,7 +78,7 @@ unsigned long NBConnectionHandler::getTime() {
   return nbAccess.getTime();
 }
 
-void NBConnectionHandler::update() {
+void NBConnectionHandler::check() {
   unsigned long const now = millis();
   int nbAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {

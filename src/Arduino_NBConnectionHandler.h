@@ -38,10 +38,7 @@ class NBConnectionHandler : public TcpIpConnectionHandler {
 
     virtual void init();
     virtual unsigned long getTime();
-    virtual void check() {
-      update();
-    }
-    virtual void update() __attribute__((deprecated)); /* use 'update()' instead */
+    virtual void check();
     virtual Client &getClient() {
       return networkClient;
     };

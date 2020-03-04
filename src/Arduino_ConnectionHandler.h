@@ -138,7 +138,6 @@ class ConnectionHandler {
   public:
     virtual void init() = 0;
     virtual void check() = 0;
-    virtual void update() __attribute__((deprecated)) = 0; /* use 'check()' instead */
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
       virtual unsigned long getTime() = 0;
