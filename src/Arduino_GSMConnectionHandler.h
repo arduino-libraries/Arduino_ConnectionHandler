@@ -74,6 +74,8 @@ class GSMConnectionHandler : public ConnectionHandler {
 
 };
 
+typedef GSMConnectionHandler TcpIpConnectionHandler;
+
 #endif /* #ifdef BOARD_HAS_GSM  */
 
 #endif /* #ifndef GSM_CONNECTION_MANAGER_H_ */

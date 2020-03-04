@@ -73,6 +73,8 @@ class WiFiConnectionHandler : public ConnectionHandler {
 
 };
 
+typedef WiFiConnectionHandler TcpIpConnectionHandler;
+
 #endif /* #ifdef BOARD_HAS_WIFI */
 
 #endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */

@@ -86,4 +86,6 @@ class LoRaConnectionHandler : public ConnectionHandler {
 
 };
 
+typedef LoRaConnectionHandler LPWANConnectionHandler;
+
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */
