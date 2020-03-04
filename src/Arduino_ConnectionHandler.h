@@ -145,7 +145,7 @@ class ConnectionHandler {
       virtual UDP &getUDP() = 0;
     #endif
 
-    virtual NetworkConnectionState getStatus() {
+    virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
       return netConnectionState;
     }
     virtual void connect();
