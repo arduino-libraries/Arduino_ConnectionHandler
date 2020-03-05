@@ -50,7 +50,7 @@ unsigned long WiFiConnectionHandler::getTime() {
 #endif
 }
 
-void WiFiConnectionHandler::update() {
+NetworkConnectionState WiFiConnectionHandler::check() {
 
   unsigned long const now = millis();
   if((now - lastConnectionTickTime) > connectionTickTimeInterval)
@@ -68,6 +68,8 @@ void WiFiConnectionHandler::update() {
       case NetworkConnectionState::CLOSED:                                                           break;
     }
   }
+
+  return netConnectionState;
 }
 
 /******************************************************************************

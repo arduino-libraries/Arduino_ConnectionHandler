@@ -137,8 +137,7 @@ typedef void (*OnNetworkEventCallback)(void * /* arg */);
 class ConnectionHandler {
   public:
     virtual void init() = 0;
-    virtual void check() = 0;
-    virtual void update() __attribute__((deprecated)) = 0; /* use 'check()' instead */
+    virtual NetworkConnectionState check() = 0;
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
       virtual unsigned long getTime() = 0;
@@ -146,11 +145,17 @@ class ConnectionHandler {
       virtual UDP &getUDP() = 0;
     #endif
 
-    virtual NetworkConnectionState getStatus() {
+    #if defined(BOARD_HAS_LORA)
+      virtual int write(const uint8_t *buf, size_t size) = 0;
+      virtual int read() = 0;
+      virtual bool available() = 0;
+    #endif
+
+    virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
       return netConnectionState;
     }
-    virtual void connect();
-    virtual void disconnect();
+    virtual void connect() = 0;
+    virtual void disconnect() = 0;
     void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
     void addConnectCallback(OnNetworkEventCallback callback);
     void addDisconnectCallback(OnNetworkEventCallback callback);
@@ -168,12 +173,14 @@ class ConnectionHandler {
 
 };
 
-#if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
-  #include "Arduino_TcpIpConnectionHandler.h"
-#endif
-
-#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
-  #include "Arduino_LPWANConnectionHandler.h"
+#if defined(BOARD_HAS_WIFI)
+  #include "Arduino_WiFiConnectionHandler.h"
+#elif defined(BOARD_HAS_GSM)
+  #include "Arduino_GSMConnectionHandler.h"
+#elif defined(BOARD_HAS_NB)
+  #include "Arduino_NBConnectionHandler.h"
+#elif defined(BOARD_HAS_LORA)
+  #include "Arduino_LoRaConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

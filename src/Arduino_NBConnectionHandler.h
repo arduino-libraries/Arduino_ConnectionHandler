@@ -30,7 +30,7 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class NBConnectionHandler : public TcpIpConnectionHandler {
+class NBConnectionHandler : public ConnectionHandler {
   public:
     NBConnectionHandler(const char *pin, const bool keepAlive = true);
     NBConnectionHandler(const char *pin, const char *apn, const bool keepAlive = true);
@@ -38,10 +38,7 @@ class NBConnectionHandler : public TcpIpConnectionHandler {
 
     virtual void init();
     virtual unsigned long getTime();
-    virtual void check() {
-      update();
-    }
-    virtual void update() __attribute__((deprecated)); /* use 'update()' instead */
+    virtual NetworkConnectionState check();
     virtual Client &getClient() {
       return networkClient;
     };
@@ -77,6 +74,8 @@ class NBConnectionHandler : public TcpIpConnectionHandler {
     bool keepAlive;
 
 };
+
+typedef NBConnectionHandler TcpIpConnectionHandler;
 
 #endif /* #ifdef BOARD_HAS_NB  */
 

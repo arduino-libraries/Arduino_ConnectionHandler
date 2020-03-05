@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_LPWANConnectionHandler.h"
+#include "Arduino_ConnectionHandler.h"
 
 typedef enum {
   LORA_ERROR_ACK_NOT_RECEIVED = -1,
@@ -40,23 +40,20 @@ typedef enum {
    CLASS DECLARATION
  ******************************************************************************/
 
-class LoRaConnectionHandler : public LPWANConnectionHandler {
+class LoRaConnectionHandler : public ConnectionHandler {
   public:
     LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = _lora_band::EU868, _lora_class = _lora_class::CLASS_A);
 
-    void init();
-    unsigned long getTime();
-    void check() {
-      update();
-    }
-    void update() __attribute__((deprecated)); /* use 'check()' instead */
+    virtual void init();
+    virtual unsigned long getTime();
+    virtual NetworkConnectionState check();
 
-    int write(const uint8_t *buf, size_t size);
-    int read();
-    bool available();
+    virtual int write(const uint8_t *buf, size_t size);
+    virtual int read();
+    virtual bool available();
 
-    void disconnect();
-    void connect();
+    virtual void disconnect();
+    virtual void connect();
 
   private:
 
@@ -88,5 +85,7 @@ class LoRaConnectionHandler : public LPWANConnectionHandler {
 
 
 };
+
+typedef LoRaConnectionHandler LPWANConnectionHandler;
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */
