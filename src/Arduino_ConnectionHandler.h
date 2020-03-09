@@ -113,15 +113,15 @@
    TYPEDEFS
  ******************************************************************************/
 
-enum class NetworkConnectionState {
-  INIT,
-  CONNECTING,
-  CONNECTED,
-  GETTIME,
-  DISCONNECTING,
-  DISCONNECTED,
-  CLOSED,
-  ERROR
+enum class NetworkConnectionState : unsigned int {
+  INIT          = 0,
+  CONNECTING    = 1,
+  CONNECTED     = 2,
+  GETTIME       = 3,
+  DISCONNECTING = 4,
+  DISCONNECTED  = 5,
+  CLOSED        = 6,
+  ERROR         = 7
 };
 
 enum class NetworkConnectionEvent {

@@ -50,17 +50,10 @@ class WiFiConnectionHandler : public ConnectionHandler {
 
   private:
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
-
     const char *ssid, *pass;
     unsigned long lastConnectionTickTime;
 
     WiFiClient wifiClient;
-    int connectionTickTimeInterval;
 
     bool keepAlive;
 
