@@ -75,8 +75,6 @@ class NBConnectionHandler : public ConnectionHandler {
 
 };
 
-typedef NBConnectionHandler TcpIpConnectionHandler;
-
 #endif /* #ifdef BOARD_HAS_NB  */
 
 #endif /* #ifndef NB_CONNECTION_MANAGER_H_ */
