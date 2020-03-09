@@ -157,9 +157,9 @@ class ConnectionHandler {
     virtual void connect() = 0;
     virtual void disconnect() = 0;
     void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    void addConnectCallback(OnNetworkEventCallback callback);
-    void addDisconnectCallback(OnNetworkEventCallback callback);
-    void addErrorCallback(OnNetworkEventCallback callback);
+    void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
+    void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
+    void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
 
   protected:
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
