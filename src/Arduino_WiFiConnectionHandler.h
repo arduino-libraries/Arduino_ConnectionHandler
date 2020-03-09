@@ -34,7 +34,6 @@ class WiFiConnectionHandler : public ConnectionHandler {
   public:
     WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
-    virtual void init();
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
     virtual Client & getClient() { return _wifi_client; }

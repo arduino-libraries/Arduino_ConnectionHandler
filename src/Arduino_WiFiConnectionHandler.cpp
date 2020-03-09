@@ -52,9 +52,6 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandler::init() {
-}
-
 unsigned long WiFiConnectionHandler::getTime() {
 #if !defined(BOARD_ESP8266)
   return WiFi.getTime();
