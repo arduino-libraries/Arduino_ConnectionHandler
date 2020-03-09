@@ -47,9 +47,18 @@ void ConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
   _on_error_event_callback = callback;
 }
 
-void ConnectionHandler::execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg) {
-  if (callback) {
-    (*callback)(callback_arg);
+/******************************************************************************
+   PRIVATE MEMBER FUNCTIONS
+ ******************************************************************************/
+
+void ConnectionHandler::execCallback(NetworkConnectionEvent const event, void * callback_arg) {
+  switch (event) {
+    case NetworkConnectionEvent::CONNECTED:       if(_on_connect_event_callback)    _on_connect_event_callback   (callback_arg); break;
+    case NetworkConnectionEvent::DISCONNECTED:    if(_on_disconnect_event_callback) _on_disconnect_event_callback(callback_arg); break;
+    case NetworkConnectionEvent::ERROR:           if(_on_error_event_callback)      _on_error_event_callback     (callback_arg); break;
+    case NetworkConnectionEvent::INIT:                                                                                           break;
+    case NetworkConnectionEvent::CONNECTING:                                                                                     break;
+    case NetworkConnectionEvent::DISCONNECTING:                                                                                  break;
+    case NetworkConnectionEvent::CLOSED:                                                                                         break;
   }
 }
-

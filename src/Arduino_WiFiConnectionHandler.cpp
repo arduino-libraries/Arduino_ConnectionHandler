@@ -96,7 +96,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
 #ifndef BOARD_ESP8266
   Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() == NETWORK_HARDWARE_ERROR) {
-    execNetworkEventCallback(_on_error_event_callback, 0);
+    execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
     Debug.print(DBG_ERROR, "Then reset and retry.");
     return NetworkConnectionState::ERROR;
@@ -138,7 +138,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting() {
   }
   else {
     Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
-    execNetworkEventCallback(_on_connect_event_callback, 0);
+    execCallback(NetworkConnectionEvent::CONNECTED, 0);
     connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
     return NetworkConnectionState::GETTIME;
   }
@@ -149,7 +149,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
   Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() != WL_CONNECTED)
   {
-    execNetworkEventCallback(_on_disconnect_event_callback, 0);
+    execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
    
     Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
     Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);

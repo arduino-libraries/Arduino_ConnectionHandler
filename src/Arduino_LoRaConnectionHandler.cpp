@@ -133,7 +133,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
   Debug.print(DBG_VERBOSE, "::INIT");
   if (!modem.begin(band)) {
     Debug.print(DBG_VERBOSE, "Failed to start module");
-    execNetworkEventCallback(_on_error_event_callback, 0);
+    execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   };
   //A delay is required between modem.begin(band) and modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
@@ -149,14 +149,14 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting() {
   Debug.print(DBG_VERBOSE, "::CONNECTING");
   bool networkStatus = modem.joinOTAA(appeui, appkey);
   if (networkStatus != true) {
-    execNetworkEventCallback(_on_error_event_callback, 0);
+    execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
     return NetworkConnectionState::ERROR;
   }
 
   Debug.print(DBG_INFO, "Connected to the network");
   connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
-  execNetworkEventCallback(_on_connect_event_callback, 0);
+  execCallback(NetworkConnectionEvent::CONNECTED, 0);
   return NetworkConnectionState::CONNECTED;
 }
 
@@ -165,7 +165,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
   bool networkStatus = modem.connected();
   Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
   if (networkStatus != true) {
-    execNetworkEventCallback(_on_disconnect_event_callback, 0);
+    execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
 
     Debug.print(DBG_ERROR, "Connection to the network lost.");
     if (keepAlive) {
@@ -180,7 +180,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
 }
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting() {
-  execNetworkEventCallback(_on_disconnect_event_callback, 0);
+  execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
 
   Debug.print(DBG_ERROR, "Connection to the network lost.");
   if (keepAlive) {

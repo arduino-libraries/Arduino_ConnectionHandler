@@ -162,15 +162,17 @@ class ConnectionHandler {
     void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
 
   protected:
-    OnNetworkEventCallback  _on_connect_event_callback = NULL,
-                            _on_disconnect_event_callback = NULL,
-                            _on_error_event_callback = NULL;
 
     unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
     NetworkConnectionState netConnectionState = NetworkConnectionState::INIT;
 
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
+    void execCallback(NetworkConnectionEvent const event, void * callback_arg);
 
+  private:
+
+    OnNetworkEventCallback  _on_connect_event_callback = NULL,
+                            _on_disconnect_event_callback = NULL,
+                            _on_error_event_callback = NULL;
 };
 
 #if defined(BOARD_HAS_WIFI)
