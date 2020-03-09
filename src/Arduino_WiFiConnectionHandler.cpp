@@ -39,11 +39,13 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
    CTOR/DTOR
  ******************************************************************************/
 
-WiFiConnectionHandler::WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive) :
-  ssid(_ssid),
-  pass(_pass),
-  lastConnectionTickTime(millis()),
-  keepAlive(_keepAlive) {
+WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
+: _ssid{ssid}
+, _pass{pass}
+, _lastConnectionTickTime{millis()}
+, _keep_alive{keep_alive}
+{
+
 }
 
 /******************************************************************************
@@ -66,9 +68,9 @@ NetworkConnectionState WiFiConnectionHandler::check() {
   unsigned long const now = millis();
   unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
 
-  if((now - lastConnectionTickTime) > connectionTickTimeInterval)
+  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {
-    lastConnectionTickTime = now;
+    _lastConnectionTickTime = now;
 
     switch (netConnectionState) {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (); break;
@@ -93,12 +95,12 @@ void WiFiConnectionHandler::connect() {
   if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
-  keepAlive = true;
+  _keep_alive = true;
   netConnectionState = NetworkConnectionState::INIT;
 }
 
 void WiFiConnectionHandler::disconnect() {
-  keepAlive = false;
+  _keep_alive = false;
   netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
@@ -125,7 +127,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
   Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
   WiFi.disconnect();
   delay(300);
-  WiFi.begin(ssid, pass);
+  WiFi.begin(_ssid, _pass);
   delay(1000);
 #endif /* ifndef BOARD_ESP8266 */
 
@@ -137,18 +139,18 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting() {
   
 #ifndef BOARD_ESP8266
   if (WiFi.status() != WL_CONNECTED) {
-    WiFi.begin(ssid, pass);
+    WiFi.begin(_ssid, _pass);
   }
 #endif /* ifndef BOARD_ESP8266 */
 
   Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() != NETWORK_CONNECTED) {
-    Debug.print(DBG_ERROR, "Connection to \"%s\" failed", ssid);
+    Debug.print(DBG_ERROR, "Connection to \"%s\" failed", _ssid);
     Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
   else {
-    Debug.print(DBG_INFO, "Connected to \"%s\"", ssid);
+    Debug.print(DBG_INFO, "Connected to \"%s\"", _ssid);
     execCallback(NetworkConnectionEvent::CONNECTED, 0);
     return NetworkConnectionState::GETTIME;
   }
@@ -162,15 +164,14 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
     execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
    
     Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
-    Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", ssid);
+    Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", _ssid);
   
-    if (keepAlive) {
+    if (_keep_alive) {
       Debug.print(DBG_ERROR, "Attempting reconnection");
     }
   
     return NetworkConnectionState::DISCONNECTED;
   }
-  Debug.print(DBG_VERBOSE, "Connected to \"%s\"", ssid);
   return NetworkConnectionState::CONNECTED;
 }
 
@@ -183,7 +184,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting() {
-  Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", ssid);
+  Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", _ssid);
   WiFi.disconnect();
   return NetworkConnectionState::DISCONNECTED;
 }
@@ -192,11 +193,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected() {
 #ifndef BOARD_ESP8266
   WiFi.end();
 #endif /* ifndef BOARD_ESP8266 */
-  if (keepAlive) {
+  if (_keep_alive) {
     return NetworkConnectionState::INIT;
   }
   else {
-    Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", ssid);
+    Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", _ssid);
     return NetworkConnectionState::CLOSED;
   }
 }

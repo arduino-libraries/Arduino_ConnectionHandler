@@ -32,30 +32,25 @@
 
 class WiFiConnectionHandler : public ConnectionHandler {
   public:
-    WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
+    WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
     virtual void init();
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return wifiClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
+    virtual Client & getClient() { return _wifi_client; }
+    virtual UDP & getUDP() { return _wifi_udp; }
     virtual void disconnect();
     virtual void connect();
 
-    WiFiUDP udp;
-
   private:
 
-    const char *ssid, *pass;
-    unsigned long lastConnectionTickTime;
+    char const * _ssid;
+    char const * _pass;
+    bool _keep_alive;
+    unsigned long _lastConnectionTickTime;
 
-    WiFiClient wifiClient;
-
-    bool keepAlive;
+    WiFiUDP _wifi_udp;
+    WiFiClient _wifi_client;
 
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();
