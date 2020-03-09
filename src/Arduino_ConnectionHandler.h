@@ -163,7 +163,6 @@ class ConnectionHandler {
 
   protected:
 
-    unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
     NetworkConnectionState netConnectionState = NetworkConnectionState::INIT;
 
     void execCallback(NetworkConnectionEvent const event, void * callback_arg);
