@@ -34,12 +34,12 @@ class WiFiConnectionHandler : public ConnectionHandler {
   public:
     WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client & getClient() { return _wifi_client; }
-    virtual UDP & getUDP() { return _wifi_udp; }
-    virtual void disconnect();
-    virtual void connect();
+    virtual unsigned long getTime() override;
+    virtual NetworkConnectionState check() override;
+    virtual Client & getClient() override{ return _wifi_client; }
+    virtual UDP & getUDP() override { return _wifi_udp; }
+    virtual void disconnect() override;
+    virtual void connect() override;
 
   private:
 
