@@ -35,12 +35,12 @@ class GSMConnectionHandler : public ConnectionHandler {
   public:
     GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
 
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client &getClient() { return _gsm_client; };
-    virtual UDP &getUDP() { return _udp; };
-    virtual void disconnect();
-    virtual void connect();
+    virtual unsigned long getTime() override;
+    virtual NetworkConnectionState check() override;
+    virtual Client & getClient() override { return _gsm_client; };
+    virtual UDP & getUDP() override { return _udp; };
+    virtual void disconnect() override;
+    virtual void connect() override;
 
   private:
 
