@@ -52,7 +52,8 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-unsigned long WiFiConnectionHandler::getTime() {
+unsigned long WiFiConnectionHandler::getTime()
+{
 #if !defined(BOARD_ESP8266)
   return WiFi.getTime();
 #else
@@ -60,8 +61,8 @@ unsigned long WiFiConnectionHandler::getTime() {
 #endif
 }
 
-NetworkConnectionState WiFiConnectionHandler::check() {
-
+NetworkConnectionState WiFiConnectionHandler::check()
+{
   unsigned long const now = millis();
   unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
 
@@ -69,7 +70,8 @@ NetworkConnectionState WiFiConnectionHandler::check() {
   {
     _lastConnectionTickTime = now;
 
-    switch (netConnectionState) {
+    switch (netConnectionState)
+    {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (); break;
       case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (); break;
@@ -88,25 +90,29 @@ NetworkConnectionState WiFiConnectionHandler::check() {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandler::connect() {
-  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
-    return;
+void WiFiConnectionHandler::connect()
+{
+  if (netConnectionState != NetworkConnectionState::INIT && netConnectionState != NetworkConnectionState::CONNECTING)
+  {
+    _keep_alive = true;
+    netConnectionState = NetworkConnectionState::INIT;
   }
-  _keep_alive = true;
-  netConnectionState = NetworkConnectionState::INIT;
 }
 
-void WiFiConnectionHandler::disconnect() {
+void WiFiConnectionHandler::disconnect()
+{
   _keep_alive = false;
   netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
+NetworkConnectionState WiFiConnectionHandler::update_handleInit()
+{
   Debug.print(DBG_VERBOSE, "::INIT");
 
 #ifndef BOARD_ESP8266
   Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
-  if (WiFi.status() == NETWORK_HARDWARE_ERROR) {
+  if (WiFi.status() == NETWORK_HARDWARE_ERROR)
+  {
     execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
     Debug.print(DBG_ERROR, "Then reset and retry.");
@@ -115,7 +121,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
 
   Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
 
-  if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED) {
+  if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED)
+  {
     Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
     Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
     delay(5000);
@@ -131,30 +138,34 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit() {
   return NetworkConnectionState::CONNECTING;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleConnecting() {
+NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
+{
   Debug.print(DBG_VERBOSE, "::CONNECTING");
   
 #ifndef BOARD_ESP8266
-  if (WiFi.status() != WL_CONNECTED) {
+  if (WiFi.status() != WL_CONNECTED)
+  {
     WiFi.begin(_ssid, _pass);
   }
 #endif /* ifndef BOARD_ESP8266 */
 
   Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
-  if (WiFi.status() != NETWORK_CONNECTED) {
+  if (WiFi.status() != NETWORK_CONNECTED)
+  {
     Debug.print(DBG_ERROR, "Connection to \"%s\" failed", _ssid);
     Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
-  else {
+  else
+  {
     Debug.print(DBG_INFO, "Connected to \"%s\"", _ssid);
     execCallback(NetworkConnectionEvent::CONNECTED, 0);
     return NetworkConnectionState::GETTIME;
   }
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
-
+NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
+{
   Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() != WL_CONNECTED)
   {
@@ -163,7 +174,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
     Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
     Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", _ssid);
   
-    if (_keep_alive) {
+    if (_keep_alive)
+    {
       Debug.print(DBG_ERROR, "Attempting reconnection");
     }
   
@@ -172,7 +184,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected() {
   return NetworkConnectionState::CONNECTED;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
+NetworkConnectionState WiFiConnectionHandler::update_handleGetTime()
+{
   Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
@@ -180,20 +193,24 @@ NetworkConnectionState WiFiConnectionHandler::update_handleGetTime() {
   return NetworkConnectionState::CONNECTED;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting() {
+NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting()
+{
   Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", _ssid);
   WiFi.disconnect();
   return NetworkConnectionState::DISCONNECTED;
 }
 
-NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected() {
+NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
+{
 #ifndef BOARD_ESP8266
   WiFi.end();
 #endif /* ifndef BOARD_ESP8266 */
-  if (_keep_alive) {
+  if (_keep_alive)
+  {
     return NetworkConnectionState::INIT;
   }
-  else {
+  else
+  {
     Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", _ssid);
     return NetworkConnectionState::CLOSED;
   }

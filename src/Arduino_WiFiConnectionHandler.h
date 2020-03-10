@@ -30,9 +30,12 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandler : public ConnectionHandler {
+class WiFiConnectionHandler : public ConnectionHandler
+{
   public:
+
     WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
+
 
     virtual unsigned long getTime() override;
     virtual NetworkConnectionState check() override;
@@ -40,6 +43,7 @@ class WiFiConnectionHandler : public ConnectionHandler {
     virtual UDP & getUDP() override { return _wifi_udp; }
     virtual void disconnect() override;
     virtual void connect() override;
+
 
   private:
 
@@ -57,7 +61,6 @@ class WiFiConnectionHandler : public ConnectionHandler {
     NetworkConnectionState update_handleGetTime      ();
     NetworkConnectionState update_handleDisconnecting();
     NetworkConnectionState update_handleDisconnected ();
-
 };
 
 #endif /* #ifdef BOARD_HAS_WIFI */

@@ -31,9 +31,12 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public ConnectionHandler {
+class GSMConnectionHandler : public ConnectionHandler
+{
   public:
+
     GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
+
 
     virtual unsigned long getTime() override;
     virtual NetworkConnectionState check() override;
@@ -41,6 +44,7 @@ class GSMConnectionHandler : public ConnectionHandler {
     virtual UDP & getUDP() override { return _gsm_udp; };
     virtual void disconnect() override;
     virtual void connect() override;
+
 
   private:
 
@@ -56,13 +60,11 @@ class GSMConnectionHandler : public ConnectionHandler {
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 
-
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();
     NetworkConnectionState update_handleConnected    ();
     NetworkConnectionState update_handleDisconnecting();
     NetworkConnectionState update_handleDisconnected ();
-
 };
 
 #endif /* #ifdef BOARD_HAS_GSM  */
