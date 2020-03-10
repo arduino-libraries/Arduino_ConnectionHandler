@@ -27,7 +27,17 @@
    CONSTANTS
  ******************************************************************************/
 
-static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED    */
+static unsigned int const CHECK_INTERVAL_TABLE[] =
+{
+  /* INIT          */ 100,
+  /* CONNECTING    */ 500,
+  /* CONNECTED     */ 10000,
+  /* GETTIME       */ 100,
+  /* DISCONNECTING */ 100,
+  /* DISCONNECTED  */ 1000,
+  /* CLOSED        */ 1000,
+  /* ERROR         */ 1000
+};
 
 /******************************************************************************
    CTOR/DTOR
@@ -39,7 +49,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * a
 , _band(band)
 , _device_class(device_class)
 , _lastConnectionTickTime(millis())
-, _connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
 , _keep_alive(false)
 {
 
@@ -101,11 +110,14 @@ bool LoRaConnectionHandler::available() {
 NetworkConnectionState LoRaConnectionHandler::check() {
 
   unsigned long const now = millis();
-  int networkStatus = 0;
-  if (now - _lastConnectionTickTime > _connectionTickTimeInterval) { /*  time bracket  */
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
 
+  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
+  {
     _lastConnectionTickTime = now;
-    switch (netConnectionState) {
+
+    switch (netConnectionState)
+    {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit(); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting(); break;
       case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected(); break;
@@ -148,7 +160,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
   _modem.configureClass(_device_class);
   delay(100);
   Debug.print(DBG_INFO, "Connecting to the network");
-  _connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
   return NetworkConnectionState::CONNECTING;
 }
 
@@ -162,7 +173,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting() {
   }
 
   Debug.print(DBG_INFO, "Connected to the network");
-  _connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
   execCallback(NetworkConnectionEvent::CONNECTED, 0);
   return NetworkConnectionState::CONNECTED;
 }
@@ -178,7 +188,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
     if (_keep_alive) {
       Debug.print(DBG_ERROR, "Attempting reconnection");
     }
-    _connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
     return NetworkConnectionState::DISCONNECTED;
   }
   Debug.print(DBG_VERBOSE, "Connected to the network");
@@ -193,20 +202,17 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting() {
   if (_keep_alive) {
     Debug.print(DBG_ERROR, "Attempting reconnection");
   }
-  _connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
   return NetworkConnectionState::DISCONNECTED;
 }
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected() {
   if (_keep_alive) {
     Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
-    _connectionTickTimeInterval = CHECK_INTERVAL_INIT;
     return NetworkConnectionState::INIT;
   } else {
     Debug.print(DBG_VERBOSE, "Connection to the network terminated");
     return NetworkConnectionState::CLOSED;
   }
-
 }
 
 #endif

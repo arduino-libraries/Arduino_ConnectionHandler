@@ -23,6 +23,10 @@
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
+/******************************************************************************
+   CONSTANTS
+ ******************************************************************************/
+
 static unsigned int const CHECK_INTERVAL_TABLE[] =
 {
   /* INIT          */ 100,

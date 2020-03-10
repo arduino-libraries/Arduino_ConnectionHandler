@@ -69,7 +69,6 @@ class LoRaConnectionHandler : public ConnectionHandler {
     _lora_band _band;
     _lora_class _device_class;
     unsigned long _lastConnectionTickTime;
-    int _connectionTickTimeInterval;
     bool _keep_alive;
     LoRaModem _modem;
 
