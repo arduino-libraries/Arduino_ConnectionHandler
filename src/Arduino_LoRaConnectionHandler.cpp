@@ -48,9 +48,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void LoRaConnectionHandler::init() {
-}
-
 unsigned long LoRaConnectionHandler::getTime() {
   return 0;
 }

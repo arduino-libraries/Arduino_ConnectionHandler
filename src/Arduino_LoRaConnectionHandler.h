@@ -44,7 +44,6 @@ class LoRaConnectionHandler : public ConnectionHandler {
   public:
     LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = _lora_band::EU868, _lora_class = _lora_class::CLASS_A);
 
-    virtual void init();
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
 
