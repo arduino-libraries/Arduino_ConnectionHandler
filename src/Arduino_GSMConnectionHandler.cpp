@@ -58,13 +58,16 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-unsigned long GSMConnectionHandler::getTime() {
+unsigned long GSMConnectionHandler::getTime()
+{
   return _gsm.getTime();
 }
 
-NetworkConnectionState GSMConnectionHandler::check() {
+NetworkConnectionState GSMConnectionHandler::check()
+{
   unsigned long const now = millis();
-  if (now - lastConnectionTickTime > connectionTickTimeInterval) {
+  if (now - lastConnectionTickTime > connectionTickTimeInterval)
+  {
     switch (netConnectionState)
     {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit();          break;
@@ -125,6 +128,8 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
   if (network_status == GSM3_NetworkStatus_t::ERROR)
   {
+    Debug.print(DBG_ERROR, "GPRS attach failed");
+    Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
     execCallback(NetworkConnectionEvent::ERROR, 0);
     return NetworkConnectionState::ERROR;
   }
@@ -175,51 +180,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
   {
    return NetworkConnectionState::CLOSED;
   }
-}
-
-void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
-  int newInterval = CHECK_INTERVAL_IDLE;
-  switch (_newState) {
-    case NetworkConnectionState::INIT: {
-        newInterval = CHECK_INTERVAL_INIT;
-      }
-      break;
-    case NetworkConnectionState::CONNECTING: {
-        Debug.print(DBG_INFO, "Connecting to Cellular Network");
-        newInterval = CHECK_INTERVAL_CONNECTING;
-      }
-      break;
-    case NetworkConnectionState::CONNECTED: {
-        execCallback(NetworkConnectionEvent::CONNECTED, 0);
-        newInterval = CHECK_INTERVAL_CONNECTED;
-      }
-      break;
-    case NetworkConnectionState::GETTIME: {
-      }
-      break;
-    case NetworkConnectionState::DISCONNECTING: {
-      }
-    case NetworkConnectionState::DISCONNECTED: {
-        if (netConnectionState == NetworkConnectionState::CONNECTED) {
-          execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
-          Debug.print(DBG_ERROR, "Disconnected from Cellular Network");
-          Debug.print(DBG_ERROR, "Attempting reconnection");
-          if (_keep_alive) {
-            Debug.print(DBG_ERROR, "Attempting reconnection");
-          }
-        }
-        newInterval = CHECK_INTERVAL_DISCONNECTED;
-      }
-      break;
-    case NetworkConnectionState::ERROR: {
-        execCallback(NetworkConnectionEvent::ERROR, 0);
-        Debug.print(DBG_ERROR, "GPRS attach failed\n\rMake sure the antenna is connected and reset your board.");
-      }
-      break;
-  }
-  connectionTickTimeInterval = newInterval;
-  lastConnectionTickTime = millis();
-  netConnectionState = _newState;
 }
 
 #endif /* #ifdef BOARD_HAS_GSM  */
