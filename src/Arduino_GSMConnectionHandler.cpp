@@ -88,11 +88,11 @@ NetworkConnectionState GSMConnectionHandler::check()
       case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit();          break;
       case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting();    break;
       case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected();     break;
-      case NetworkConnectionState::GETTIME:       /* Unused */                                       break;
+      case NetworkConnectionState::GETTIME:       /* Unused */                                        break;
       case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
       case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected();  break;
-      case NetworkConnectionState::ERROR:                                                            break;
-      case NetworkConnectionState::CLOSED:                                                           break;
+      case NetworkConnectionState::ERROR:                                                             break;
+      case NetworkConnectionState::CLOSED:                                                            break;
     }
   }
 
