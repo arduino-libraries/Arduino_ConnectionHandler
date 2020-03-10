@@ -69,17 +69,6 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, cha
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void NBConnectionHandler::init() {
-  char msgBuffer[120];
-  if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY) {
-    Debug.print(DBG_INFO, "SIM card ok");
-    _nb.setTimeout(CHECK_INTERVAL_RETRYING);
-    changeConnectionState(NetworkConnectionState::CONNECTING);
-  } else {
-    Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
-  }
-}
-
 unsigned long NBConnectionHandler::getTime() {
   return _nb.getTime();
 }
@@ -90,9 +79,15 @@ NetworkConnectionState NBConnectionHandler::check() {
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
     switch (_netConnectionState) {
       case NetworkConnectionState::INIT: {
-          init();
+        if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY) {
+          Debug.print(DBG_INFO, "SIM card ok");
+          _nb.setTimeout(CHECK_INTERVAL_RETRYING);
+          changeConnectionState(NetworkConnectionState::CONNECTING);
+        } else {
+          Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
         }
-        break;
+      }
+      break;
 
       case NetworkConnectionState::CONNECTING: {
           // NOTE: Blocking Call when 4th parameter == true

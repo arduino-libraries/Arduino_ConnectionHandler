@@ -36,13 +36,12 @@ class NBConnectionHandler : public ConnectionHandler {
     NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
     NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client & getClient() { return _nb_client; };
-    virtual UDP & getUDP() { return _nb_udp; };
-    virtual void disconnect();
-    virtual void connect();
+    virtual unsigned long getTime() override;
+    virtual NetworkConnectionState check() override;
+    virtual Client & getClient() override { return _nb_client; };
+    virtual UDP & getUDP() override { return _nb_udp; };
+    virtual void disconnect() override;
+    virtual void connect() override;
 
   private:
 
