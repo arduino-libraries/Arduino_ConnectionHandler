@@ -90,6 +90,15 @@ void GSMConnectionHandler::disconnect()
   netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
+void GSMConnectionHandler::connect()
+{
+  if (netConnectionState != NetworkConnectionState::INIT && netConnectionState != NetworkConnectionState::CONNECTING)
+  {
+    _keep_alive = true;
+    netConnectionState = NetworkConnectionState::INIT;
+  }
+}
+
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
@@ -211,16 +220,6 @@ void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newStat
   connectionTickTimeInterval = newInterval;
   lastConnectionTickTime = millis();
   netConnectionState = _newState;
-}
-
-
-void GSMConnectionHandler::connect() {
-  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
-    return;
-  }
-  _keep_alive = true;
-  changeConnectionState(NetworkConnectionState::INIT);
-
 }
 
 #endif /* #ifdef BOARD_HAS_GSM  */
