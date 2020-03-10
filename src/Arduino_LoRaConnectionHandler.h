@@ -35,12 +35,12 @@ class LoRaConnectionHandler : public ConnectionHandler
     LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, _lora_class const device_class = _lora_class::CLASS_A);
 
 
-    virtual NetworkConnectionState check();
-    virtual int write(const uint8_t *buf, size_t size);
-    virtual int read();
-    virtual bool available();
-    virtual void disconnect();
-    virtual void connect();
+    virtual NetworkConnectionState check() override;
+    virtual int write(const uint8_t *buf, size_t size) override;
+    virtual int read() override;
+    virtual bool available() override;
+    virtual void disconnect() override;
+    virtual void connect() override;
 
 
   private:
