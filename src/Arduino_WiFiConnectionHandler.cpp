@@ -68,26 +68,26 @@ unsigned long WiFiConnectionHandler::getTime()
 NetworkConnectionState WiFiConnectionHandler::check()
 {
   unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
 
   if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {
     _lastConnectionTickTime = now;
 
-    switch (netConnectionState)
+    switch (_netConnectionState)
     {
-      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit         (); break;
-      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting   (); break;
-      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected    (); break;
-      case NetworkConnectionState::GETTIME:       netConnectionState = update_handleGetTime      (); break;
-      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected (); break;
+      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit         (); break;
+      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting   (); break;
+      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected    (); break;
+      case NetworkConnectionState::GETTIME:       _netConnectionState = update_handleGetTime      (); break;
+      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
+      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected (); break;
       case NetworkConnectionState::ERROR:                                                            break;
       case NetworkConnectionState::CLOSED:                                                           break;
     }
   }
 
-  return netConnectionState;
+  return _netConnectionState;
 }
 
 /******************************************************************************
@@ -96,17 +96,17 @@ NetworkConnectionState WiFiConnectionHandler::check()
 
 void WiFiConnectionHandler::connect()
 {
-  if (netConnectionState != NetworkConnectionState::INIT && netConnectionState != NetworkConnectionState::CONNECTING)
+  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
   {
     _keep_alive = true;
-    netConnectionState = NetworkConnectionState::INIT;
+    _netConnectionState = NetworkConnectionState::INIT;
   }
 }
 
 void WiFiConnectionHandler::disconnect()
 {
   _keep_alive = false;
-  netConnectionState = NetworkConnectionState::DISCONNECTING;
+  _netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()

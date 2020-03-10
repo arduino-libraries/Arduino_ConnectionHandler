@@ -77,41 +77,41 @@ unsigned long GSMConnectionHandler::getTime()
 NetworkConnectionState GSMConnectionHandler::check()
 {
   unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
 
   if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {
     _lastConnectionTickTime = now;
 
-    switch (netConnectionState)
+    switch (_netConnectionState)
     {
-      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit();          break;
-      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting();    break;
-      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected();     break;
+      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit();          break;
+      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting();    break;
+      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected();     break;
       case NetworkConnectionState::GETTIME:       /* Unused */                                       break;
-      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected();  break;
+      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
+      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected();  break;
       case NetworkConnectionState::ERROR:                                                            break;
       case NetworkConnectionState::CLOSED:                                                           break;
     }
   }
 
-  return netConnectionState;
+  return _netConnectionState;
 }
 
 void GSMConnectionHandler::disconnect()
 {
   _gsm.shutdown();
   _keep_alive = false;
-  netConnectionState = NetworkConnectionState::DISCONNECTING;
+  _netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
 void GSMConnectionHandler::connect()
 {
-  if (netConnectionState != NetworkConnectionState::INIT && netConnectionState != NetworkConnectionState::CONNECTING)
+  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
   {
     _keep_alive = true;
-    netConnectionState = NetworkConnectionState::INIT;
+    _netConnectionState = NetworkConnectionState::INIT;
   }
 }
 

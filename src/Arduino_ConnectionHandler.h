@@ -151,7 +151,7 @@ class ConnectionHandler {
     #endif
 
     virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
-      return netConnectionState;
+      return _netConnectionState;
     }
     virtual void connect() = 0;
     virtual void disconnect() = 0;
@@ -162,7 +162,7 @@ class ConnectionHandler {
 
   protected:
 
-    NetworkConnectionState netConnectionState = NetworkConnectionState::INIT;
+    NetworkConnectionState _netConnectionState = NetworkConnectionState::INIT;
 
     void execCallback(NetworkConnectionEvent const event, void * callback_arg);
 

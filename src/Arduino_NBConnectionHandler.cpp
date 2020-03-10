@@ -82,7 +82,7 @@ NetworkConnectionState NBConnectionHandler::check() {
   unsigned long const now = millis();
   int nbAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
-    switch (netConnectionState) {
+    switch (_netConnectionState) {
       case NetworkConnectionState::INIT: {
           init();
         }
@@ -96,7 +96,7 @@ NetworkConnectionState NBConnectionHandler::check() {
           if (networkStatus == NB_NetworkStatus_t::ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
             changeConnectionState(NetworkConnectionState::ERROR);
-            return netConnectionState;
+            return _netConnectionState;
           }
           Debug.print(DBG_INFO, "Sending PING to outer space...");
           int pingResult;
@@ -106,11 +106,11 @@ NetworkConnectionState NBConnectionHandler::check() {
           if (pingResult < 0) {
             Debug.print(DBG_ERROR, "PING failed");
             Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-            return netConnectionState;
+            return _netConnectionState;
           } else {
             Debug.print(DBG_INFO, "Connected to GPRS Network");
             changeConnectionState(NetworkConnectionState::CONNECTED);
-            return netConnectionState;
+            return _netConnectionState;
           }
         }
         break;
@@ -119,7 +119,7 @@ NetworkConnectionState NBConnectionHandler::check() {
           Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", nbAccessAlive);
           if (nbAccessAlive != 1) {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
-            return netConnectionState;
+            return _netConnectionState;
           }
           Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
         }
@@ -139,7 +139,7 @@ NetworkConnectionState NBConnectionHandler::check() {
     lastConnectionTickTime = now;
   }
 
-  return netConnectionState;
+  return _netConnectionState;
 }
 
 /******************************************************************************
@@ -171,7 +171,7 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
         nbAccess.shutdown();
       }
     case NetworkConnectionState::DISCONNECTED: {
-        if (netConnectionState == NetworkConnectionState::CONNECTED) {
+        if (_netConnectionState == NetworkConnectionState::CONNECTED) {
           execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
           Debug.print(DBG_ERROR, "Disconnected from Cellular Network");
           Debug.print(DBG_ERROR, "Attempting reconnection");
@@ -190,12 +190,12 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
   }
   connectionTickTimeInterval = newInterval;
   lastConnectionTickTime = millis();
-  netConnectionState = _newState;
+  _netConnectionState = _newState;
 }
 
 
 void NBConnectionHandler::connect() {
-  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
+  if (_netConnectionState == NetworkConnectionState::INIT || _netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
   keepAlive = true;
