@@ -80,13 +80,13 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, cha
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-unsigned long NBConnectionHandler::getTime() {
+unsigned long NBConnectionHandler::getTime()
+{
   return _nb.getTime();
 }
 
 NetworkConnectionState NBConnectionHandler::check()
 {
-
   unsigned long const now = millis();
   unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
 
@@ -94,25 +94,30 @@ NetworkConnectionState NBConnectionHandler::check()
   {
     _lastConnectionTickTime = now;
 
-    switch (_netConnectionState) {
-      case NetworkConnectionState::INIT: {
-        if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY) {
+    switch (_netConnectionState)
+    {
+      case NetworkConnectionState::INIT:
+      {
+        if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY)
+        {
           Debug.print(DBG_INFO, "SIM card ok");
           _nb.setTimeout(NB_TIMEOUT);
           changeConnectionState(NetworkConnectionState::CONNECTING);
-        } else {
+        }
+        else
+        {
           Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
         }
       }
       break;
 
-      case NetworkConnectionState::CONNECTING: {
-          // NOTE: Blocking Call when 4th parameter == true
+      case NetworkConnectionState::CONNECTING:
+      {
           NB_NetworkStatus_t networkStatus;
           networkStatus = _nb_gprs.attachGPRS(true);
           Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", networkStatus);
-          if (networkStatus == NB_NetworkStatus_t::ERROR) {
-            // NO FURTHER ACTION WILL FOLLOW THIS
+          if (networkStatus == NB_NetworkStatus_t::ERROR)
+          {
             changeConnectionState(NetworkConnectionState::ERROR);
             return _netConnectionState;
           }
@@ -121,36 +126,41 @@ NetworkConnectionState NBConnectionHandler::check()
           // pingResult = _nb_gprs.ping("time.arduino.cc");
           // Debug.print(DBG_INFO, "NB.ping(): %d", pingResult);
           // if (pingResult < 0) {
-          if (pingResult < 0) {
+          if (pingResult < 0)
+          {
             Debug.print(DBG_ERROR, "PING failed");
             Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
             return _netConnectionState;
-          } else {
+          }
+          else
+          {
             Debug.print(DBG_INFO, "Connected to GPRS Network");
             changeConnectionState(NetworkConnectionState::CONNECTED);
             return _netConnectionState;
           }
         }
         break;
-      case NetworkConnectionState::CONNECTED: {
+      case NetworkConnectionState::CONNECTED:
+      {
           int const nb_is_access_alive = _nb.isAccessAlive();
           Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", nb_is_access_alive);
-          if (nb_is_access_alive != 1) {
+          if (nb_is_access_alive != 1)
+          {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
             return _netConnectionState;
           }
           Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
         }
         break;
-      case NetworkConnectionState::DISCONNECTED: {
-          //_nb_gprs.detachGPRS();
-          if (_keep_alive) {
+      case NetworkConnectionState::DISCONNECTED:
+      {
+          if (_keep_alive)
+          {
             Debug.print(DBG_VERBOSE, "keep alive > INIT");
             changeConnectionState(NetworkConnectionState::INIT);
           } else {
             changeConnectionState(NetworkConnectionState::CLOSED);
           }
-          //changeConnectionState(NetworkConnectionState::CONNECTING);
         }
         break;
     }
