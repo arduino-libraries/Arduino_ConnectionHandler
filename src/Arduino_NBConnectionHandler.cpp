@@ -143,6 +143,22 @@ NetworkConnectionState NBConnectionHandler::check() {
   return _netConnectionState;
 }
 
+void NBConnectionHandler::connect()
+{
+  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
+  {
+    _keep_alive = true;
+    changeConnectionState(NetworkConnectionState::INIT);
+  }
+}
+
+void NBConnectionHandler::disconnect()
+{
+  changeConnectionState(NetworkConnectionState::DISCONNECTING);
+  _keep_alive = false;
+}
+
+
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
@@ -192,22 +208,6 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
   connectionTickTimeInterval = newInterval;
   lastConnectionTickTime = millis();
   _netConnectionState = _newState;
-}
-
-
-void NBConnectionHandler::connect() {
-  if (_netConnectionState == NetworkConnectionState::INIT || _netConnectionState == NetworkConnectionState::CONNECTING) {
-    return;
-  }
-  _keep_alive = true;
-  changeConnectionState(NetworkConnectionState::INIT);
-
-}
-void NBConnectionHandler::disconnect() {
-  //WiFi.end();
-
-  changeConnectionState(NetworkConnectionState::DISCONNECTING);
-  _keep_alive = false;
 }
 
 #endif /* #ifdef BOARD_HAS_NB  */
