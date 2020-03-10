@@ -62,22 +62,12 @@ unsigned long GSMConnectionHandler::getTime() {
 
 NetworkConnectionState GSMConnectionHandler::check() {
   unsigned long const now = millis();
-  int gsmAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
     switch (netConnectionState)
     {
       case NetworkConnectionState::INIT:       netConnectionState = update_handleInit();       break;
       case NetworkConnectionState::CONNECTING: netConnectionState = update_handleConnecting(); break;
-      case NetworkConnectionState::CONNECTED: {
-          gsmAccessAlive = gsmAccess.isAccessAlive();
-          Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", gsmAccessAlive);
-          if (gsmAccessAlive != 1) {
-            changeConnectionState(NetworkConnectionState::DISCONNECTED);
-            return netConnectionState;
-          }
-          Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
-        }
-        break;
+      case NetworkConnectionState::CONNECTED:  netConnectionState = update_handleConnected();  break;
       case NetworkConnectionState::DISCONNECTED: {
           //gprs.detachGPRS();
           if (keepAlive) {
@@ -140,6 +130,19 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
     execCallback(NetworkConnectionEvent::CONNECTED, 0);
     return NetworkConnectionState::CONNECTED;
   }
+}
+
+NetworkConnectionState GSMConnectionHandler::update_handleConnected()
+{
+  int const is_gsm_access_alive = gsmAccess.isAccessAlive();
+  Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", is_gsm_access_alive);
+  if (is_gsm_access_alive != 1)
+  {
+    execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
+    return NetworkConnectionState::DISCONNECTED;
+  }
+  Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
+  return NetworkConnectionState::CONNECTED;
 }
 
 void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
