@@ -38,7 +38,7 @@ class GSMConnectionHandler : public ConnectionHandler {
     virtual unsigned long getTime() override;
     virtual NetworkConnectionState check() override;
     virtual Client & getClient() override { return _gsm_client; };
-    virtual UDP & getUDP() override { return _udp; };
+    virtual UDP & getUDP() override { return _gsm_udp; };
     virtual void disconnect() override;
     virtual void connect() override;
 
@@ -48,14 +48,14 @@ class GSMConnectionHandler : public ConnectionHandler {
     const char * _apn;
     const char * _login;
     const char * _pass;
+    bool _keep_alive;
     unsigned long _lastConnectionTickTime;
 
     GSM _gsm;
     GPRS _gprs;
-    GSMUDP _udp;
+    GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 
-    bool _keep_alive;
 
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();

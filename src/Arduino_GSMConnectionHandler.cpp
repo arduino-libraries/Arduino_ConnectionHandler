@@ -59,8 +59,8 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, _lastConnectionTickTime(millis())
 , _keep_alive(keep_alive)
+, _lastConnectionTickTime(millis())
 {
 
 }
