@@ -158,7 +158,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
 {
   if (!_modem.begin(_band))
   {
-    execCallback(NetworkConnectionEvent::ERROR, 0);
+    execCallback(NetworkConnectionEvent::ERROR);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   }
   //A delay is required between _modem.begin(band) and _modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
@@ -174,13 +174,13 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
   bool const network_status = _modem.joinOTAA(_appeui, _appkey);
   if (network_status != true)
   {
-    execCallback(NetworkConnectionEvent::ERROR, 0);
+    execCallback(NetworkConnectionEvent::ERROR);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
     return NetworkConnectionState::ERROR;
   }
 
   Debug.print(DBG_INFO, "Connected to the network");
-  execCallback(NetworkConnectionEvent::CONNECTED, 0);
+  execCallback(NetworkConnectionEvent::CONNECTED);
   return NetworkConnectionState::CONNECTED;
 }
 
@@ -188,7 +188,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 {
   bool const network_status = _modem.connected();
   if (network_status != true) {
-    execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
+    execCallback(NetworkConnectionEvent::DISCONNECTED);
 
     Debug.print(DBG_ERROR, "Connection to the network lost.");
     if (_keep_alive)
@@ -202,7 +202,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 {
-  execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
+  execCallback(NetworkConnectionEvent::DISCONNECTED);
 
   Debug.print(DBG_ERROR, "Connection to the network lost.");
   if (_keep_alive)

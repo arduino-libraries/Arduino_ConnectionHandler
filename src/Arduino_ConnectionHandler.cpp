@@ -51,14 +51,14 @@ void ConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void ConnectionHandler::execCallback(NetworkConnectionEvent const event, void * callback_arg) {
+void ConnectionHandler::execCallback(NetworkConnectionEvent const event) {
   switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       if(_on_connect_event_callback)    _on_connect_event_callback   (callback_arg); break;
-    case NetworkConnectionEvent::DISCONNECTED:    if(_on_disconnect_event_callback) _on_disconnect_event_callback(callback_arg); break;
-    case NetworkConnectionEvent::ERROR:           if(_on_error_event_callback)      _on_error_event_callback     (callback_arg); break;
-    case NetworkConnectionEvent::INIT:                                                                                           break;
-    case NetworkConnectionEvent::CONNECTING:                                                                                     break;
-    case NetworkConnectionEvent::DISCONNECTING:                                                                                  break;
-    case NetworkConnectionEvent::CLOSED:                                                                                         break;
+    case NetworkConnectionEvent::CONNECTED:       if(_on_connect_event_callback)    _on_connect_event_callback   (); break;
+    case NetworkConnectionEvent::DISCONNECTED:    if(_on_disconnect_event_callback) _on_disconnect_event_callback(); break;
+    case NetworkConnectionEvent::ERROR:           if(_on_error_event_callback)      _on_error_event_callback     (); break;
+    case NetworkConnectionEvent::INIT:                                                                               break;
+    case NetworkConnectionEvent::CONNECTING:                                                                         break;
+    case NetworkConnectionEvent::DISCONNECTING:                                                                      break;
+    case NetworkConnectionEvent::CLOSED:                                                                             break;
   }
 }

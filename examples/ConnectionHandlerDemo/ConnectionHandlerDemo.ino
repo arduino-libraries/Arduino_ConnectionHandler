@@ -35,10 +35,8 @@ void setup() {
 
   setDebugMessageLevel(DBG_INFO);
 
-  /* Register a function to be called upon connection to a network */
-  conMan.addConnectCallback(onNetworkConnect);
-  /* Register a function to be called upon disconnection from a network */
-  conMan.addDisconnectCallback(onNetworkDisconnect);
+  conMan.addCallback(NetworkConnectionEvent::CONNECTED, onNetworkConnect);
+  conMan.addCallback(NetworkConnectionEvent::DISCONNECTED, onNetworkDisconnect);
 }
 
 void loop() {
@@ -54,10 +52,10 @@ void loop() {
   conMan.check();
 }
 
-void onNetworkConnect(void *_arg) {
+void onNetworkConnect() {
   Serial.println(">>>> CONNECTED to network");
 }
 
-void onNetworkDisconnect(void *_arg) {
+void onNetworkDisconnect() {
   Serial.println(">>>> DISCONNECTED from network");
 }

@@ -128,7 +128,7 @@ enum class NetworkConnectionEvent {
   INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
 };
 
-typedef void (*OnNetworkEventCallback)(void * /* arg */);
+typedef void (*OnNetworkEventCallback)();
 
 /******************************************************************************
    CLASS DECLARATION
@@ -164,7 +164,7 @@ class ConnectionHandler {
 
     NetworkConnectionState _netConnectionState = NetworkConnectionState::INIT;
 
-    void execCallback(NetworkConnectionEvent const event, void * callback_arg);
+    void execCallback(NetworkConnectionEvent const event);
 
   private:
 

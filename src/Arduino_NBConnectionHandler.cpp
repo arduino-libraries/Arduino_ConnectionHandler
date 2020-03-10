@@ -159,7 +159,7 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
       }
       break;
     case NetworkConnectionState::CONNECTED: {
-        execCallback(NetworkConnectionEvent::CONNECTED, 0);
+        execCallback(NetworkConnectionEvent::CONNECTED);
         newInterval = CHECK_INTERVAL_CONNECTED;
       }
       break;
@@ -172,7 +172,7 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
       }
     case NetworkConnectionState::DISCONNECTED: {
         if (_netConnectionState == NetworkConnectionState::CONNECTED) {
-          execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
+          execCallback(NetworkConnectionEvent::DISCONNECTED);
           Debug.print(DBG_ERROR, "Disconnected from Cellular Network");
           Debug.print(DBG_ERROR, "Attempting reconnection");
           if (keepAlive) {
@@ -183,7 +183,7 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
       }
       break;
     case NetworkConnectionState::ERROR: {
-        execCallback(NetworkConnectionEvent::ERROR, 0);
+        execCallback(NetworkConnectionEvent::ERROR);
         Debug.print(DBG_ERROR, "GPRS attach failed\n\rMake sure the antenna is connected and reset your board.");
       }
       break;
