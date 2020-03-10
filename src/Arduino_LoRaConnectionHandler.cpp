@@ -33,14 +33,14 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;   /*    NOT USED
    CTOR/DTOR
  ******************************************************************************/
 
-LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band band, _lora_class deviceClass) :
-  appeui(_appeui),
-  appkey(_appkey),
-  band(band),
-  deviceClass(deviceClass),
-  lastConnectionTickTime(millis()),
-  connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(false)
+LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, _lora_class const device_class)
+: _appeui(appeui)
+, _appkey(appkey)
+, _band(band)
+, _device_class(device_class)
+, _lastConnectionTickTime(millis())
+, _connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
+, _keep_alive(false)
 {
 
 }
@@ -51,9 +51,9 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
 
 int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
   int err;
-  modem.beginPacket();
-  modem.write(buf, size);
-  err = modem.endPacket(true);
+  _modem.beginPacket();
+  _modem.write(buf, size);
+  err = _modem.endPacket(true);
   if (err != size) {
     switch (err) {
       case LoRaCommunicationError::LORA_ERROR_ACK_NOT_RECEIVED: {
@@ -91,20 +91,20 @@ int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
 }
 
 int LoRaConnectionHandler::read() {
-  return modem.read();
+  return _modem.read();
 }
 
 bool LoRaConnectionHandler::available() {
-  return modem.available();
+  return _modem.available();
 }
 
 NetworkConnectionState LoRaConnectionHandler::check() {
 
   unsigned long const now = millis();
   int networkStatus = 0;
-  if (now - lastConnectionTickTime > connectionTickTimeInterval) { /*  time bracket  */
+  if (now - _lastConnectionTickTime > _connectionTickTimeInterval) { /*  time bracket  */
 
-    lastConnectionTickTime = now;
+    _lastConnectionTickTime = now;
     switch (netConnectionState) {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit(); break;
       case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting(); break;
@@ -125,47 +125,47 @@ NetworkConnectionState LoRaConnectionHandler::check() {
 
 NetworkConnectionState LoRaConnectionHandler::update_handleInit() {
   Debug.print(DBG_VERBOSE, "::INIT");
-  if (!modem.begin(band)) {
+  if (!_modem.begin(_band)) {
     Debug.print(DBG_VERBOSE, "Failed to start module");
     execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   };
-  //A delay is required between modem.begin(band) and modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
+  //A delay is required between _modem.begin(band) and _modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
   delay(100);
-  modem.configureClass(deviceClass);
+  _modem.configureClass(_device_class);
   delay(100);
   Debug.print(DBG_INFO, "Connecting to the network");
-  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
+  _connectionTickTimeInterval = CHECK_INTERVAL_CONNECTING;
   return NetworkConnectionState::CONNECTING;
 }
 
 NetworkConnectionState LoRaConnectionHandler::update_handleConnecting() {
   Debug.print(DBG_VERBOSE, "::CONNECTING");
-  bool networkStatus = modem.joinOTAA(appeui, appkey);
-  if (networkStatus != true) {
+  bool const network_status = _modem.joinOTAA(_appeui, _appkey);
+  if (network_status != true) {
     execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
     return NetworkConnectionState::ERROR;
   }
 
   Debug.print(DBG_INFO, "Connected to the network");
-  connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
+  _connectionTickTimeInterval = CHECK_INTERVAL_CONNECTED;
   execCallback(NetworkConnectionEvent::CONNECTED, 0);
   return NetworkConnectionState::CONNECTED;
 }
 
 NetworkConnectionState LoRaConnectionHandler::update_handleConnected() {
 
-  bool networkStatus = modem.connected();
-  Debug.print(DBG_VERBOSE, "Connection state: %d", networkStatus);
-  if (networkStatus != true) {
+  bool const network_status = _modem.connected();
+  Debug.print(DBG_VERBOSE, "Connection state: %d", network_status);
+  if (network_status != true) {
     execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
 
     Debug.print(DBG_ERROR, "Connection to the network lost.");
-    if (keepAlive) {
+    if (_keep_alive) {
       Debug.print(DBG_ERROR, "Attempting reconnection");
     }
-    connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
+    _connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
     return NetworkConnectionState::DISCONNECTED;
   }
   Debug.print(DBG_VERBOSE, "Connected to the network");
@@ -177,17 +177,17 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting() {
   execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
 
   Debug.print(DBG_ERROR, "Connection to the network lost.");
-  if (keepAlive) {
+  if (_keep_alive) {
     Debug.print(DBG_ERROR, "Attempting reconnection");
   }
-  connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
+  _connectionTickTimeInterval = CHECK_INTERVAL_DISCONNECTED;
   return NetworkConnectionState::DISCONNECTED;
 }
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected() {
-  if (keepAlive) {
+  if (_keep_alive) {
     Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
-    connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+    _connectionTickTimeInterval = CHECK_INTERVAL_INIT;
     return NetworkConnectionState::INIT;
   } else {
     Debug.print(DBG_VERBOSE, "Connection to the network terminated");
@@ -200,8 +200,8 @@ void LoRaConnectionHandler::connect() {
   if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
-  keepAlive = true;
-  connectionTickTimeInterval = CHECK_INTERVAL_INIT;
+  _keep_alive = true;
+  _connectionTickTimeInterval = CHECK_INTERVAL_INIT;
   netConnectionState = NetworkConnectionState::INIT;
 
 }

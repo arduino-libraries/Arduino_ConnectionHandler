@@ -42,7 +42,7 @@ typedef enum {
 
 class LoRaConnectionHandler : public ConnectionHandler {
   public:
-    LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = _lora_band::EU868, _lora_class = _lora_class::CLASS_A);
+    LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, _lora_class const device_class = _lora_class::CLASS_A);
 
     virtual NetworkConnectionState check();
 
@@ -64,15 +64,14 @@ class LoRaConnectionHandler : public ConnectionHandler {
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
     const int CHECK_INTERVAL_ERROR = 500;
 
-    LoRaModem modem;
-    const char *appeui, *appkey;
-    _lora_band band;
-    _lora_class deviceClass;
-    unsigned long lastConnectionTickTime;
-
-    int connectionTickTimeInterval;
-
-    bool keepAlive;
+    char const * _appeui;
+    char const * _appkey;
+    _lora_band _band;
+    _lora_class _device_class;
+    unsigned long _lastConnectionTickTime;
+    int _connectionTickTimeInterval;
+    bool _keep_alive;
+    LoRaModem _modem;
 
     NetworkConnectionState update_handleInit();
     NetworkConnectionState update_handleConnecting();
