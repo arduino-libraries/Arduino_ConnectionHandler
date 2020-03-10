@@ -32,25 +32,15 @@
 
 class NBConnectionHandler : public ConnectionHandler {
   public:
-    NBConnectionHandler(const char *pin, const bool keepAlive = true);
-    NBConnectionHandler(const char *pin, const char *apn, const bool keepAlive = true);
-    NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
+    NBConnectionHandler(char const * pin, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
 
     virtual void init();
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return _gsm_client;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
-
-    NBClient _gsm_client;
-    NB  nbAccess;
-    GPRS _gprs;
-    NBUDP udp;
-
+    virtual Client & getClient() { return _nb_client; };
+    virtual UDP & getUDP() { return _nb_udp; };
     virtual void disconnect();
     virtual void connect();
 
@@ -66,13 +56,18 @@ class NBConnectionHandler : public ConnectionHandler {
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
     const int CHECK_INTERVAL_ERROR = 500;
 
-    const char *pin, *apn, *login, *pass;
+    char const * _pin;
+    char const * _apn;
+    char const * _login;
+    char const * _pass;
     unsigned long lastConnectionTickTime;
     int connectionTickTimeInterval;
+    bool _keep_alive;
 
-
-    bool keepAlive;
-
+    NB _nb;
+    GPRS _nb_gprs;
+    NBUDP _nb_udp;
+    NBClient _nb_client;
 };
 
 #endif /* #ifdef BOARD_HAS_NB  */

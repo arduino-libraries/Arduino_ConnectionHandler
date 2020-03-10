@@ -41,22 +41,28 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
-NBConnectionHandler::NBConnectionHandler(const char *pin, bool _keepAlive) :
-  NBConnectionHandler(pin, "", _keepAlive) {
+NBConnectionHandler::NBConnectionHandler(char const * pin, bool const keep_alive)
+: NBConnectionHandler(pin, "", keep_alive)
+{
+
 }
 
-NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, bool _keepAlive) :
-  NBConnectionHandler(pin, apn, "", "", _keepAlive) {
+NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive)
+: NBConnectionHandler(pin, apn, "", "", keep_alive)
+{
+
 }
 
-NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, bool _keepAlive) :
-  pin(pin),
-  apn(apn),
-  login(login),
-  pass(pass),
-  lastConnectionTickTime(millis()),
-  connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(_keepAlive) {
+NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
+: _pin(pin)
+, _apn(apn)
+, _login(login)
+, _pass(pass)
+, lastConnectionTickTime(millis())
+, connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
+, _keep_alive(keep_alive)
+{
+
 }
 
 /******************************************************************************
@@ -65,9 +71,9 @@ NBConnectionHandler::NBConnectionHandler(const char *pin, const char *apn, const
 
 void NBConnectionHandler::init() {
   char msgBuffer[120];
-  if (nbAccess.begin(pin, apn, login, pass) == NB_READY) {
+  if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY) {
     Debug.print(DBG_INFO, "SIM card ok");
-    nbAccess.setTimeout(CHECK_INTERVAL_RETRYING);
+    _nb.setTimeout(CHECK_INTERVAL_RETRYING);
     changeConnectionState(NetworkConnectionState::CONNECTING);
   } else {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
@@ -75,12 +81,12 @@ void NBConnectionHandler::init() {
 }
 
 unsigned long NBConnectionHandler::getTime() {
-  return nbAccess.getTime();
+  return _nb.getTime();
 }
 
 NetworkConnectionState NBConnectionHandler::check() {
   unsigned long const now = millis();
-  int nbAccessAlive;
+  int _nbAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
     switch (_netConnectionState) {
       case NetworkConnectionState::INIT: {
@@ -91,7 +97,7 @@ NetworkConnectionState NBConnectionHandler::check() {
       case NetworkConnectionState::CONNECTING: {
           // NOTE: Blocking Call when 4th parameter == true
           NB_NetworkStatus_t networkStatus;
-          networkStatus = _gprs.attachGPRS(true);
+          networkStatus = _nb_gprs.attachGPRS(true);
           Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", networkStatus);
           if (networkStatus == NB_NetworkStatus_t::ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
@@ -100,7 +106,7 @@ NetworkConnectionState NBConnectionHandler::check() {
           }
           Debug.print(DBG_INFO, "Sending PING to outer space...");
           int pingResult;
-          // pingResult = _gprs.ping("time.arduino.cc");
+          // pingResult = _nb_gprs.ping("time.arduino.cc");
           // Debug.print(DBG_INFO, "NB.ping(): %d", pingResult);
           // if (pingResult < 0) {
           if (pingResult < 0) {
@@ -115,9 +121,9 @@ NetworkConnectionState NBConnectionHandler::check() {
         }
         break;
       case NetworkConnectionState::CONNECTED: {
-          nbAccessAlive = nbAccess.isAccessAlive();
-          Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", nbAccessAlive);
-          if (nbAccessAlive != 1) {
+          _nbAlive = _nb.isAccessAlive();
+          Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", _nbAlive);
+          if (_nbAlive != 1) {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
             return _netConnectionState;
           }
@@ -125,8 +131,8 @@ NetworkConnectionState NBConnectionHandler::check() {
         }
         break;
       case NetworkConnectionState::DISCONNECTED: {
-          //_gprs.detachGPRS();
-          if (keepAlive) {
+          //_nb_gprs.detachGPRS();
+          if (_keep_alive) {
             Debug.print(DBG_VERBOSE, "keep alive > INIT");
             changeConnectionState(NetworkConnectionState::INIT);
           } else {
@@ -168,14 +174,14 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
       break;
     case NetworkConnectionState::DISCONNECTING: {
         Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
-        nbAccess.shutdown();
+        _nb.shutdown();
       }
     case NetworkConnectionState::DISCONNECTED: {
         if (_netConnectionState == NetworkConnectionState::CONNECTED) {
           execCallback(NetworkConnectionEvent::DISCONNECTED);
           Debug.print(DBG_ERROR, "Disconnected from Cellular Network");
           Debug.print(DBG_ERROR, "Attempting reconnection");
-          if (keepAlive) {
+          if (_keep_alive) {
             Debug.print(DBG_ERROR, "Attempting reconnection");
           }
         }
@@ -198,7 +204,7 @@ void NBConnectionHandler::connect() {
   if (_netConnectionState == NetworkConnectionState::INIT || _netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
-  keepAlive = true;
+  _keep_alive = true;
   changeConnectionState(NetworkConnectionState::INIT);
 
 }
@@ -206,7 +212,7 @@ void NBConnectionHandler::disconnect() {
   //WiFi.end();
 
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
-  keepAlive = false;
+  _keep_alive = false;
 }
 
 #endif /* #ifdef BOARD_HAS_NB  */
