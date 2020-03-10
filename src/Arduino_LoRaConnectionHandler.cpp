@@ -48,10 +48,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-unsigned long LoRaConnectionHandler::getTime() {
-  return 0;
-}
-
 int LoRaConnectionHandler::write(const uint8_t *buf, size_t size) {
   int err;
   modem.beginPacket();
