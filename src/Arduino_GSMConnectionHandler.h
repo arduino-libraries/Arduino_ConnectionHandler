@@ -35,7 +35,6 @@ class GSMConnectionHandler : public ConnectionHandler {
   public:
     GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
-    virtual void init();
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
     virtual Client &getClient() {
@@ -71,6 +70,8 @@ class GSMConnectionHandler : public ConnectionHandler {
 
 
     bool keepAlive;
+
+    NetworkConnectionState update_handleInit         ();
 
 };
 

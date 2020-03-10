@@ -56,17 +56,6 @@ GSMConnectionHandler::GSMConnectionHandler(const char *pin, const char *apn, con
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void GSMConnectionHandler::init() {
-  char msgBuffer[120];
-  if (gsmAccess.begin(pin) == GSM_READY) {
-    Debug.print(DBG_INFO, "SIM card ok");
-    gsmAccess.setTimeout(CHECK_INTERVAL_RETRYING);
-    changeConnectionState(NetworkConnectionState::CONNECTING);
-  } else {
-    Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
-  }
-}
-
 unsigned long GSMConnectionHandler::getTime() {
   return gsmAccess.getTime();
 }
@@ -75,11 +64,9 @@ NetworkConnectionState GSMConnectionHandler::check() {
   unsigned long const now = millis();
   int gsmAccessAlive;
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
-    switch (netConnectionState) {
-      case NetworkConnectionState::INIT: {
-          init();
-        }
-        break;
+    switch (netConnectionState)
+    {
+      case NetworkConnectionState::INIT: netConnectionState = update_handleInit(); break;
 
       case NetworkConnectionState::CONNECTING: {
           // NOTE: Blocking Call when 4th parameter == true
@@ -137,6 +124,21 @@ NetworkConnectionState GSMConnectionHandler::check() {
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
+
+NetworkConnectionState GSMConnectionHandler::update_handleInit()
+{
+  if (gsmAccess.begin(pin) == GSM_READY)
+  {
+    Debug.print(DBG_INFO, "SIM card ok");
+    gsmAccess.setTimeout(CHECK_INTERVAL_RETRYING);
+    return NetworkConnectionState::CONNECTING;
+  }
+  else
+  {
+    Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
+    return NetworkConnectionState::ERROR;
+  }
+}
 
 void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
   int newInterval = CHECK_INTERVAL_IDLE;
