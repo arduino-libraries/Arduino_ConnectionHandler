@@ -82,6 +82,14 @@ NetworkConnectionState GSMConnectionHandler::check() {
   return netConnectionState;
 }
 
+void GSMConnectionHandler::disconnect()
+{
+  Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
+  _gsm.shutdown();
+  _keep_alive = false;
+  netConnectionState = NetworkConnectionState::DISCONNECTING;
+}
+
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
@@ -181,8 +189,6 @@ void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newStat
       }
       break;
     case NetworkConnectionState::DISCONNECTING: {
-        Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
-        _gsm.shutdown();
       }
     case NetworkConnectionState::DISCONNECTED: {
         if (netConnectionState == NetworkConnectionState::CONNECTED) {
@@ -215,12 +221,6 @@ void GSMConnectionHandler::connect() {
   _keep_alive = true;
   changeConnectionState(NetworkConnectionState::INIT);
 
-}
-void GSMConnectionHandler::disconnect() {
-  //WiFi.end();
-
-  changeConnectionState(NetworkConnectionState::DISCONNECTING);
-  _keep_alive = false;
 }
 
 #endif /* #ifdef BOARD_HAS_GSM  */
