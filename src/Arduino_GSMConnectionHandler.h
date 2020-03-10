@@ -74,6 +74,7 @@ class GSMConnectionHandler : public ConnectionHandler {
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();
     NetworkConnectionState update_handleConnected    ();
+    NetworkConnectionState update_handleDisconnecting();
 
 };
 

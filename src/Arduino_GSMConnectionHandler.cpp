@@ -65,9 +65,11 @@ NetworkConnectionState GSMConnectionHandler::check() {
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
     switch (netConnectionState)
     {
-      case NetworkConnectionState::INIT:       netConnectionState = update_handleInit();       break;
-      case NetworkConnectionState::CONNECTING: netConnectionState = update_handleConnecting(); break;
-      case NetworkConnectionState::CONNECTED:  netConnectionState = update_handleConnected();  break;
+      case NetworkConnectionState::INIT:          netConnectionState = update_handleInit();          break;
+      case NetworkConnectionState::CONNECTING:    netConnectionState = update_handleConnecting();    break;
+      case NetworkConnectionState::CONNECTED:     netConnectionState = update_handleConnected();     break;
+      case NetworkConnectionState::GETTIME:       /* Unused */                                       break;
+      case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
       case NetworkConnectionState::DISCONNECTED: {
           //gprs.detachGPRS();
           if (keepAlive) {
@@ -143,6 +145,12 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
   }
   Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
   return NetworkConnectionState::CONNECTED;
+}
+
+NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
+{
+  execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
+  return NetworkConnectionState::DISCONNECTED;
 }
 
 void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
