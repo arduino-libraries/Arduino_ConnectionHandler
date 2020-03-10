@@ -42,14 +42,16 @@ static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
    CTOR/DTOR
  ******************************************************************************/
 
-GSMConnectionHandler::GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, bool _keepAlive) :
-  pin(pin),
-  apn(apn),
-  login(login),
-  pass(pass),
-  lastConnectionTickTime(millis()),
-  connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(_keepAlive) {
+GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
+: _pin(pin)
+, _apn(apn)
+, _login(login)
+, _pass(pass)
+, lastConnectionTickTime(millis())
+, connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
+, _keep_alive(keep_alive)
+{
+
 }
 
 /******************************************************************************
@@ -57,7 +59,7 @@ GSMConnectionHandler::GSMConnectionHandler(const char *pin, const char *apn, con
  ******************************************************************************/
 
 unsigned long GSMConnectionHandler::getTime() {
-  return gsmAccess.getTime();
+  return _gsm.getTime();
 }
 
 NetworkConnectionState GSMConnectionHandler::check() {
@@ -71,6 +73,8 @@ NetworkConnectionState GSMConnectionHandler::check() {
       case NetworkConnectionState::GETTIME:       /* Unused */                                       break;
       case NetworkConnectionState::DISCONNECTING: netConnectionState = update_handleDisconnecting(); break;
       case NetworkConnectionState::DISCONNECTED:  netConnectionState = update_handleDisconnected();  break;
+      case NetworkConnectionState::ERROR:                                                            break;
+      case NetworkConnectionState::CLOSED:                                                           break;
     }
     lastConnectionTickTime = now;
   }
@@ -84,10 +88,10 @@ NetworkConnectionState GSMConnectionHandler::check() {
 
 NetworkConnectionState GSMConnectionHandler::update_handleInit()
 {
-  if (gsmAccess.begin(pin) == GSM_READY)
+  if (_gsm.begin(_pin) == GSM_READY)
   {
     Debug.print(DBG_INFO, "SIM card ok");
-    gsmAccess.setTimeout(CHECK_INTERVAL_RETRYING);
+    _gsm.setTimeout(CHECK_INTERVAL_RETRYING);
     return NetworkConnectionState::CONNECTING;
   }
   else
@@ -100,7 +104,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 {
-  GSM3_NetworkStatus_t const network_status = gprs.attachGPRS(apn, login, pass, true);
+  GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
   Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
   if (network_status == GSM3_NetworkStatus_t::ERROR)
   {
@@ -108,7 +112,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::ERROR;
   }
   Debug.print(DBG_INFO, "Sending PING to outer space...");
-  int const ping_result = gprs.ping("time.arduino.cc");
+  int const ping_result = _gprs.ping("time.arduino.cc");
   Debug.print(DBG_INFO, "GPRS.ping(): %d", ping_result);
   if (ping_result < 0)
   {
@@ -126,7 +130,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 {
-  int const is_gsm_access_alive = gsmAccess.isAccessAlive();
+  int const is_gsm_access_alive = _gsm.isAccessAlive();
   Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", is_gsm_access_alive);
   if (is_gsm_access_alive != 1)
   {
@@ -145,7 +149,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
 {
-  if (keepAlive)
+  if (_keep_alive)
   {
     Debug.print(DBG_VERBOSE, "keep alive > INIT");
     return NetworkConnectionState::INIT;
@@ -178,14 +182,14 @@ void GSMConnectionHandler::changeConnectionState(NetworkConnectionState _newStat
       break;
     case NetworkConnectionState::DISCONNECTING: {
         Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
-        gsmAccess.shutdown();
+        _gsm.shutdown();
       }
     case NetworkConnectionState::DISCONNECTED: {
         if (netConnectionState == NetworkConnectionState::CONNECTED) {
           execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
           Debug.print(DBG_ERROR, "Disconnected from Cellular Network");
           Debug.print(DBG_ERROR, "Attempting reconnection");
-          if (keepAlive) {
+          if (_keep_alive) {
             Debug.print(DBG_ERROR, "Attempting reconnection");
           }
         }
@@ -208,7 +212,7 @@ void GSMConnectionHandler::connect() {
   if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
     return;
   }
-  keepAlive = true;
+  _keep_alive = true;
   changeConnectionState(NetworkConnectionState::INIT);
 
 }
@@ -216,7 +220,7 @@ void GSMConnectionHandler::disconnect() {
   //WiFi.end();
 
   changeConnectionState(NetworkConnectionState::DISCONNECTING);
-  keepAlive = false;
+  _keep_alive = false;
 }
 
 #endif /* #ifdef BOARD_HAS_GSM  */

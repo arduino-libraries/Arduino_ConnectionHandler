@@ -40,15 +40,15 @@ class NBConnectionHandler : public ConnectionHandler {
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
     virtual Client &getClient() {
-      return networkClient;
+      return _gsm_client;
     };
     virtual UDP &getUDP() {
       return udp;
     };
 
-    NBClient networkClient;
+    NBClient _gsm_client;
     NB  nbAccess;
-    GPRS gprs;
+    GPRS _gprs;
     NBUDP udp;
 
     virtual void disconnect();

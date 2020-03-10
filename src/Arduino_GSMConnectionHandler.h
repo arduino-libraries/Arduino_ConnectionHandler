@@ -33,22 +33,12 @@
 
 class GSMConnectionHandler : public ConnectionHandler {
   public:
-    GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
+    GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
 
     virtual unsigned long getTime();
     virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return networkClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
-
-    GSMClient networkClient;
-    GSM gsmAccess;
-    GPRS gprs;
-    GSMUDP udp;
-
+    virtual Client &getClient() { return _gsm_client; };
+    virtual UDP &getUDP() { return _udp; };
     virtual void disconnect();
     virtual void connect();
 
@@ -64,12 +54,19 @@ class GSMConnectionHandler : public ConnectionHandler {
     const int CHECK_INTERVAL_DISCONNECTED = 1000;
     const int CHECK_INTERVAL_ERROR = 500;
 
-    const char *pin, *apn, *login, *pass;
+    const char * _pin;
+    const char * _apn;
+    const char * _login;
+    const char * _pass;
     unsigned long lastConnectionTickTime;
     int connectionTickTimeInterval;
 
+    GSM _gsm;
+    GPRS _gprs;
+    GSMUDP _udp;
+    GSMClient _gsm_client;
 
-    bool keepAlive;
+    bool _keep_alive;
 
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();

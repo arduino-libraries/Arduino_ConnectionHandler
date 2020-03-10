@@ -91,7 +91,7 @@ NetworkConnectionState NBConnectionHandler::check() {
       case NetworkConnectionState::CONNECTING: {
           // NOTE: Blocking Call when 4th parameter == true
           NB_NetworkStatus_t networkStatus;
-          networkStatus = gprs.attachGPRS(true);
+          networkStatus = _gprs.attachGPRS(true);
           Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", networkStatus);
           if (networkStatus == NB_NetworkStatus_t::ERROR) {
             // NO FURTHER ACTION WILL FOLLOW THIS
@@ -100,7 +100,7 @@ NetworkConnectionState NBConnectionHandler::check() {
           }
           Debug.print(DBG_INFO, "Sending PING to outer space...");
           int pingResult;
-          // pingResult = gprs.ping("time.arduino.cc");
+          // pingResult = _gprs.ping("time.arduino.cc");
           // Debug.print(DBG_INFO, "NB.ping(): %d", pingResult);
           // if (pingResult < 0) {
           if (pingResult < 0) {
@@ -125,7 +125,7 @@ NetworkConnectionState NBConnectionHandler::check() {
         }
         break;
       case NetworkConnectionState::DISCONNECTED: {
-          //gprs.detachGPRS();
+          //_gprs.detachGPRS();
           if (keepAlive) {
             Debug.print(DBG_VERBOSE, "keep alive > INIT");
             changeConnectionState(NetworkConnectionState::INIT);
