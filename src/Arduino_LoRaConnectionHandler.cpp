@@ -40,8 +40,9 @@ LoRaConnectionHandler::LoRaConnectionHandler(const char *_appeui, const char *_a
   deviceClass(deviceClass),
   lastConnectionTickTime(millis()),
   connectionTickTimeInterval(CHECK_INTERVAL_IDLE),
-  keepAlive(false) {
-  netConnectionState = NetworkConnectionState::INIT;
+  keepAlive(false)
+{
+
 }
 
 /******************************************************************************
