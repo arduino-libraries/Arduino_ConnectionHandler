@@ -119,6 +119,19 @@ NetworkConnectionState LoRaConnectionHandler::check() {
   return netConnectionState;
 }
 
+void LoRaConnectionHandler::connect()
+{
+  if (netConnectionState != NetworkConnectionState::INIT && netConnectionState != NetworkConnectionState::CONNECTING)
+  {
+    _keep_alive = true;
+    netConnectionState = NetworkConnectionState::INIT;
+  }
+}
+void LoRaConnectionHandler::disconnect()
+{
+  /* Do nothing */
+}
+
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
@@ -196,17 +209,4 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected() {
 
 }
 
-void LoRaConnectionHandler::connect() {
-  if (netConnectionState == NetworkConnectionState::INIT || netConnectionState == NetworkConnectionState::CONNECTING) {
-    return;
-  }
-  _keep_alive = true;
-  _connectionTickTimeInterval = CHECK_INTERVAL_INIT;
-  netConnectionState = NetworkConnectionState::INIT;
-
-}
-void LoRaConnectionHandler::disconnect() {
-  // do nothing
-  return;
-}
 #endif
