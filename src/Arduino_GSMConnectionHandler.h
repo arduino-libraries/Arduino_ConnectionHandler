@@ -72,6 +72,7 @@ class GSMConnectionHandler : public ConnectionHandler {
     bool keepAlive;
 
     NetworkConnectionState update_handleInit         ();
+    NetworkConnectionState update_handleConnecting   ();
 
 };
 

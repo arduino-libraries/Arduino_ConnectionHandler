@@ -66,33 +66,8 @@ NetworkConnectionState GSMConnectionHandler::check() {
   if (now - lastConnectionTickTime > connectionTickTimeInterval) {
     switch (netConnectionState)
     {
-      case NetworkConnectionState::INIT: netConnectionState = update_handleInit(); break;
-
-      case NetworkConnectionState::CONNECTING: {
-          // NOTE: Blocking Call when 4th parameter == true
-          GSM3_NetworkStatus_t networkStatus;
-          networkStatus = gprs.attachGPRS(apn, login, pass, true);
-          Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", networkStatus);
-          if (networkStatus == GSM3_NetworkStatus_t::ERROR) {
-            // NO FURTHER ACTION WILL FOLLOW THIS
-            changeConnectionState(NetworkConnectionState::ERROR);
-            return netConnectionState;
-          }
-          Debug.print(DBG_INFO, "Sending PING to outer space...");
-          int pingResult;
-          pingResult = gprs.ping("time.arduino.cc");
-          Debug.print(DBG_INFO, "GSM.ping(): %d", pingResult);
-          if (pingResult < 0) {
-            Debug.print(DBG_ERROR, "PING failed");
-            Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-            return netConnectionState;
-          } else {
-            Debug.print(DBG_INFO, "Connected to GPRS Network");
-            changeConnectionState(NetworkConnectionState::CONNECTED);
-            return netConnectionState;
-          }
-        }
-        break;
+      case NetworkConnectionState::INIT:       netConnectionState = update_handleInit();       break;
+      case NetworkConnectionState::CONNECTING: netConnectionState = update_handleConnecting(); break;
       case NetworkConnectionState::CONNECTED: {
           gsmAccessAlive = gsmAccess.isAccessAlive();
           Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", gsmAccessAlive);
@@ -136,7 +111,34 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
   else
   {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
+    execCallback(NetworkConnectionEvent::ERROR, 0);
     return NetworkConnectionState::ERROR;
+  }
+}
+
+NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
+{
+  GSM3_NetworkStatus_t const network_status = gprs.attachGPRS(apn, login, pass, true);
+  Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
+  if (network_status == GSM3_NetworkStatus_t::ERROR)
+  {
+    execCallback(NetworkConnectionEvent::ERROR, 0);
+    return NetworkConnectionState::ERROR;
+  }
+  Debug.print(DBG_INFO, "Sending PING to outer space...");
+  int const ping_result = gprs.ping("time.arduino.cc");
+  Debug.print(DBG_INFO, "GPRS.ping(): %d", ping_result);
+  if (ping_result < 0)
+  {
+    Debug.print(DBG_ERROR, "PING failed");
+    Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
+    return NetworkConnectionState::CONNECTING;
+  }
+  else
+  {
+    Debug.print(DBG_INFO, "Connected to GPRS Network");
+    execCallback(NetworkConnectionEvent::CONNECTED, 0);
+    return NetworkConnectionState::CONNECTED;
   }
 }
 
