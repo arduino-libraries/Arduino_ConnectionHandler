@@ -36,7 +36,19 @@
    CONSTANTS
  ******************************************************************************/
 
-static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
+static int const GSM_TIMEOUT = 30000;
+
+static unsigned int const CHECK_INTERVAL_TABLE[] =
+{
+  /* INIT          */ 100,
+  /* CONNECTING    */ 500,
+  /* CONNECTED     */ 10000,
+  /* GETTIME       */ 100,
+  /* DISCONNECTING */ 100,
+  /* DISCONNECTED  */ 1000,
+  /* CLOSED        */ 1000,
+  /* ERROR         */ 1000
+};
 
 /******************************************************************************
    CTOR/DTOR
@@ -47,8 +59,7 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, lastConnectionTickTime(millis())
-, connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
+, _lastConnectionTickTime(millis())
 , _keep_alive(keep_alive)
 {
 
@@ -66,8 +77,12 @@ unsigned long GSMConnectionHandler::getTime()
 NetworkConnectionState GSMConnectionHandler::check()
 {
   unsigned long const now = millis();
-  if (now - lastConnectionTickTime > connectionTickTimeInterval)
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(netConnectionState)];
+
+  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {
+    _lastConnectionTickTime = now;
+
     switch (netConnectionState)
     {
       case NetworkConnectionState::INIT:          netConnectionState = update_handleInit();          break;
@@ -79,7 +94,6 @@ NetworkConnectionState GSMConnectionHandler::check()
       case NetworkConnectionState::ERROR:                                                            break;
       case NetworkConnectionState::CLOSED:                                                           break;
     }
-    lastConnectionTickTime = now;
   }
 
   return netConnectionState;
@@ -111,7 +125,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
   if (_gsm.begin(_pin) == GSM_READY)
   {
     Debug.print(DBG_INFO, "SIM card ok");
-    _gsm.setTimeout(CHECK_INTERVAL_RETRYING);
+    _gsm.setTimeout(GSM_TIMEOUT);
     return NetworkConnectionState::CONNECTING;
   }
   else
@@ -139,7 +153,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   if (ping_result < 0)
   {
     Debug.print(DBG_ERROR, "PING failed");
-    Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
+    Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
   else
