@@ -47,20 +47,11 @@ class NBConnectionHandler : public ConnectionHandler {
 
     void changeConnectionState(NetworkConnectionState _newState);
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 30000;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
-
     char const * _pin;
     char const * _apn;
     char const * _login;
     char const * _pass;
-    unsigned long lastConnectionTickTime;
-    int connectionTickTimeInterval;
+    unsigned long _lastConnectionTickTime;
     bool _keep_alive;
 
     NB _nb;

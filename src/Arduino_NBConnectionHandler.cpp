@@ -36,7 +36,19 @@
    CONSTANTS
  ******************************************************************************/
 
-static const unsigned long NETWORK_CONNECTION_INTERVAL = 30000;
+static int const NB_TIMEOUT = 30000;
+
+static unsigned int const CHECK_INTERVAL_TABLE[] =
+{
+  /* INIT          */ 100,
+  /* CONNECTING    */ 500,
+  /* CONNECTED     */ 10000,
+  /* GETTIME       */ 100,
+  /* DISCONNECTING */ 100,
+  /* DISCONNECTED  */ 1000,
+  /* CLOSED        */ 1000,
+  /* ERROR         */ 1000
+};
 
 /******************************************************************************
    CTOR/DTOR
@@ -58,8 +70,7 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, cha
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, lastConnectionTickTime(millis())
-, connectionTickTimeInterval(CHECK_INTERVAL_IDLE)
+, _lastConnectionTickTime(millis())
 , _keep_alive(keep_alive)
 {
 
@@ -73,15 +84,21 @@ unsigned long NBConnectionHandler::getTime() {
   return _nb.getTime();
 }
 
-NetworkConnectionState NBConnectionHandler::check() {
+NetworkConnectionState NBConnectionHandler::check()
+{
+
   unsigned long const now = millis();
-  int _nbAlive;
-  if (now - lastConnectionTickTime > connectionTickTimeInterval) {
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
+
+  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
+  {
+    _lastConnectionTickTime = now;
+
     switch (_netConnectionState) {
       case NetworkConnectionState::INIT: {
         if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY) {
           Debug.print(DBG_INFO, "SIM card ok");
-          _nb.setTimeout(CHECK_INTERVAL_RETRYING);
+          _nb.setTimeout(NB_TIMEOUT);
           changeConnectionState(NetworkConnectionState::CONNECTING);
         } else {
           Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
@@ -116,9 +133,9 @@ NetworkConnectionState NBConnectionHandler::check() {
         }
         break;
       case NetworkConnectionState::CONNECTED: {
-          _nbAlive = _nb.isAccessAlive();
-          Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", _nbAlive);
-          if (_nbAlive != 1) {
+          int const nb_is_access_alive = _nb.isAccessAlive();
+          Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", nb_is_access_alive);
+          if (nb_is_access_alive != 1) {
             changeConnectionState(NetworkConnectionState::DISCONNECTED);
             return _netConnectionState;
           }
@@ -137,7 +154,6 @@ NetworkConnectionState NBConnectionHandler::check() {
         }
         break;
     }
-    lastConnectionTickTime = now;
   }
 
   return _netConnectionState;
@@ -164,23 +180,13 @@ void NBConnectionHandler::disconnect()
  ******************************************************************************/
 
 void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState) {
-  int newInterval = CHECK_INTERVAL_IDLE;
   switch (_newState) {
-    case NetworkConnectionState::INIT: {
-        newInterval = CHECK_INTERVAL_INIT;
-      }
-      break;
     case NetworkConnectionState::CONNECTING: {
         Debug.print(DBG_INFO, "Connecting to Cellular Network");
-        newInterval = CHECK_INTERVAL_CONNECTING;
       }
       break;
     case NetworkConnectionState::CONNECTED: {
         execCallback(NetworkConnectionEvent::CONNECTED);
-        newInterval = CHECK_INTERVAL_CONNECTED;
-      }
-      break;
-    case NetworkConnectionState::GETTIME: {
       }
       break;
     case NetworkConnectionState::DISCONNECTING: {
@@ -196,7 +202,6 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
             Debug.print(DBG_ERROR, "Attempting reconnection");
           }
         }
-        newInterval = CHECK_INTERVAL_DISCONNECTED;
       }
       break;
     case NetworkConnectionState::ERROR: {
@@ -205,8 +210,6 @@ void NBConnectionHandler::changeConnectionState(NetworkConnectionState _newState
       }
       break;
   }
-  connectionTickTimeInterval = newInterval;
-  lastConnectionTickTime = millis();
   _netConnectionState = _newState;
 }
 
