@@ -101,7 +101,6 @@ NetworkConnectionState GSMConnectionHandler::check()
 
 void GSMConnectionHandler::disconnect()
 {
-  Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
   _gsm.shutdown();
   _keep_alive = false;
   netConnectionState = NetworkConnectionState::DISCONNECTING;
@@ -167,13 +166,11 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 {
   int const is_gsm_access_alive = _gsm.isAccessAlive();
-  Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", is_gsm_access_alive);
   if (is_gsm_access_alive != 1)
   {
     execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
     return NetworkConnectionState::DISCONNECTED;
   }
-  Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
   return NetworkConnectionState::CONNECTED;
 }
 
@@ -187,7 +184,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
 {
   if (_keep_alive)
   {
-    Debug.print(DBG_VERBOSE, "keep alive > INIT");
     return NetworkConnectionState::INIT;
   }
   else

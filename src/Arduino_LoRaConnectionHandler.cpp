@@ -156,10 +156,8 @@ void LoRaConnectionHandler::disconnect()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleInit()
 {
-  Debug.print(DBG_VERBOSE, "::INIT");
   if (!_modem.begin(_band))
   {
-    Debug.print(DBG_VERBOSE, "Failed to start module");
     execCallback(NetworkConnectionEvent::ERROR, 0);
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
   }
@@ -173,7 +171,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
 {
-  Debug.print(DBG_VERBOSE, "::CONNECTING");
   bool const network_status = _modem.joinOTAA(_appeui, _appkey);
   if (network_status != true)
   {
@@ -190,7 +187,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
 NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 {
   bool const network_status = _modem.connected();
-  Debug.print(DBG_VERBOSE, "Connection state: %d", network_status);
   if (network_status != true) {
     execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
 
@@ -201,7 +197,6 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
     }
     return NetworkConnectionState::DISCONNECTED;
   }
-  Debug.print(DBG_VERBOSE, "Connected to the network");
   return NetworkConnectionState::CONNECTED;
 }
 
@@ -221,12 +216,10 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected()
 {
   if (_keep_alive)
   {
-    Debug.print(DBG_VERBOSE, "CHANGING STATE TO ::INIT");
     return NetworkConnectionState::INIT;
   }
   else
   {
-    Debug.print(DBG_VERBOSE, "Connection to the network terminated");
     return NetworkConnectionState::CLOSED;
   }
 }

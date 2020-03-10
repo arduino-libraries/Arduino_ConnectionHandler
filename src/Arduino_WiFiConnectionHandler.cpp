@@ -111,8 +111,6 @@ void WiFiConnectionHandler::disconnect()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
-  Debug.print(DBG_VERBOSE, "::INIT");
-
 #ifndef BOARD_ESP8266
   Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
@@ -144,8 +142,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 {
-  Debug.print(DBG_VERBOSE, "::CONNECTING");
-  
 #ifndef BOARD_ESP8266
   if (WiFi.status() != WL_CONNECTED)
   {
@@ -153,7 +149,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
   }
 #endif /* ifndef BOARD_ESP8266 */
 
-  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() != NETWORK_CONNECTED)
   {
     Debug.print(DBG_ERROR, "Connection to \"%s\" failed", _ssid);
@@ -170,7 +165,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
 {
-  Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
   if (WiFi.status() != WL_CONNECTED)
   {
     execCallback(NetworkConnectionEvent::DISCONNECTED, 0);
@@ -190,7 +184,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleGetTime()
 {
-  Debug.print(DBG_VERBOSE, "NetworkConnectionState::GETTIME");
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
@@ -199,7 +192,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleGetTime()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting()
 {
-  Debug.print(DBG_VERBOSE, "Disconnecting from \"%s\"", _ssid);
   WiFi.disconnect();
   return NetworkConnectionState::DISCONNECTED;
 }
@@ -215,7 +207,6 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
   }
   else
   {
-    Debug.print(DBG_VERBOSE, "Connection to \"%s\" closed", _ssid);
     return NetworkConnectionState::CLOSED;
   }
 }
