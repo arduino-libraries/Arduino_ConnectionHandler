@@ -37,6 +37,7 @@ void setup() {
 
   conMan.addCallback(NetworkConnectionEvent::CONNECTED, onNetworkConnect);
   conMan.addCallback(NetworkConnectionEvent::DISCONNECTED, onNetworkDisconnect);
+  conMan.addCallback(NetworkConnectionEvent::ERROR, onNetworkError);
 }
 
 void loop() {
@@ -58,4 +59,8 @@ void onNetworkConnect() {
 
 void onNetworkDisconnect() {
   Serial.println(">>>> DISCONNECTED from network");
+}
+
+void onNetworkError() {
+  Serial.println(">>>> ERROR");
 }
