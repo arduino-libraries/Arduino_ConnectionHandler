@@ -19,15 +19,6 @@
    INCLUDE
  ******************************************************************************/
 
-/*
-  static int const DBG_NONE    = -1;
-  static int const DBG_ERROR   =  0;
-  static int const DBG_WARNING =  1;
-  static int const DBG_INFO    =  2;
-  static int const DBG_DEBUG   =  3;
-  static int const DBG_VERBOSE =  4;
-*/
-
 #include "Arduino_NBConnectionHandler.h"
 
 #ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
