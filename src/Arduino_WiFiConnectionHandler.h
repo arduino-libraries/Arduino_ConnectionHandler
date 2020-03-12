@@ -41,15 +41,12 @@ class WiFiConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState check() override;
     virtual Client & getClient() override{ return _wifi_client; }
     virtual UDP & getUDP() override { return _wifi_udp; }
-    virtual void disconnect() override;
-    virtual void connect() override;
 
 
   private:
 
     char const * _ssid;
     char const * _pass;
-    bool _keep_alive;
     unsigned long _lastConnectionTickTime;
 
     WiFiUDP _wifi_udp;

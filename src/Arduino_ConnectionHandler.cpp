@@ -22,8 +22,34 @@
 #include "Arduino_ConnectionHandler.h"
 
 /******************************************************************************
+   CONSTRUCTOR/DESTRUCTOR
+ ******************************************************************************/
+
+ConnectionHandler::ConnectionHandler(bool const keep_alive)
+: _keep_alive{keep_alive}
+, _netConnectionState{NetworkConnectionState::INIT}
+{
+
+}
+
+/******************************************************************************
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
+
+void ConnectionHandler::connect()
+{
+  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
+  {
+    _keep_alive = true;
+    _netConnectionState = NetworkConnectionState::INIT;
+  }
+}
+
+void ConnectionHandler::disconnect()
+{
+  _keep_alive = false;
+  _netConnectionState = NetworkConnectionState::DISCONNECTING;
+}
 
 void ConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
   switch (event) {

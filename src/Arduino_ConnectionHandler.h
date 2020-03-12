@@ -136,6 +136,10 @@ typedef void (*OnNetworkEventCallback)();
 
 class ConnectionHandler {
   public:
+
+    ConnectionHandler(bool const keep_alive);
+
+
     virtual NetworkConnectionState check() = 0;
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
@@ -153,8 +157,10 @@ class ConnectionHandler {
     virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
       return _netConnectionState;
     }
-    virtual void connect() = 0;
-    virtual void disconnect() = 0;
+
+    void connect();
+    void disconnect();
+
     void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
     void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
     void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
@@ -162,7 +168,8 @@ class ConnectionHandler {
 
   protected:
 
-    NetworkConnectionState _netConnectionState = NetworkConnectionState::INIT;
+    bool _keep_alive;
+    NetworkConnectionState _netConnectionState;
 
     void execCallback(NetworkConnectionEvent const event);
 

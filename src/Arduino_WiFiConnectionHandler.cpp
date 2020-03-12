@@ -44,10 +44,10 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
  ******************************************************************************/
 
 WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
-: _ssid{ssid}
+: ConnectionHandler{keep_alive}
+, _ssid{ssid}
 , _pass{pass}
 , _lastConnectionTickTime{millis()}
-, _keep_alive{keep_alive}
 {
 
 }
@@ -93,21 +93,6 @@ NetworkConnectionState WiFiConnectionHandler::check()
 /******************************************************************************
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
-
-void WiFiConnectionHandler::connect()
-{
-  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
-  {
-    _keep_alive = true;
-    _netConnectionState = NetworkConnectionState::INIT;
-  }
-}
-
-void WiFiConnectionHandler::disconnect()
-{
-  _keep_alive = false;
-  _netConnectionState = NetworkConnectionState::DISCONNECTING;
-}
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {

@@ -66,12 +66,12 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, boo
 }
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
-: _pin(pin)
+: ConnectionHandler{keep_alive}
+, _pin(pin)
 , _apn(apn)
 , _login(login)
 , _pass(pass)
 , _lastConnectionTickTime(millis())
-, _keep_alive(keep_alive)
 {
 
 }
@@ -108,21 +108,6 @@ NetworkConnectionState NBConnectionHandler::check()
   }
 
   return _netConnectionState;
-}
-
-void NBConnectionHandler::connect()
-{
-  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
-  {
-    _keep_alive = true;
-    _netConnectionState = NetworkConnectionState::INIT;
-  }
-}
-
-void NBConnectionHandler::disconnect()
-{
-  _keep_alive = false;
-  _netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
 /******************************************************************************

@@ -61,12 +61,12 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
  ******************************************************************************/
 
 LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, _lora_class const device_class)
-: _appeui(appeui)
+: ConnectionHandler{false}
+, _appeui(appeui)
 , _appkey(appkey)
 , _band(band)
 , _device_class(device_class)
 , _lastConnectionTickTime(millis())
-, _keep_alive(false)
 {
 
 }
@@ -135,19 +135,6 @@ int LoRaConnectionHandler::read()
 bool LoRaConnectionHandler::available()
 {
   return _modem.available();
-}
-
-void LoRaConnectionHandler::connect()
-{
-  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
-  {
-    _keep_alive = true;
-    _netConnectionState = NetworkConnectionState::INIT;
-  }
-}
-void LoRaConnectionHandler::disconnect()
-{
-  /* Do nothing */
 }
 
 /******************************************************************************

@@ -39,8 +39,6 @@ class LoRaConnectionHandler : public ConnectionHandler
     virtual int write(const uint8_t *buf, size_t size) override;
     virtual int read() override;
     virtual bool available() override;
-    virtual void disconnect() override;
-    virtual void connect() override;
 
 
   private:
@@ -50,7 +48,6 @@ class LoRaConnectionHandler : public ConnectionHandler
     _lora_band _band;
     _lora_class _device_class;
     unsigned long _lastConnectionTickTime;
-    bool _keep_alive;
     LoRaModem _modem;
 
     NetworkConnectionState update_handleInit();

@@ -55,11 +55,11 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
  ******************************************************************************/
 
 GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: _pin(pin)
+: ConnectionHandler{keep_alive}
+, _pin(pin)
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, _keep_alive(keep_alive)
 , _lastConnectionTickTime(millis())
 {
 
@@ -97,21 +97,6 @@ NetworkConnectionState GSMConnectionHandler::check()
   }
 
   return _netConnectionState;
-}
-
-void GSMConnectionHandler::disconnect()
-{
-  _keep_alive = false;
-  _netConnectionState = NetworkConnectionState::DISCONNECTING;
-}
-
-void GSMConnectionHandler::connect()
-{
-  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
-  {
-    _keep_alive = true;
-    _netConnectionState = NetworkConnectionState::INIT;
-  }
 }
 
 /******************************************************************************

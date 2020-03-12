@@ -43,8 +43,6 @@ class NBConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState check() override;
     virtual Client & getClient() override { return _nb_client; };
     virtual UDP & getUDP() override { return _nb_udp; };
-    virtual void disconnect() override;
-    virtual void connect() override;
 
 
   private:
@@ -56,7 +54,6 @@ class NBConnectionHandler : public ConnectionHandler
     char const * _login;
     char const * _pass;
     unsigned long _lastConnectionTickTime;
-    bool _keep_alive;
 
     NB _nb;
     GPRS _nb_gprs;
