@@ -186,8 +186,6 @@ class ConnectionHandler {
 
     bool _keep_alive;
 
-    void execCallback(NetworkConnectionEvent const event);
-
     virtual NetworkConnectionState update_handleInit         () = 0;
     virtual NetworkConnectionState update_handleConnecting   () = 0;
     virtual NetworkConnectionState update_handleConnected    () = 0;

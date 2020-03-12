@@ -67,7 +67,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
   else
   {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
-    execCallback(NetworkConnectionEvent::ERROR);
     return NetworkConnectionState::ERROR;
   }
 }
@@ -80,7 +79,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   {
     Debug.print(DBG_ERROR, "GPRS attach failed");
     Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
-    execCallback(NetworkConnectionEvent::ERROR);
     return NetworkConnectionState::ERROR;
   }
   Debug.print(DBG_INFO, "Sending PING to outer space...");
@@ -95,7 +93,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   else
   {
     Debug.print(DBG_INFO, "Connected to GPRS Network");
-    execCallback(NetworkConnectionEvent::CONNECTED);
     return NetworkConnectionState::CONNECTED;
   }
 }
@@ -105,7 +102,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
   int const is_gsm_access_alive = _gsm.isAccessAlive();
   if (is_gsm_access_alive != 1)
   {
-    execCallback(NetworkConnectionEvent::DISCONNECTED);
     return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTED;
@@ -114,7 +110,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 {
   _gsm.shutdown();
-  execCallback(NetworkConnectionEvent::DISCONNECTED);
   return NetworkConnectionState::DISCONNECTED;
 }
 
