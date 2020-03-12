@@ -38,18 +38,6 @@
 
 static int const NB_TIMEOUT = 30000;
 
-static unsigned int const CHECK_INTERVAL_TABLE[] =
-{
-  /* INIT          */ 100,
-  /* CONNECTING    */ 500,
-  /* CONNECTED     */ 10000,
-  /* GETTIME       */ 100,
-  /* DISCONNECTING */ 100,
-  /* DISCONNECTED  */ 1000,
-  /* CLOSED        */ 1000,
-  /* ERROR         */ 1000
-};
-
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
@@ -99,7 +87,6 @@ NetworkConnectionState NBConnectionHandler::check()
       case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit         (); break;
       case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting   (); break;
       case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected    (); break;
-      case NetworkConnectionState::GETTIME:       /* Unused */                                        break;
       case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
       case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected (); break;
       case NetworkConnectionState::ERROR:                                                             break;

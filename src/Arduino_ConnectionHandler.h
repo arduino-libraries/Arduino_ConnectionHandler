@@ -117,11 +117,10 @@ enum class NetworkConnectionState : unsigned int {
   INIT          = 0,
   CONNECTING    = 1,
   CONNECTED     = 2,
-  GETTIME       = 3,
-  DISCONNECTING = 4,
-  DISCONNECTED  = 5,
-  CLOSED        = 6,
-  ERROR         = 7
+  DISCONNECTING = 3,
+  DISCONNECTED  = 4,
+  CLOSED        = 5,
+  ERROR         = 6
 };
 
 enum class NetworkConnectionEvent {
@@ -129,6 +128,21 @@ enum class NetworkConnectionEvent {
 };
 
 typedef void (*OnNetworkEventCallback)();
+
+/******************************************************************************
+   CONSTANTS
+ ******************************************************************************/
+
+static unsigned int const CHECK_INTERVAL_TABLE[] =
+{
+  /* INIT          */ 100,
+  /* CONNECTING    */ 500,
+  /* CONNECTED     */ 10000,
+  /* DISCONNECTING */ 100,
+  /* DISCONNECTED  */ 1000,
+  /* CLOSED        */ 1000,
+  /* ERROR         */ 1000
+};
 
 /******************************************************************************
    CLASS DECLARATION
