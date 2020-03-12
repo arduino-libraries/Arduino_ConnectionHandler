@@ -121,23 +121,9 @@ NetworkConnectionState NBConnectionHandler::check()
             changeConnectionState(NetworkConnectionState::ERROR);
             return _netConnectionState;
           }
-          Debug.print(DBG_INFO, "Sending PING to outer space...");
-          int pingResult;
-          // pingResult = _nb_gprs.ping("time.arduino.cc");
-          // Debug.print(DBG_INFO, "NB.ping(): %d", pingResult);
-          // if (pingResult < 0) {
-          if (pingResult < 0)
-          {
-            Debug.print(DBG_ERROR, "PING failed");
-            Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", connectionTickTimeInterval);
-            return _netConnectionState;
-          }
-          else
-          {
-            Debug.print(DBG_INFO, "Connected to GPRS Network");
-            changeConnectionState(NetworkConnectionState::CONNECTED);
-            return _netConnectionState;
-          }
+          Debug.print(DBG_INFO, "Connected to GPRS Network");
+          changeConnectionState(NetworkConnectionState::CONNECTED);
+          return _netConnectionState;
         }
         break;
       case NetworkConnectionState::CONNECTED:
