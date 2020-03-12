@@ -76,15 +76,13 @@ void ConnectionHandler::disconnect()
   _netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
 
-void ConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback) {
-  switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       _on_connect_event_callback       = callback; break;
-    case NetworkConnectionEvent::DISCONNECTED:    _on_disconnect_event_callback    = callback; break;
-    case NetworkConnectionEvent::ERROR:           _on_error_event_callback         = callback; break;
-    case NetworkConnectionEvent::INIT:                                                       ; break;
-    case NetworkConnectionEvent::CONNECTING:                                                 ; break;
-    case NetworkConnectionEvent::DISCONNECTING:                                              ; break;
-    case NetworkConnectionEvent::CLOSED:                                                     ; break;
+void ConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback)
+{
+  switch (event)
+  {
+    case NetworkConnectionEvent::CONNECTED:    _on_connect_event_callback    = callback; break;
+    case NetworkConnectionEvent::DISCONNECTED: _on_disconnect_event_callback = callback; break;
+    case NetworkConnectionEvent::ERROR:        _on_error_event_callback      = callback; break;
   }
 }
 
@@ -102,14 +100,12 @@ void ConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
    PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-void ConnectionHandler::execCallback(NetworkConnectionEvent const event) {
-  switch (event) {
-    case NetworkConnectionEvent::CONNECTED:       if(_on_connect_event_callback)    _on_connect_event_callback   (); break;
-    case NetworkConnectionEvent::DISCONNECTED:    if(_on_disconnect_event_callback) _on_disconnect_event_callback(); break;
-    case NetworkConnectionEvent::ERROR:           if(_on_error_event_callback)      _on_error_event_callback     (); break;
-    case NetworkConnectionEvent::INIT:                                                                               break;
-    case NetworkConnectionEvent::CONNECTING:                                                                         break;
-    case NetworkConnectionEvent::DISCONNECTING:                                                                      break;
-    case NetworkConnectionEvent::CLOSED:                                                                             break;
+void ConnectionHandler::execCallback(NetworkConnectionEvent const event)
+{
+  switch (event)
+  {
+    case NetworkConnectionEvent::CONNECTED:    if(_on_connect_event_callback)    _on_connect_event_callback   (); break;
+    case NetworkConnectionEvent::DISCONNECTED: if(_on_disconnect_event_callback) _on_disconnect_event_callback(); break;
+    case NetworkConnectionEvent::ERROR:        if(_on_error_event_callback)      _on_error_event_callback     (); break;
   }
 }

@@ -124,7 +124,9 @@ enum class NetworkConnectionState : unsigned int {
 };
 
 enum class NetworkConnectionEvent {
-  INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
+  CONNECTED,
+  DISCONNECTED,
+  ERROR
 };
 
 typedef void (*OnNetworkEventCallback)();
