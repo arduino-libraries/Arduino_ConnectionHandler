@@ -183,7 +183,6 @@ class ConnectionHandler {
   protected:
 
     bool _keep_alive;
-    NetworkConnectionState _netConnectionState;
 
     void execCallback(NetworkConnectionEvent const event);
 
@@ -197,6 +196,7 @@ class ConnectionHandler {
   private:
 
     unsigned long _lastConnectionTickTime;
+    NetworkConnectionState _netConnectionState;
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
