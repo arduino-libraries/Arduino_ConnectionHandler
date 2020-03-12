@@ -62,6 +62,12 @@ class NBConnectionHandler : public ConnectionHandler
     GPRS _nb_gprs;
     NBUDP _nb_udp;
     NBClient _nb_client;
+
+    NetworkConnectionState update_handleInit         ();
+    NetworkConnectionState update_handleConnecting   ();
+    NetworkConnectionState update_handleConnected    ();
+    NetworkConnectionState update_handleDisconnecting();
+    NetworkConnectionState update_handleDisconnected ();
 };
 
 #endif /* #ifdef BOARD_HAS_NB  */
