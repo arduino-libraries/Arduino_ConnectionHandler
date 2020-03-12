@@ -59,7 +59,6 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, cha
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, _lastConnectionTickTime(millis())
 {
 
 }
@@ -71,30 +70,6 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, cha
 unsigned long NBConnectionHandler::getTime()
 {
   return _nb.getTime();
-}
-
-NetworkConnectionState NBConnectionHandler::check()
-{
-  unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
-
-  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
-  {
-    _lastConnectionTickTime = now;
-
-    switch (_netConnectionState)
-    {
-      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit         (); break;
-      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting   (); break;
-      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected    (); break;
-      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected (); break;
-      case NetworkConnectionState::ERROR:                                                             break;
-      case NetworkConnectionState::CLOSED:                                                            break;
-    }
-  }
-
-  return _netConnectionState;
 }
 
 /******************************************************************************

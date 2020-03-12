@@ -39,7 +39,6 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 , _apn(apn)
 , _login(login)
 , _pass(pass)
-, _lastConnectionTickTime(millis())
 {
 
 }
@@ -53,32 +52,8 @@ unsigned long GSMConnectionHandler::getTime()
   return _gsm.getTime();
 }
 
-NetworkConnectionState GSMConnectionHandler::check()
-{
-  unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
-
-  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
-  {
-    _lastConnectionTickTime = now;
-
-    switch (_netConnectionState)
-    {
-      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit();          break;
-      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting();    break;
-      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected();     break;
-      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected();  break;
-      case NetworkConnectionState::ERROR:                                                             break;
-      case NetworkConnectionState::CLOSED:                                                            break;
-    }
-  }
-
-  return _netConnectionState;
-}
-
 /******************************************************************************
-   PRIVATE MEMBER FUNCTIONS
+   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
 NetworkConnectionState GSMConnectionHandler::update_handleInit()

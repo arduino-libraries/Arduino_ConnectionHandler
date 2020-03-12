@@ -35,10 +35,18 @@ class LoRaConnectionHandler : public ConnectionHandler
     LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, _lora_class const device_class = _lora_class::CLASS_A);
 
 
-    virtual NetworkConnectionState check() override;
     virtual int write(const uint8_t *buf, size_t size) override;
     virtual int read() override;
     virtual bool available() override;
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
 
 
   private:
@@ -47,14 +55,7 @@ class LoRaConnectionHandler : public ConnectionHandler
     char const * _appkey;
     _lora_band _band;
     _lora_class _device_class;
-    unsigned long _lastConnectionTickTime;
     LoRaModem _modem;
-
-    NetworkConnectionState update_handleInit();
-    NetworkConnectionState update_handleConnecting();
-    NetworkConnectionState update_handleConnected();
-    NetworkConnectionState update_handleDisconnecting();
-    NetworkConnectionState update_handleDisconnected();
 };
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */

@@ -40,9 +40,17 @@ class NBConnectionHandler : public ConnectionHandler
 
 
     virtual unsigned long getTime() override;
-    virtual NetworkConnectionState check() override;
     virtual Client & getClient() override { return _nb_client; };
     virtual UDP & getUDP() override { return _nb_udp; };
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
 
 
   private:
@@ -53,18 +61,11 @@ class NBConnectionHandler : public ConnectionHandler
     char const * _apn;
     char const * _login;
     char const * _pass;
-    unsigned long _lastConnectionTickTime;
 
     NB _nb;
     GPRS _nb_gprs;
     NBUDP _nb_udp;
     NBClient _nb_client;
-
-    NetworkConnectionState update_handleInit         ();
-    NetworkConnectionState update_handleConnecting   ();
-    NetworkConnectionState update_handleConnected    ();
-    NetworkConnectionState update_handleDisconnecting();
-    NetworkConnectionState update_handleDisconnected ();
 };
 
 #endif /* #ifdef BOARD_HAS_NB  */

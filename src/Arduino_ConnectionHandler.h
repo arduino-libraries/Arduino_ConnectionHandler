@@ -154,7 +154,7 @@ class ConnectionHandler {
     ConnectionHandler(bool const keep_alive);
 
 
-    virtual NetworkConnectionState check() = 0;
+    NetworkConnectionState check();
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
       virtual unsigned long getTime() = 0;
@@ -187,8 +187,16 @@ class ConnectionHandler {
 
     void execCallback(NetworkConnectionEvent const event);
 
+    virtual NetworkConnectionState update_handleInit         () = 0;
+    virtual NetworkConnectionState update_handleConnecting   () = 0;
+    virtual NetworkConnectionState update_handleConnected    () = 0;
+    virtual NetworkConnectionState update_handleDisconnecting() = 0;
+    virtual NetworkConnectionState update_handleDisconnected () = 0;
+
+
   private:
 
+    unsigned long _lastConnectionTickTime;
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;

@@ -31,7 +31,6 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
 : ConnectionHandler{keep_alive}
 , _ssid{ssid}
 , _pass{pass}
-, _lastConnectionTickTime{millis()}
 {
 
 }
@@ -49,32 +48,8 @@ unsigned long WiFiConnectionHandler::getTime()
 #endif
 }
 
-NetworkConnectionState WiFiConnectionHandler::check()
-{
-  unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
-
-  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
-  {
-    _lastConnectionTickTime = now;
-
-    switch (_netConnectionState)
-    {
-      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit         (); break;
-      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting   (); break;
-      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected    (); break;
-      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected (); break;
-      case NetworkConnectionState::ERROR:                                                             break;
-      case NetworkConnectionState::CLOSED:                                                            break;
-    }
-  }
-
-  return _netConnectionState;
-}
-
 /******************************************************************************
-   PRIVATE MEMBER FUNCTIONS
+   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()

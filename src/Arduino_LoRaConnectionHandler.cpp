@@ -50,7 +50,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * a
 , _appkey(appkey)
 , _band(band)
 , _device_class(device_class)
-, _lastConnectionTickTime(millis())
 {
 
 }
@@ -58,30 +57,6 @@ LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * a
 /******************************************************************************
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
-
-NetworkConnectionState LoRaConnectionHandler::check()
-{
-  unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
-
-  if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
-  {
-    _lastConnectionTickTime = now;
-
-    switch (_netConnectionState)
-    {
-      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit();          break;
-      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting();    break;
-      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected();     break;
-      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected();  break;
-      case NetworkConnectionState::ERROR:                                                            break;
-      case NetworkConnectionState::CLOSED:                                                           break;
-    }
-  }
-
-  return _netConnectionState;
-}
 
 int LoRaConnectionHandler::write(const uint8_t * buf, size_t size)
 {
@@ -122,7 +97,7 @@ bool LoRaConnectionHandler::available()
 }
 
 /******************************************************************************
-   PRIVATE MEMBER FUNCTIONS
+   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
 NetworkConnectionState LoRaConnectionHandler::update_handleInit()

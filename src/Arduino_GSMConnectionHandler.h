@@ -39,9 +39,17 @@ class GSMConnectionHandler : public ConnectionHandler
 
 
     virtual unsigned long getTime() override;
-    virtual NetworkConnectionState check() override;
     virtual Client & getClient() override { return _gsm_client; };
     virtual UDP & getUDP() override { return _gsm_udp; };
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
 
 
   private:
@@ -50,18 +58,11 @@ class GSMConnectionHandler : public ConnectionHandler
     const char * _apn;
     const char * _login;
     const char * _pass;
-    unsigned long _lastConnectionTickTime;
 
     GSM _gsm;
     GPRS _gprs;
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
-
-    NetworkConnectionState update_handleInit         ();
-    NetworkConnectionState update_handleConnecting   ();
-    NetworkConnectionState update_handleConnected    ();
-    NetworkConnectionState update_handleDisconnecting();
-    NetworkConnectionState update_handleDisconnected ();
 };
 
 #endif /* #ifdef BOARD_HAS_GSM  */
