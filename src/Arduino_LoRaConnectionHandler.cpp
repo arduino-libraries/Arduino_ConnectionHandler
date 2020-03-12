@@ -105,7 +105,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
   if (!_modem.begin(_band))
   {
     Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
-    return NetworkConnectionEvent::ERROR;
+    return NetworkConnectionState::ERROR;
   }
   //A delay is required between _modem.begin(band) and _modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
   delay(100);

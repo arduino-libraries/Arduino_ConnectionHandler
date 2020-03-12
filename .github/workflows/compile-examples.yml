@@ -5,7 +5,7 @@ jobs:
    runs-on: ubuntu-latest
 
    env:
-     LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB
+     LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB MKRWAN
    strategy:
      matrix:
        fqbn: [
@@ -14,6 +14,8 @@ jobs:
          "arduino:samd:nano_33_iot",
          "arduino:samd:mkrgsm1400",
          "arduino:samd:mkrnb1500",
+         "arduino:samd:mkrwan1300",
+         "arduino:samd:mkrwan1310",
          '"esp8266:esp8266:huzzah" "https://arduino.esp8266.com/stable/package_esp8266com_index.json"'
        ]
 
