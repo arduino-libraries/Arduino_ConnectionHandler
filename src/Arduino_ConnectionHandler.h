@@ -154,7 +154,7 @@ class ConnectionHandler {
       virtual bool available() = 0;
     #endif
 
-    virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
+    NetworkConnectionState getStatus() __attribute__((deprecated)) {
       return _netConnectionState;
     }
 
