@@ -27,7 +27,7 @@
 
 ConnectionHandler::ConnectionHandler(bool const keep_alive)
 : _keep_alive{keep_alive}
-, _netConnectionState{NetworkConnectionState::INIT}
+, _current_net_connection_state{NetworkConnectionState::INIT}
 , _lastConnectionTickTime{millis()}
 {
 
@@ -40,40 +40,40 @@ ConnectionHandler::ConnectionHandler(bool const keep_alive)
 NetworkConnectionState ConnectionHandler::check()
 {
   unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_netConnectionState)];
+  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_current_net_connection_state)];
 
   if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {
     _lastConnectionTickTime = now;
 
-    switch (_netConnectionState)
+    switch (_current_net_connection_state)
     {
-      case NetworkConnectionState::INIT:          _netConnectionState = update_handleInit         (); break;
-      case NetworkConnectionState::CONNECTING:    _netConnectionState = update_handleConnecting   (); break;
-      case NetworkConnectionState::CONNECTED:     _netConnectionState = update_handleConnected    (); break;
-      case NetworkConnectionState::DISCONNECTING: _netConnectionState = update_handleDisconnecting(); break;
-      case NetworkConnectionState::DISCONNECTED:  _netConnectionState = update_handleDisconnected (); break;
-      case NetworkConnectionState::ERROR:                                                             break;
-      case NetworkConnectionState::CLOSED:                                                            break;
+      case NetworkConnectionState::INIT:          _current_net_connection_state = update_handleInit         (); break;
+      case NetworkConnectionState::CONNECTING:    _current_net_connection_state = update_handleConnecting   (); break;
+      case NetworkConnectionState::CONNECTED:     _current_net_connection_state = update_handleConnected    (); break;
+      case NetworkConnectionState::DISCONNECTING: _current_net_connection_state = update_handleDisconnecting(); break;
+      case NetworkConnectionState::DISCONNECTED:  _current_net_connection_state = update_handleDisconnected (); break;
+      case NetworkConnectionState::ERROR:                                                                       break;
+      case NetworkConnectionState::CLOSED:                                                                      break;
     }
   }
 
-  return _netConnectionState;
+  return _current_net_connection_state;
 }
 
 void ConnectionHandler::connect()
 {
-  if (_netConnectionState != NetworkConnectionState::INIT && _netConnectionState != NetworkConnectionState::CONNECTING)
+  if (_current_net_connection_state != NetworkConnectionState::INIT && _current_net_connection_state != NetworkConnectionState::CONNECTING)
   {
     _keep_alive = true;
-    _netConnectionState = NetworkConnectionState::INIT;
+    _current_net_connection_state = NetworkConnectionState::INIT;
   }
 }
 
 void ConnectionHandler::disconnect()
 {
   _keep_alive = false;
-  _netConnectionState = NetworkConnectionState::DISCONNECTING;
+  _current_net_connection_state = NetworkConnectionState::DISCONNECTING;
 }
 
 void ConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback)

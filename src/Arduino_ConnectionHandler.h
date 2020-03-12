@@ -171,7 +171,7 @@ class ConnectionHandler {
     #endif
 
     NetworkConnectionState getStatus() __attribute__((deprecated)) {
-      return _netConnectionState;
+      return _current_net_connection_state;
     }
 
     void connect();
@@ -198,7 +198,7 @@ class ConnectionHandler {
   private:
 
     unsigned long _lastConnectionTickTime;
-    NetworkConnectionState _netConnectionState;
+    NetworkConnectionState _current_net_connection_state;
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
