@@ -55,7 +55,6 @@ class WiFiConnectionHandler : public ConnectionHandler
     NetworkConnectionState update_handleInit         ();
     NetworkConnectionState update_handleConnecting   ();
     NetworkConnectionState update_handleConnected    ();
-    NetworkConnectionState update_handleGetTime      ();
     NetworkConnectionState update_handleDisconnecting();
     NetworkConnectionState update_handleDisconnected ();
 };
