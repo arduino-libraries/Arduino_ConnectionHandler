@@ -101,7 +101,6 @@ NetworkConnectionState GSMConnectionHandler::check()
 
 void GSMConnectionHandler::disconnect()
 {
-  _gsm.shutdown();
   _keep_alive = false;
   _netConnectionState = NetworkConnectionState::DISCONNECTING;
 }
@@ -176,6 +175,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 {
+  _gsm.shutdown();
   execCallback(NetworkConnectionEvent::DISCONNECTED);
   return NetworkConnectionState::DISCONNECTED;
 }
