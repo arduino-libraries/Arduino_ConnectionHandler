@@ -30,52 +30,43 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class NBConnectionHandler : public ConnectionHandler {
+class NBConnectionHandler : public ConnectionHandler
+{
   public:
-    NBConnectionHandler(const char *pin, const bool keepAlive = true);
-    NBConnectionHandler(const char *pin, const char *apn, const bool keepAlive = true);
-    NBConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return networkClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
+    NBConnectionHandler(char const * pin, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
 
-    NBClient networkClient;
-    NB  nbAccess;
-    GPRS gprs;
-    NBUDP udp;
 
-    virtual void disconnect();
-    virtual void connect();
+    virtual unsigned long getTime() override;
+    virtual Client & getClient() override { return _nb_client; };
+    virtual UDP & getUDP() override { return _nb_udp; };
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
+
 
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 30000;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
+    char const * _pin;
+    char const * _apn;
+    char const * _login;
+    char const * _pass;
 
-    const char *pin, *apn, *login, *pass;
-    unsigned long lastConnectionTickTime;
-    int connectionTickTimeInterval;
-
-
-    bool keepAlive;
-
+    NB _nb;
+    GPRS _nb_gprs;
+    NBUDP _nb_udp;
+    NBClient _nb_client;
 };
-
-typedef NBConnectionHandler TcpIpConnectionHandler;
 
 #endif /* #ifdef BOARD_HAS_NB  */
 

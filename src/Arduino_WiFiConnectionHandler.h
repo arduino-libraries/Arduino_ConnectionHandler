@@ -30,50 +30,34 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandler : public ConnectionHandler {
+class WiFiConnectionHandler : public ConnectionHandler
+{
   public:
-    WiFiConnectionHandler(const char *_ssid, const char *_pass, bool _keepAlive = true);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return wifiClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
-    virtual void disconnect();
-    virtual void connect();
+    WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
-    WiFiUDP udp;
+
+    virtual unsigned long getTime() override;
+    virtual Client & getClient() override{ return _wifi_client; }
+    virtual UDP & getUDP() override { return _wifi_udp; }
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
 
   private:
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
+    char const * _ssid;
+    char const * _pass;
 
-    const char *ssid, *pass;
-    unsigned long lastConnectionTickTime;
-
-    WiFiClient wifiClient;
-    int connectionTickTimeInterval;
-
-    bool keepAlive;
-
-    NetworkConnectionState update_handleInit         ();
-    NetworkConnectionState update_handleConnecting   ();
-    NetworkConnectionState update_handleConnected    ();
-    NetworkConnectionState update_handleGetTime      ();
-    NetworkConnectionState update_handleDisconnecting();
-    NetworkConnectionState update_handleDisconnected ();
-
+    WiFiUDP _wifi_udp;
+    WiFiClient _wifi_client;
 };
-
-typedef WiFiConnectionHandler TcpIpConnectionHandler;
 
 #endif /* #ifdef BOARD_HAS_WIFI */
 

@@ -26,6 +26,8 @@ WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #elif defined(BOARD_HAS_NB)
 NBConnectionHandler conMan(SECRET_PIN);
+#elif defined(BOARD_HAS_LORA)
+LoRaConnectionHandler conMan(SECRET_APP_EUI, SECRET_APP_KEY);
 #endif
 
 void setup() {
@@ -35,10 +37,9 @@ void setup() {
 
   setDebugMessageLevel(DBG_INFO);
 
-  /* Register a function to be called upon connection to a network */
-  conMan.addConnectCallback(onNetworkConnect);
-  /* Register a function to be called upon disconnection from a network */
-  conMan.addDisconnectCallback(onNetworkDisconnect);
+  conMan.addCallback(NetworkConnectionEvent::CONNECTED, onNetworkConnect);
+  conMan.addCallback(NetworkConnectionEvent::DISCONNECTED, onNetworkDisconnect);
+  conMan.addCallback(NetworkConnectionEvent::ERROR, onNetworkError);
 }
 
 void loop() {
@@ -54,10 +55,14 @@ void loop() {
   conMan.check();
 }
 
-void onNetworkConnect(void *_arg) {
+void onNetworkConnect() {
   Serial.println(">>>> CONNECTED to network");
 }
 
-void onNetworkDisconnect(void *_arg) {
+void onNetworkDisconnect() {
   Serial.println(">>>> DISCONNECTED from network");
+}
+
+void onNetworkError() {
+  Serial.println(">>>> ERROR");
 }

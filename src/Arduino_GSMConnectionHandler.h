@@ -31,50 +31,39 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public ConnectionHandler {
+class GSMConnectionHandler : public ConnectionHandler
+{
   public:
-    GSMConnectionHandler(const char *pin, const char *apn, const char *login, const char *pass, const bool keepAlive = true);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
-    virtual Client &getClient() {
-      return networkClient;
-    };
-    virtual UDP &getUDP() {
-      return udp;
-    };
+    GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
 
-    GSMClient networkClient;
-    GSM gsmAccess;
-    GPRS gprs;
-    GSMUDP udp;
 
-    virtual void disconnect();
-    virtual void connect();
+    virtual unsigned long getTime() override;
+    virtual Client & getClient() override { return _gsm_client; };
+    virtual UDP & getUDP() override { return _gsm_udp; };
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
+
 
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
+    const char * _pin;
+    const char * _apn;
+    const char * _login;
+    const char * _pass;
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 30000;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
-
-    const char *pin, *apn, *login, *pass;
-    unsigned long lastConnectionTickTime;
-    int connectionTickTimeInterval;
-
-
-    bool keepAlive;
-
+    GSM _gsm;
+    GPRS _gprs;
+    GSMUDP _gsm_udp;
+    GSMClient _gsm_client;
 };
-
-typedef GSMConnectionHandler TcpIpConnectionHandler;
 
 #endif /* #ifdef BOARD_HAS_GSM  */
 

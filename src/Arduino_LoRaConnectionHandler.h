@@ -24,68 +24,38 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-typedef enum {
-  LORA_ERROR_ACK_NOT_RECEIVED = -1,
-  LORA_ERROR_GENERIC = -2,
-  LORA_ERROR_WRONG_PARAM = -3,
-  LORA_ERROR_COMMUNICATION_BUSY = -4,
-  LORA_ERROR_MESSAGE_OVERFLOW = -5,
-  LORA_ERROR_NO_NETWORK_AVAILABLE = -6,
-  LORA_ERROR_RX_PACKET = -7,
-  LORA_ERROR_REASON_UNKNOWN = -8,
-  LORA_ERROR_MAX_PACKET_SIZE = -20
-} LoRaCommunicationError;
-
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class LoRaConnectionHandler : public ConnectionHandler {
+class LoRaConnectionHandler : public ConnectionHandler
+{
   public:
-    LoRaConnectionHandler(const char *_appeui, const char *_appkey, _lora_band = _lora_band::EU868, _lora_class = _lora_class::CLASS_A);
 
-    virtual void init();
-    virtual unsigned long getTime();
-    virtual NetworkConnectionState check();
+    LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, _lora_class const device_class = _lora_class::CLASS_A);
 
-    virtual int write(const uint8_t *buf, size_t size);
-    virtual int read();
-    virtual bool available();
 
-    virtual void disconnect();
-    virtual void connect();
+    virtual int write(const uint8_t *buf, size_t size) override;
+    virtual int read() override;
+    virtual bool available() override;
+
+
+  protected:
+
+    virtual NetworkConnectionState update_handleInit         () override;
+    virtual NetworkConnectionState update_handleConnecting   () override;
+    virtual NetworkConnectionState update_handleConnected    () override;
+    virtual NetworkConnectionState update_handleDisconnecting() override;
+    virtual NetworkConnectionState update_handleDisconnected () override;
+
 
   private:
 
-    const int CHECK_INTERVAL_IDLE = 100;
-    const int CHECK_INTERVAL_INIT = 100;
-    const int CHECK_INTERVAL_CONNECTING = 500;
-    const int CHECK_INTERVAL_CONNECTED = 10000;
-    const int CHECK_INTERVAL_RETRYING = 30000;
-    const int CHECK_INTERVAL_DISCONNECTING = 500;
-    const int CHECK_INTERVAL_DISCONNECTED = 1000;
-    const int CHECK_INTERVAL_ERROR = 500;
-
-    LoRaModem modem;
-    const char *appeui, *appkey;
-    _lora_band band;
-    _lora_class deviceClass;
-    unsigned long lastConnectionTickTime;
-
-    int connectionTickTimeInterval;
-
-    bool keepAlive;
-
-    NetworkConnectionState update_handleInit();
-    NetworkConnectionState update_handleConnecting();
-    NetworkConnectionState update_handleConnected();
-
-    NetworkConnectionState update_handleDisconnecting();
-    NetworkConnectionState update_handleDisconnected();
-
-
+    char const * _appeui;
+    char const * _appkey;
+    _lora_band _band;
+    _lora_class _device_class;
+    LoRaModem _modem;
 };
-
-typedef LoRaConnectionHandler LPWANConnectionHandler;
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */

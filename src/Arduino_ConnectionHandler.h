@@ -113,22 +113,38 @@
    TYPEDEFS
  ******************************************************************************/
 
-enum class NetworkConnectionState {
-  INIT,
-  CONNECTING,
-  CONNECTED,
-  GETTIME,
-  DISCONNECTING,
-  DISCONNECTED,
-  CLOSED,
-  ERROR
+enum class NetworkConnectionState : unsigned int {
+  INIT          = 0,
+  CONNECTING    = 1,
+  CONNECTED     = 2,
+  DISCONNECTING = 3,
+  DISCONNECTED  = 4,
+  CLOSED        = 5,
+  ERROR         = 6
 };
 
 enum class NetworkConnectionEvent {
-  INIT, CONNECTING, CONNECTED, DISCONNECTING, DISCONNECTED, CLOSED, ERROR
+  CONNECTED,
+  DISCONNECTED,
+  ERROR
 };
 
-typedef void (*OnNetworkEventCallback)(void * /* arg */);
+typedef void (*OnNetworkEventCallback)();
+
+/******************************************************************************
+   CONSTANTS
+ ******************************************************************************/
+
+static unsigned int const CHECK_INTERVAL_TABLE[] =
+{
+  /* INIT          */ 100,
+  /* CONNECTING    */ 500,
+  /* CONNECTED     */ 10000,
+  /* DISCONNECTING */ 100,
+  /* DISCONNECTED  */ 1000,
+  /* CLOSED        */ 1000,
+  /* ERROR         */ 1000
+};
 
 /******************************************************************************
    CLASS DECLARATION
@@ -136,8 +152,11 @@ typedef void (*OnNetworkEventCallback)(void * /* arg */);
 
 class ConnectionHandler {
   public:
-    virtual void init() = 0;
-    virtual NetworkConnectionState check() = 0;
+
+    ConnectionHandler(bool const keep_alive);
+
+
+    NetworkConnectionState check();
 
     #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
       virtual unsigned long getTime() = 0;
@@ -151,26 +170,36 @@ class ConnectionHandler {
       virtual bool available() = 0;
     #endif
 
-    virtual NetworkConnectionState getStatus() __attribute__((deprecated)) {
-      return netConnectionState;
+    NetworkConnectionState getStatus() __attribute__((deprecated)) {
+      return _current_net_connection_state;
     }
-    virtual void connect() = 0;
-    virtual void disconnect() = 0;
+
+    void connect();
+    void disconnect();
+
     void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    void addConnectCallback(OnNetworkEventCallback callback);
-    void addDisconnectCallback(OnNetworkEventCallback callback);
-    void addErrorCallback(OnNetworkEventCallback callback);
+    void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
+    void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
+    void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
 
   protected:
+
+    bool _keep_alive;
+
+    virtual NetworkConnectionState update_handleInit         () = 0;
+    virtual NetworkConnectionState update_handleConnecting   () = 0;
+    virtual NetworkConnectionState update_handleConnected    () = 0;
+    virtual NetworkConnectionState update_handleDisconnecting() = 0;
+    virtual NetworkConnectionState update_handleDisconnected () = 0;
+
+
+  private:
+
+    unsigned long _lastConnectionTickTime;
+    NetworkConnectionState _current_net_connection_state;
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
-
-    unsigned long lastValidTimestamp = 0;   /*  UNUSED  */
-    NetworkConnectionState netConnectionState = NetworkConnectionState::INIT;
-
-    static void execNetworkEventCallback(OnNetworkEventCallback & callback, void * callback_arg);
-
 };
 
 #if defined(BOARD_HAS_WIFI)

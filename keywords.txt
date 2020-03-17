@@ -5,19 +5,24 @@
 ####################################################
 # Datatypes (KEYWORD1)
 ####################################################
-Client	KEYWORD1
 ConnectionHandler	KEYWORD1
 WiFiConnectionHandler	KEYWORD1
 GSMConnectionHandler	KEYWORD1
 NBConnectionHandler	KEYWORD1
-EthernetConnectionHandler	KEYWORD1
+LoRaConnectionHandler	KEYWORD1
 
 ####################################################
 # Methods and Functions (KEYWORD2)
 ####################################################
 
 ConnectionHandler	KEYWORD2
-begin	KEYWORD2
+check	KEYWORD2
+connect	KEYWORD2
+disconnect	KEYWORD2
+addCallback	KEYWORD2
+getTime	KEYWORD2
+getClient	KEYWORD2
+getUDP	KEYWORD2
 
 ####################################################
 # Constants (LITERAL1)
