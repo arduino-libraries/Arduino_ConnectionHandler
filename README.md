@@ -1,40 +1,59 @@
-# Arduino Library for network connections management
+Arduino Library for network connections management
+==================================================
 
-Library for handling and managing network connections by providing keepAlive functionalities and reconnection attempts. Initially for WiFi, GSM and NB, its goal is to be extended to more networking layers over diverse hardware (Ethernet, BlueTooth et al.)
+Library for handling and managing network connections by providing keep-alive functionality and automatic reconnection in case of connection-loss. It supports the following boards:
+* **WiFi**: [`MKR 1000`](https://store.arduino.cc/arduino-mkr1000-wifi), [`MKR WiFi 1010`](https://store.arduino.cc/arduino-mkr-wifi-1010), [`Nano 33 IoT`](https://store.arduino.cc/arduino-nano-33-iot), `ESP8266`
+* **GSM**: [`MKR GSM 1400`](https://store.arduino.cc/arduino-mkr-gsm-1400-1415)
+* **5G**: [`MKR NB 1500`](https://store.arduino.cc/arduino-mkr-nb-1500-1413)
+* **LoRa**: [`MKR WAN 1300/1310`](https://store.arduino.cc/mkr-wan-1310)
 
+### How-to-use
 
-## Usage
+```C++
+#include <Arduino_ConnectionHandler.h>
+/* ... */
+#if defined(BOARD_HAS_WIFI)
+WiFiConnectionHandler conMan("SECRET_SSID", "SECRET_PASS");
+#elif defined(BOARD_HAS_GSM)
+GSMConnectionHandler conMan("SECRET_PIN", "SECRET_APN", "SECRET_GSM_LOGIN", "SECRET_GSM_PASS");
+#elif defined(BOARD_HAS_NB)
+NBConnectionHandler conMan("SECRET_PIN", "SECRET_APN", "SECRET_GSM_LOGIN", "SECRET_GSM_PASS");
+#elif defined(BOARD_HAS_LORA)
+LoRaConnectionHandler conMan("SECRET_APP_EUI", "SECRET_APP_KEY");
+#endif
+/* ... */
+void setup() {
+  Serial.begin(9600);
+  while(!Serial) { }
 
-## Credits
+  setDebugMessageLevel(DBG_INFO);
 
-## Website
+  conMan.addCallback(NetworkConnectionEvent::CONNECTED, onNetworkConnect);
+  conMan.addCallback(NetworkConnectionEvent::DISCONNECTED, onNetworkDisconnect);
+  conMan.addCallback(NetworkConnectionEvent::ERROR, onNetworkError);
+}
 
-# License
+void loop() {
+  /* The following code keeps on running connection workflows on our
+   * ConnectionHandler object, hence allowing reconnection in case of failure
+   * and notification of connect/disconnect event if enabled (see
+   * addConnectCallback/addDisconnectCallback) NOTE: any use of delay() within
+   * the loop or methods called from it will delay the execution of .check(),
+   * which might not guarantee the correct functioning of the ConnectionHandler
+   * object.
+   */
+  conMan.check();
+}
+/* ... */
+void onNetworkConnect() {
+  Serial.println(">>>> CONNECTED to network");
+}
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+void onNetworkDisconnect() {
+  Serial.println(">>>> DISCONNECTED from network");
+}
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-
-### ConnectionHandler
-
-**Connection Handler** is configured via a series of compiler directives, including the correct implementation of the class based on which board is selected.
-
-### How to use it
-- Instantiate the class with `ConnectionHandler conHandler(SECRET_SSID, SECRET_PASS);` if you are using a WiFi board, otherwise replace **WiFi** with **GSM** or **NB** or any future implementation minding to carefully pass the init parameters to the constructor (i.e.: for the GSM you'll need to pass PIN, APN, login, password).
-
-- The `update()` method does all the work. It uses a finite state machine and is responsible for connection and reconnection to a network. The method is designed to be non-blocking by using time (milliseconds) to perform its tasks.
-
-- `&getClient()` returns a reference to an instance of the `Client` class used to connect to the network.
-
-- `getStatus()` returns the network connection status. The different states are defined in an `enum`
+void onNetworkError() {
+  Serial.println(">>>> ERROR");
+}
+```
