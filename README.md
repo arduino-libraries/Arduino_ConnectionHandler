@@ -1,5 +1,8 @@
 Arduino Library for network connections management
 ==================================================
+![](https://github.com/arduino-libraries/Arduino_ConnectionHandler/workflows/Compile%20Examples/badge.svg)
+![](https://github.com/arduino-libraries/Arduino_ConnectionHandler/workflows/Spell%20Check/badge.svg)
+
 
 Library for handling and managing network connections by providing keep-alive functionality and automatic reconnection in case of connection-loss. It supports the following boards:
 * **WiFi**: [`MKR 1000`](https://store.arduino.cc/arduino-mkr1000-wifi), [`MKR WiFi 1010`](https://store.arduino.cc/arduino-mkr-wifi-1010), [`Nano 33 IoT`](https://store.arduino.cc/arduino-nano-33-iot), `ESP8266`
