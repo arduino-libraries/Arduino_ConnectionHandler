@@ -23,16 +23,8 @@ jobs:
      - uses: actions/checkout@v1
        with:
          fetch-depth: 1
-     - name: compile-examples for official Arduino boards
-       if: startsWith(matrix.fqbn, '"esp8266:esp8266') != true
+     - name: Compile examples
        uses: arduino/actions/libraries/compile-examples@master
        with:
          fqbn: ${{ matrix.fqbn }}
          libraries: ${{ env.LIBRARIES }}
-     - name: compile-examples for ESP8266 boards
-       if: startsWith(matrix.fqbn, '"esp8266:esp8266')
-       uses: arduino/actions/libraries/compile-examples@master
-       with:
-         fqbn: ${{ matrix.fqbn }}
-         libraries: ${{ env.LIBRARIES }}
-         entrypoint: /github/workspace/.github/workflows/install-python-wrapper.sh
