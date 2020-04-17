@@ -23,8 +23,18 @@ jobs:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
+
       - name: Compile examples
         uses: arduino/actions/libraries/compile-examples@master
         with:
           fqbn: ${{ matrix.fqbn }}
           libraries: ${{ env.LIBRARIES }}
+          size-report-sketch: 'ConnectionHandlerDemo'
+          enable-size-deltas-report: 'true'
+
+      - name: Save memory usage change report as artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v1
+        with:
+          name: 'size-deltas-reports'
+          path: 'size-deltas-reports'
