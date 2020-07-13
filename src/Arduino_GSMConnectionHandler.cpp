@@ -43,6 +43,16 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 
 }
 
+GSMConnectionHandler::GSMConnectionHandler(bool const keep_alive)
+: ConnectionHandler{keep_alive}
+, _pin("")
+, _apn("")
+, _login("")
+, _pass("")
+{
+
+}
+
 /******************************************************************************
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
@@ -109,6 +119,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 {
+  // _gsm.lowPowerMode();
   _gsm.shutdown();
   return NetworkConnectionState::DISCONNECTED;
 }

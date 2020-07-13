@@ -36,7 +36,12 @@ class GSMConnectionHandler : public ConnectionHandler
   public:
 
     GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
+    GSMConnectionHandler(bool const keep_alive = true);
 
+    void setSimPin(const char * pin) { _pin = pin; };
+    void setGprsApn(const char * apn) { _apn = apn; };
+    void setGprsUsername(const char * user) { _login = user; };
+    void setGprsPassword(const char * pass) { _pass = pass; };
 
     virtual unsigned long getTime() override;
     virtual Client & getClient() override { return _gsm_client; };
