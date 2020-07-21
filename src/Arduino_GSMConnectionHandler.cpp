@@ -68,10 +68,10 @@ unsigned long GSMConnectionHandler::getTime()
 
 NetworkConnectionState GSMConnectionHandler::update_handleInit()
 {
+  _gsm.setTimeout(GSM_TIMEOUT);
   if (_gsm.begin(_pin) == GSM_READY)
   {
     Debug.print(DBG_INFO, "SIM card ok");
-    _gsm.setTimeout(GSM_TIMEOUT);
     return NetworkConnectionState::CONNECTING;
   }
   else
