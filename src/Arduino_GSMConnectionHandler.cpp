@@ -62,6 +62,15 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
   {
     Debug.print(DBG_INFO, "SIM card ok");
     _gsm.setTimeout(GSM_TIMEOUT);
+
+    GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
+    Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
+    if (network_status == GSM3_NetworkStatus_t::ERROR)
+    {
+      Debug.print(DBG_ERROR, "GPRS attach failed");
+      Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
+      return NetworkConnectionState::ERROR;
+    }
     return NetworkConnectionState::CONNECTING;
   }
   else
@@ -73,14 +82,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 {
-  GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
-  Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
-  if (network_status == GSM3_NetworkStatus_t::ERROR)
-  {
-    Debug.print(DBG_ERROR, "GPRS attach failed");
-    Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
-    return NetworkConnectionState::ERROR;
-  }
   Debug.print(DBG_INFO, "Sending PING to outer space...");
   int const ping_result = _gprs.ping("time.arduino.cc");
   Debug.print(DBG_INFO, "GPRS.ping(): %d", ping_result);
