@@ -58,26 +58,25 @@ unsigned long GSMConnectionHandler::getTime()
 
 NetworkConnectionState GSMConnectionHandler::update_handleInit()
 {
-  if (_gsm.begin(_pin) == GSM_READY)
-  {
-    Debug.print(DBG_INFO, "SIM card ok");
-    _gsm.setTimeout(GSM_TIMEOUT);
-
-    GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
-    Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
-    if (network_status == GSM3_NetworkStatus_t::ERROR)
-    {
-      Debug.print(DBG_ERROR, "GPRS attach failed");
-      Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
-      return NetworkConnectionState::ERROR;
-    }
-    return NetworkConnectionState::CONNECTING;
-  }
-  else
+  if (_gsm.begin(_pin) != GSM_READY)
   {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
     return NetworkConnectionState::ERROR;
   }
+
+  Debug.print(DBG_INFO, "SIM card ok");
+  _gsm.setTimeout(GSM_TIMEOUT);
+
+  GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
+  Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
+  if (network_status == GSM3_NetworkStatus_t::ERROR)
+  {
+    Debug.print(DBG_ERROR, "GPRS attach failed");
+    Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
+    return NetworkConnectionState::ERROR;
+  }
+
+  return NetworkConnectionState::CONNECTING;
 }
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
