@@ -119,7 +119,6 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnected()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 {
-  // _gsm.lowPowerMode();
   _gsm.shutdown();
   return NetworkConnectionState::DISCONNECTED;
 }
