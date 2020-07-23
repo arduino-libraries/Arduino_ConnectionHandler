@@ -69,20 +69,15 @@ unsigned long GSMConnectionHandler::getTime()
 NetworkConnectionState GSMConnectionHandler::update_handleInit()
 {
   _gsm.setTimeout(GSM_TIMEOUT);
-  if (_gsm.begin(_pin) == GSM_READY)
-  {
-    Debug.print(DBG_INFO, "SIM card ok");
-    return NetworkConnectionState::CONNECTING;
-  }
-  else
+  
+  if (_gsm.begin(_pin) != GSM_READY)
   {
     Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
     return NetworkConnectionState::ERROR;
   }
-}
 
-NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
-{
+  Debug.print(DBG_INFO, "SIM card ok");
+
   GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
   Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
   if (network_status == GSM3_NetworkStatus_t::ERROR)
@@ -91,6 +86,12 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
     Debug.print(DBG_ERROR, "Make sure the antenna is connected and reset your board.");
     return NetworkConnectionState::ERROR;
   }
+
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
+{
   Debug.print(DBG_INFO, "Sending PING to outer space...");
   int const ping_result = _gprs.ping("time.arduino.cc");
   Debug.print(DBG_INFO, "GPRS.ping(): %d", ping_result);
