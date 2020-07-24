@@ -65,12 +65,15 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
   Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
 
+#if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
   if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED)
   {
     Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
     Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
     delay(5000);
   }
+#endif
+
 #else
   Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
   WiFi.disconnect();
