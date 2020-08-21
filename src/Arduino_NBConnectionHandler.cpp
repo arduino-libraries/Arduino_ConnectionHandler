@@ -71,13 +71,13 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
 {
   if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY)
   {
-    Debug.print(DBG_INFO, "SIM card ok");
+    Debug.print(DBG_INFO, F("SIM card ok"));
     _nb.setTimeout(NB_TIMEOUT);
     return NetworkConnectionState::CONNECTING;
   }
   else
   {
-    Debug.print(DBG_ERROR, "SIM not present or wrong PIN");
+    Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
 }
@@ -85,15 +85,15 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
 NetworkConnectionState NBConnectionHandler::update_handleConnecting()
 {
   NB_NetworkStatus_t const network_status = _nb_gprs.attachGPRS(true);
-  Debug.print(DBG_DEBUG, "GPRS.attachGPRS(): %d", network_status);
+  Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
   if (network_status == NB_NetworkStatus_t::ERROR)
   {
-    Debug.print(DBG_ERROR, "GPRS.attachGPRS() failed");
+    Debug.print(DBG_ERROR, F("GPRS.attachGPRS() failed"));
     return NetworkConnectionState::ERROR;
   }
   else
   {
-    Debug.print(DBG_INFO, "Connected to GPRS Network");
+    Debug.print(DBG_INFO, F("Connected to GPRS Network"));
     return NetworkConnectionState::CONNECTED;
   }
 }
@@ -101,22 +101,22 @@ NetworkConnectionState NBConnectionHandler::update_handleConnecting()
 NetworkConnectionState NBConnectionHandler::update_handleConnected()
 {
   int const nb_is_access_alive = _nb.isAccessAlive();
-  Debug.print(DBG_VERBOSE, "GPRS.isAccessAlive(): %d", nb_is_access_alive);
+  Debug.print(DBG_VERBOSE, F("GPRS.isAccessAlive(): %d"), nb_is_access_alive);
   if (nb_is_access_alive != 1)
   {
-    Debug.print(DBG_INFO, "Disconnected from cellular network");
+    Debug.print(DBG_INFO, F("Disconnected from cellular network"));
     return NetworkConnectionState::DISCONNECTED;
   }
   else
   {
-    Debug.print(DBG_VERBOSE, "Connected to Cellular Network");
+    Debug.print(DBG_VERBOSE, F("Connected to Cellular Network"));
     return NetworkConnectionState::CONNECTED;
   }
 }
 
 NetworkConnectionState NBConnectionHandler::update_handleDisconnecting()
 {
-  Debug.print(DBG_VERBOSE, "Disconnecting from Cellular Network");
+  Debug.print(DBG_VERBOSE, F("Disconnecting from Cellular Network"));
   _nb.shutdown();
   return NetworkConnectionState::DISCONNECTED;
 }
