@@ -55,27 +55,27 @@ unsigned long WiFiConnectionHandler::getTime()
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
 #ifndef BOARD_ESP8266
-  Debug.print(DBG_INFO, "WiFi.status(): %d", WiFi.status());
+  Debug.print(DBG_INFO, F("WiFi.status(): %d"), WiFi.status());
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
-    Debug.print(DBG_ERROR, "WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield.");
-    Debug.print(DBG_ERROR, "Then reset and retry.");
+    Debug.print(DBG_ERROR, F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
+    Debug.print(DBG_ERROR, F("Then reset and retry."));
     return NetworkConnectionState::ERROR;
   }
 
-  Debug.print(DBG_ERROR, "Current WiFi Firmware: %s", WiFi.firmwareVersion());
+  Debug.print(DBG_ERROR, F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
 
 #if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
   if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED)
   {
-    Debug.print(DBG_ERROR, "Latest WiFi Firmware: %s", WIFI_FIRMWARE_VERSION_REQUIRED);
-    Debug.print(DBG_ERROR, "Please update to the latest version for best performance.");
+    Debug.print(DBG_ERROR, F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
+    Debug.print(DBG_ERROR, F("Please update to the latest version for best performance."));
     delay(5000);
   }
 #endif
 
 #else
-  Debug.print(DBG_ERROR, "WiFi status ESP: %d", WiFi.status());
+  Debug.print(DBG_ERROR, F("WiFi status ESP: %d"), WiFi.status());
   WiFi.disconnect();
   delay(300);
   WiFi.begin(_ssid, _pass);
@@ -96,13 +96,13 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
-    Debug.print(DBG_ERROR, "Connection to \"%s\" failed", _ssid);
-    Debug.print(DBG_INFO, "Retrying in  \"%d\" milliseconds", CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _ssid);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
   else
   {
-    Debug.print(DBG_INFO, "Connected to \"%s\"", _ssid);
+    Debug.print(DBG_INFO, F("Connected to \"%s\""), _ssid);
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
@@ -114,12 +114,12 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-    Debug.print(DBG_VERBOSE, "WiFi.status(): %d", WiFi.status());
-    Debug.print(DBG_ERROR, "Connection to \"%s\" lost.", _ssid);
+    Debug.print(DBG_VERBOSE, F("WiFi.status(): %d"), WiFi.status());
+    Debug.print(DBG_ERROR, F("Connection to \"%s\" lost."), _ssid);
   
     if (_keep_alive)
     {
-      Debug.print(DBG_ERROR, "Attempting reconnection");
+      Debug.print(DBG_ERROR, F("Attempting reconnection"));
     }
   
     return NetworkConnectionState::DISCONNECTED;

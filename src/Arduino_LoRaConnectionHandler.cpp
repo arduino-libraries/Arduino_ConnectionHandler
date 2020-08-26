@@ -68,20 +68,20 @@ int LoRaConnectionHandler::write(const uint8_t * buf, size_t size)
   {
     switch (err)
     {
-      case LoRaCommunicationError::LORA_ERROR_ACK_NOT_RECEIVED:     Debug.print(DBG_ERROR, "Message ack was not received, the message could not be delivered"); break;
-      case LoRaCommunicationError::LORA_ERROR_GENERIC:              Debug.print(DBG_ERROR, "LoRa generic error (LORA_ERROR)");                                  break;
-      case LoRaCommunicationError::LORA_ERROR_WRONG_PARAM:          Debug.print(DBG_ERROR, "LoRa malformed param error (LORA_ERROR_PARAM");                     break;
-      case LoRaCommunicationError::LORA_ERROR_COMMUNICATION_BUSY:   Debug.print(DBG_ERROR, "LoRa chip is busy (LORA_ERROR_BUSY)");                              break;
-      case LoRaCommunicationError::LORA_ERROR_MESSAGE_OVERFLOW:     Debug.print(DBG_ERROR, "LoRa chip overflow error (LORA_ERROR_OVERFLOW)");                   break;
-      case LoRaCommunicationError::LORA_ERROR_NO_NETWORK_AVAILABLE: Debug.print(DBG_ERROR, "LoRa no network error (LORA_ERROR_NO_NETWORK)");                    break;
-      case LoRaCommunicationError::LORA_ERROR_RX_PACKET:            Debug.print(DBG_ERROR, "LoRa rx error (LORA_ERROR_RX)");                                    break;
-      case LoRaCommunicationError::LORA_ERROR_REASON_UNKNOWN:       Debug.print(DBG_ERROR, "LoRa unknown error (LORA_ERROR_UNKNOWN)");                          break;
-      case LoRaCommunicationError::LORA_ERROR_MAX_PACKET_SIZE:      Debug.print(DBG_ERROR, "Message length is bigger than max LoRa packet!");                   break;
+      case LoRaCommunicationError::LORA_ERROR_ACK_NOT_RECEIVED:     Debug.print(DBG_ERROR, F("Message ack was not received, the message could not be delivered")); break;
+      case LoRaCommunicationError::LORA_ERROR_GENERIC:              Debug.print(DBG_ERROR, F("LoRa generic error (LORA_ERROR)"));                                  break;
+      case LoRaCommunicationError::LORA_ERROR_WRONG_PARAM:          Debug.print(DBG_ERROR, F("LoRa malformed param error (LORA_ERROR_PARAM"));                     break;
+      case LoRaCommunicationError::LORA_ERROR_COMMUNICATION_BUSY:   Debug.print(DBG_ERROR, F("LoRa chip is busy (LORA_ERROR_BUSY)"));                              break;
+      case LoRaCommunicationError::LORA_ERROR_MESSAGE_OVERFLOW:     Debug.print(DBG_ERROR, F("LoRa chip overflow error (LORA_ERROR_OVERFLOW)"));                   break;
+      case LoRaCommunicationError::LORA_ERROR_NO_NETWORK_AVAILABLE: Debug.print(DBG_ERROR, F("LoRa no network error (LORA_ERROR_NO_NETWORK)"));                    break;
+      case LoRaCommunicationError::LORA_ERROR_RX_PACKET:            Debug.print(DBG_ERROR, F("LoRa rx error (LORA_ERROR_RX)"));                                    break;
+      case LoRaCommunicationError::LORA_ERROR_REASON_UNKNOWN:       Debug.print(DBG_ERROR, F("LoRa unknown error (LORA_ERROR_UNKNOWN)"));                          break;
+      case LoRaCommunicationError::LORA_ERROR_MAX_PACKET_SIZE:      Debug.print(DBG_ERROR, F("Message length is bigger than max LoRa packet!"));                   break;
     }
   }
   else
   {
-    Debug.print(DBG_INFO, "Message sent correctly!");
+    Debug.print(DBG_INFO, F("Message sent correctly!"));
   }
   return err;
 }
@@ -104,14 +104,14 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
 {
   if (!_modem.begin(_band))
   {
-    Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
+    Debug.print(DBG_ERROR, F("Something went wrong; are you indoor? Move near a window, then reset and retry."));
     return NetworkConnectionState::ERROR;
   }
   //A delay is required between _modem.begin(band) and _modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
   delay(100);
   _modem.configureClass(_device_class);
   delay(100);
-  Debug.print(DBG_INFO, "Connecting to the network");
+  Debug.print(DBG_INFO, F("Connecting to the network"));
   return NetworkConnectionState::CONNECTING;
 }
 
@@ -120,12 +120,12 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
   bool const network_status = _modem.joinOTAA(_appeui, _appkey);
   if (network_status != true)
   {
-    Debug.print(DBG_ERROR, "Something went wrong; are you indoor? Move near a window, then reset and retry.");
+    Debug.print(DBG_ERROR, F("Something went wrong; are you indoor? Move near a window, then reset and retry."));
     return NetworkConnectionState::ERROR;
   }
   else
   {
-    Debug.print(DBG_INFO, "Connected to the network");
+    Debug.print(DBG_INFO, F("Connected to the network"));
     return NetworkConnectionState::CONNECTED;
   }
 }
@@ -135,10 +135,10 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
   bool const network_status = _modem.connected();
   if (network_status != true)
   {
-    Debug.print(DBG_ERROR, "Connection to the network lost.");
+    Debug.print(DBG_ERROR, F("Connection to the network lost."));
     if (_keep_alive)
     {
-      Debug.print(DBG_ERROR, "Attempting reconnection");
+      Debug.print(DBG_ERROR, F("Attempting reconnection"));
     }
     return NetworkConnectionState::DISCONNECTED;
   }
@@ -147,10 +147,10 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 {
-  Debug.print(DBG_ERROR, "Connection to the network lost.");
+  Debug.print(DBG_ERROR, F("Connection to the network lost."));
   if (_keep_alive)
   {
-    Debug.print(DBG_ERROR, "Attempting reconnection");
+    Debug.print(DBG_ERROR, F("Attempting reconnection"));
   }
   return NetworkConnectionState::DISCONNECTED;
 }
