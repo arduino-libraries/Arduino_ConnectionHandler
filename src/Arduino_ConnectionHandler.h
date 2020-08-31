@@ -113,6 +113,14 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
+//#define ARDUINO_ETHERNET_SHIELD /* Uncomment this line if you want to use a ethernet shield via e.g. MKR ETH Shield */
+#if defined(ARDUINO_ETHERNET_SHIELD)
+  #include <SPI.h>
+  #include <Ethernet.h>
+
+  #define BOARD_HAS_ETHERNET
+#endif
+
 /******************************************************************************
    INCLUDES
  ******************************************************************************/
@@ -212,7 +220,9 @@ class ConnectionHandler {
                             _on_error_event_callback = NULL;
 };
 
-#if defined(BOARD_HAS_WIFI)
+#if defined(BOARD_HAS_ETHERNET)
+  #include "Arduino_EthernetConnectionHandler.h"
+#elif defined(BOARD_HAS_WIFI)
   #include "Arduino_WiFiConnectionHandler.h"
 #elif defined(BOARD_HAS_GSM)
   #include "Arduino_GSMConnectionHandler.h"
