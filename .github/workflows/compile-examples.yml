@@ -18,28 +18,95 @@ jobs:
 
     env:
       LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB MKRWAN
+      ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
+      ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
     strategy:
       matrix:
-        fqbn: [
-          "arduino:samd:mkr1000",
-          "arduino:samd:mkrwifi1010",
-          "arduino:samd:nano_33_iot",
-          "arduino:samd:mkrgsm1400",
-          "arduino:samd:mkrnb1500",
-          "arduino:samd:mkrwan1300",
-          "arduino:samd:mkrwan1310",
-          '"esp8266:esp8266:huzzah" "https://arduino.esp8266.com/stable/package_esp8266com_index.json"'
-        ]
+        board:
+          - fqbn: "arduino:samd:mkr1000"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:mkrwifi1010"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:nano_33_iot"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:mkrgsm1400"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:mkrnb1500"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:mkrwan1300"
+            platform-name: arduino:samd
+          - fqbn: "arduino:samd:mkrwan1310"
+            platform-name: arduino:samd
+          - fqbn: "arduino-beta:mbed:envie_m7"
+            platform-name: arduino-beta:mbed
+          - fqbn: "arduino-beta:mbed:envie_m4"
+            platform-name: arduino-beta:mbed
+          - fqbn: "esp8266:esp8266:huzzah"
+            platform-name: esp8266:esp8266
+
+        # Make board type-specific customizations to the matrix jobs
+        include:
+          - board:
+              platform-name: arduino:samd
+            platforms: |
+              # Install Arduino SAMD Boards via Boards Manager
+              - name: arduino:samd
+          - board:
+              platform-name: arduino-beta:mbed
+            platforms: |
+              # Install Arduino mbed-Enabled Boards via Boards Manager for the toolchain
+              - name: arduino-beta:mbed
+              # Overwrite the Arduino mbed-Enabled Boards release version with version from the tip of the default branch (located in local path because of the need to first install ArduinoCore-API)
+              - source-path: extras/ArduinoCore-mbed
+                name: arduino-beta:mbed
+          - board:
+              platform-name: esp8266:esp8266
+            platforms: |
+              # Install ESP8266 platform via Boards Manager
+              - name: esp8266:esp8266
+                source-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
 
     steps:
       - uses: actions/checkout@v1
         with:
           fetch-depth: 1
 
+      # It's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
+      - name: Checkout ArduinoCore-mbed
+        # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-mbed
+          # The arduino/actions/libraries/compile-examples action will install the platform from this path
+          path: ${{ env.ARDUINOCORE_MBED_STAGING_PATH }}
+
+      - name: Remove ArduinoCore-API symlink from Arduino mbed-Enabled Boards platform
+        # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        run: rm "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino/api"
+
+      - name: Checkout ArduinoCore-API
+        # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        uses: actions/checkout@v2
+        with:
+          repository: arduino/ArduinoCore-API
+          # As specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
+          ref: namespace_arduino
+          path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
+
+      - name: Install ArduinoCore-API
+        # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
+        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        run: |
+          mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
+
       - name: Compile examples
         uses: arduino/actions/libraries/compile-examples@master
         with:
-          fqbn: ${{ matrix.fqbn }}
+          platforms: ${{ matrix.platforms }}
+          fqbn: ${{ matrix.board.fqbn }}
           libraries: ${{ env.LIBRARIES }}
           size-report-sketch: 'ConnectionHandlerDemo'
           enable-size-deltas-report: 'true'
