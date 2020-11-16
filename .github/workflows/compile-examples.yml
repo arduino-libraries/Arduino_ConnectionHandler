@@ -37,10 +37,10 @@ jobs:
             platform-name: arduino:samd
           - fqbn: "arduino:samd:mkrwan1310"
             platform-name: arduino:samd
-          - fqbn: "arduino-beta:mbed:envie_m7"
-            platform-name: arduino-beta:mbed
-          - fqbn: "arduino-beta:mbed:envie_m4"
-            platform-name: arduino-beta:mbed
+          - fqbn: "arduino:mbed:envie_m7"
+            platform-name: arduino:mbed
+          - fqbn: "arduino:mbed:envie_m4"
+            platform-name: arduino:mbed
           - fqbn: "esp8266:esp8266:huzzah"
             platform-name: esp8266:esp8266
 
@@ -52,13 +52,13 @@ jobs:
               # Install Arduino SAMD Boards via Boards Manager
               - name: arduino:samd
           - board:
-              platform-name: arduino-beta:mbed
+              platform-name: arduino:mbed
             platforms: |
               # Install Arduino mbed-Enabled Boards via Boards Manager for the toolchain
-              - name: arduino-beta:mbed
+              - name: arduino:mbed
               # Overwrite the Arduino mbed-Enabled Boards release version with version from the tip of the default branch (located in local path because of the need to first install ArduinoCore-API)
               - source-path: extras/ArduinoCore-mbed
-                name: arduino-beta:mbed
+                name: arduino:mbed
           - board:
               platform-name: esp8266:esp8266
             platforms: |
@@ -74,7 +74,7 @@ jobs:
       # It's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        if: matrix.board.platform-name == 'arduino:mbed'
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-mbed
@@ -83,12 +83,12 @@ jobs:
 
       - name: Remove ArduinoCore-API symlink from Arduino mbed-Enabled Boards platform
         # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        if: matrix.board.platform-name == 'arduino:mbed'
         run: rm "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino/api"
 
       - name: Checkout ArduinoCore-API
         # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        if: matrix.board.platform-name == 'arduino:mbed'
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-API
@@ -98,7 +98,7 @@ jobs:
 
       - name: Install ArduinoCore-API
         # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
-        if: matrix.board.platform-name == 'arduino-beta:mbed'
+        if: matrix.board.platform-name == 'arduino:mbed'
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
 
