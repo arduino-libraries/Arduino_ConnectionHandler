@@ -41,7 +41,7 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
 
 unsigned long WiFiConnectionHandler::getTime()
 {
-#if !defined(BOARD_ESP8266)
+#if !defined(BOARD_ESP8266) && !defined(ESP32)
   return WiFi.getTime();
 #else
   return 0;
@@ -54,17 +54,17 @@ unsigned long WiFiConnectionHandler::getTime()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
-#ifndef BOARD_ESP8266
+#if !defined(BOARD_ESP8266) && !defined(ESP32)
 #if !defined(__AVR__)
   Debug.print(DBG_INFO, F("WiFi.status(): %d"), WiFi.status());
 #endif
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
 #if !defined(__AVR__)
-    Debug.print(DBG_ERROR, F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
-    Debug.print(DBG_ERROR, F("Then reset and retry."));
+  Debug.print(DBG_ERROR, F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
+  Debug.print(DBG_ERROR, F("Then reset and retry."));
 #endif
-    return NetworkConnectionState::ERROR;
+  return NetworkConnectionState::ERROR;
   }
 #if !defined(__AVR__)
   Debug.print(DBG_ERROR, F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
@@ -74,10 +74,10 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED)
   {
 #if !defined(__AVR__)
-    Debug.print(DBG_ERROR, F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
-    Debug.print(DBG_ERROR, F("Please update to the latest version for best performance."));
+  Debug.print(DBG_ERROR, F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
+  Debug.print(DBG_ERROR, F("Please update to the latest version for best performance."));
 #endif
-    delay(5000);
+  delay(5000);
   }
 #endif
 
@@ -87,7 +87,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   delay(300);
   WiFi.begin(_ssid, _pass);
   delay(1000);
-#endif /* ifndef BOARD_ESP8266 */
+#endif #if !defined(BOARD_ESP8266) && !defined(ESP32)
 
   return NetworkConnectionState::CONNECTING;
 }
@@ -97,27 +97,27 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 #ifndef BOARD_ESP8266
   if (WiFi.status() != WL_CONNECTED)
   {
-    WiFi.begin(_ssid, _pass);
+  WiFi.begin(_ssid, _pass);
   }
 #endif /* ifndef BOARD_ESP8266 */
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
 #if !defined(__AVR__)
-    Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _ssid);
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+  Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _ssid);
+  Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
 #endif
-    return NetworkConnectionState::CONNECTING;
+  return NetworkConnectionState::CONNECTING;
   }
   else
   {
 #if !defined(__AVR__)
-    Debug.print(DBG_INFO, F("Connected to \"%s\""), _ssid);
+  Debug.print(DBG_INFO, F("Connected to \"%s\""), _ssid);
 #endif
 #ifdef BOARD_ESP8266
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
-    return NetworkConnectionState::CONNECTED;
+  return NetworkConnectionState::CONNECTED;
   }
 }
 
@@ -126,17 +126,17 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
   if (WiFi.status() != WL_CONNECTED)
   {
 #if !defined(__AVR__)
-    Debug.print(DBG_VERBOSE, F("WiFi.status(): %d"), WiFi.status());
-    Debug.print(DBG_ERROR, F("Connection to \"%s\" lost."), _ssid);
+  Debug.print(DBG_VERBOSE, F("WiFi.status(): %d"), WiFi.status());
+  Debug.print(DBG_ERROR, F("Connection to \"%s\" lost."), _ssid);
 #endif
-    if (_keep_alive)
-    {
+  if (_keep_alive)
+  {
 #if !defined(__AVR__)
-      Debug.print(DBG_ERROR, F("Attempting reconnection"));
+    Debug.print(DBG_ERROR, F("Attempting reconnection"));
 #endif
-    }
+  }
   
-    return NetworkConnectionState::DISCONNECTED;
+  return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTED;
 }
@@ -149,16 +149,16 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
 {
-#ifndef BOARD_ESP8266
+#if !defined(BOARD_ESP8266) && !defined(ESP32)
   WiFi.end();
 #endif /* ifndef BOARD_ESP8266 */
   if (_keep_alive)
   {
-    return NetworkConnectionState::INIT;
+  return NetworkConnectionState::INIT;
   }
   else
   {
-    return NetworkConnectionState::CLOSED;
+  return NetworkConnectionState::CLOSED;
   }
 }
 
