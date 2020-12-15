@@ -87,8 +87,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: arduino/ArduinoCore-API
-          # As specified at https://github.com/arduino/ArduinoCore-mbed/blob/master/README.md#installation
-          ref: namespace_arduino
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
 
       - name: Install ArduinoCore-API
