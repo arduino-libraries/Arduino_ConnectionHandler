@@ -34,9 +34,9 @@ void setup() {
   Serial.begin(9600);
   /* Give a few seconds for the Serial connection to be available */
   delay(4000);
-
+#ifndef __AVR__
   setDebugMessageLevel(DBG_INFO);
-
+#endif
   conMan.addCallback(NetworkConnectionEvent::CONNECTED, onNetworkConnect);
   conMan.addCallback(NetworkConnectionEvent::DISCONNECTED, onNetworkDisconnect);
   conMan.addCallback(NetworkConnectionEvent::ERROR, onNetworkError);
