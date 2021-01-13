@@ -27,8 +27,8 @@
 
 ConnectionHandler::ConnectionHandler(bool const keep_alive)
 : _keep_alive{keep_alive}
-, _current_net_connection_state{NetworkConnectionState::INIT}
 , _lastConnectionTickTime{millis()}
+, _current_net_connection_state{NetworkConnectionState::INIT}
 {
 
 }
