@@ -20,6 +20,7 @@ jobs:
       LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB MKRWAN
       ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
       ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
+      SKETCHES_REPORTS_PATH: sketches-reports
     strategy:
       matrix:
         board:
@@ -43,6 +44,8 @@ jobs:
             platform-name: arduino:mbed
           - fqbn: "esp8266:esp8266:huzzah"
             platform-name: esp8266:esp8266
+          - fqbn: "esp32:esp32:esp32"
+            platform-name: esp32:esp32
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -65,6 +68,12 @@ jobs:
               # Install ESP8266 platform via Boards Manager
               - name: esp8266:esp8266
                 source-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+          - board:
+              platform-name: esp32:esp32
+            platforms: |
+              # Install ESP32 platform via Boards Manager
+              - name: esp32:esp32
+                source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
     steps:
       - uses: actions/checkout@v1
@@ -95,18 +104,23 @@ jobs:
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
 
+      - name: Install ESP32 platform dependencies
+        if: matrix.board.platform-name == 'esp32:esp32'
+        run: pip3 install pyserial
+
       - name: Compile examples
-        uses: arduino/actions/libraries/compile-examples@master
+        uses: arduino/compile-sketches@main
         with:
           platforms: ${{ matrix.platforms }}
           fqbn: ${{ matrix.board.fqbn }}
           libraries: ${{ env.LIBRARIES }}
           size-report-sketch: 'ConnectionHandlerDemo'
           enable-size-deltas-report: 'true'
+          sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - name: Save memory usage change report as artifact
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v1
         with:
-          name: 'size-deltas-reports'
-          path: 'size-deltas-reports'
+          name: ${{ env.SKETCHES_REPORTS_PATH }}
+          path: ${{ env.SKETCHES_REPORTS_PATH }}
