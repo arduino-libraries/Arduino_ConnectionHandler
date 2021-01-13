@@ -44,6 +44,8 @@ jobs:
             platform-name: arduino:mbed
           - fqbn: "esp8266:esp8266:huzzah"
             platform-name: esp8266:esp8266
+          - fqbn: "esp32:esp32:esp32"
+            platform-name: esp32:esp32
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -66,6 +68,12 @@ jobs:
               # Install ESP8266 platform via Boards Manager
               - name: esp8266:esp8266
                 source-url: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+          - board:
+              platform-name: esp32:esp32
+            platforms: |
+              # Install ESP32 platform via Boards Manager
+              - name: esp32:esp32
+                source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
     steps:
       - uses: actions/checkout@v1
@@ -95,6 +103,10 @@ jobs:
         if: matrix.board.platform-name == 'arduino:mbed'
         run: |
           mv "${{ env.ARDUINOCORE_API_STAGING_PATH }}/api" "${{ env.ARDUINOCORE_MBED_STAGING_PATH }}/cores/arduino"
+
+      - name: Install ESP32 platform dependencies
+        if: matrix.board.platform-name == 'esp32:esp32'
+        run: pip3 install pyserial
 
       - name: Compile examples
         uses: arduino/compile-sketches@main
