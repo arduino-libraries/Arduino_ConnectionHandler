@@ -18,6 +18,8 @@
 #ifndef ARDUINO_CONNECTION_HANDLER_H_
 #define ARDUINO_CONNECTION_HANDLER_H_
 
+#include <Arduino.h>
+
 #ifdef ARDUINO_SAMD_MKR1000
   #include <WiFi101.h>
   #include <WiFiUdp.h>
