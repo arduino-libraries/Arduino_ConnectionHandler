@@ -4,16 +4,24 @@ on:
   pull_request:
     paths:
       - ".github/workflows/compile-examples.yml"
+      - "library.properties"
       - "examples/**"
       - "src/**"
   push:
     paths:
       - ".github/workflows/compile-examples.yml"
+      - "library.properties"
       - "examples/**"
       - "src/**"
+  schedule:
+    # Run every Tuesday at 8 AM UTC to catch breakage caused by changes to external resources (libraries, platforms).
+    - cron: "0 8 * * TUE"
+  workflow_dispatch:
+  repository_dispatch:
 
 jobs:
   build:
+    name: ${{ matrix.board.fqbn }}
     runs-on: ubuntu-latest
 
     env:
@@ -77,9 +85,7 @@ jobs:
                 source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
     steps:
-      - uses: actions/checkout@v1
-        with:
-          fetch-depth: 1
+      - uses: actions/checkout@v2
 
       # It's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
@@ -110,7 +116,7 @@ jobs:
         run: pip3 install pyserial
 
       - name: Compile examples
-        uses: arduino/compile-sketches@main
+        uses: arduino/compile-sketches@v1
         with:
           platforms: ${{ matrix.platforms }}
           fqbn: ${{ matrix.board.fqbn }}
@@ -121,7 +127,8 @@ jobs:
 
       - name: Save memory usage change report as artifact
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
+          if-no-files-found: error
           name: ${{ env.SKETCHES_REPORTS_PATH }}
           path: ${{ env.SKETCHES_REPORTS_PATH }}
