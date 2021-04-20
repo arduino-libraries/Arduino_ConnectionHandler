@@ -54,6 +54,8 @@ jobs:
             platform-name: esp8266:esp8266
           - fqbn: "esp32:esp32:esp32"
             platform-name: esp32:esp32
+          - fqbn: arduino:mbed_nano:nanorp2040connect
+            platform-name: arduino:mbed_nano
 
         # Make board type-specific customizations to the matrix jobs
         include:
