@@ -152,7 +152,8 @@ enum class NetworkConnectionState : unsigned int {
 enum class NetworkConnectionEvent {
   CONNECTED,
   DISCONNECTED,
-  ERROR
+  ERROR,
+  CONNECTION_FAILED,
 };
 
 typedef void (*OnNetworkEventCallback)();
@@ -217,6 +218,10 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleConnected    () = 0;
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
+
+  protected:
+
+    OnNetworkEventCallback _on_connection_failed_event_callback = NULL;
 
 
   private:

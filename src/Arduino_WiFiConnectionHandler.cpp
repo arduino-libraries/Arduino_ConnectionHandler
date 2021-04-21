@@ -103,6 +103,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
+    if (_on_connection_failed_event_callback)
+      _on_connection_failed_event_callback();
 #if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _ssid);
     Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
