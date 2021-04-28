@@ -30,6 +30,18 @@
 static int const NB_TIMEOUT = 30000;
 
 /******************************************************************************
+   FUNCTION DEFINITION
+ ******************************************************************************/
+
+__attribute__((weak)) void mkr_nb_feed_watchdog()
+{
+    /* This function can be overwritten by a "strong" implementation
+     * in a higher level application, such as the ArduinoIoTCloud
+     * firmware stack.
+     */
+}
+
+/******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
 NBConnectionHandler::NBConnectionHandler(char const * pin, bool const keep_alive)
@@ -69,6 +81,8 @@ unsigned long NBConnectionHandler::getTime()
 
 NetworkConnectionState NBConnectionHandler::update_handleInit()
 {
+  mkr_nb_feed_watchdog();
+
   if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY)
   {
     Debug.print(DBG_INFO, F("SIM card ok"));

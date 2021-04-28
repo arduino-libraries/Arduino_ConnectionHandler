@@ -30,6 +30,18 @@
 static int const GSM_TIMEOUT = 30000;
 
 /******************************************************************************
+   FUNCTION DEFINITION
+ ******************************************************************************/
+
+__attribute__((weak)) void mkr_gsm_feed_watchdog()
+{
+    /* This function can be overwritten by a "strong" implementation
+     * in a higher level application, such as the ArduinoIoTCloud
+     * firmware stack.
+     */
+}
+
+/******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
 
@@ -58,14 +70,20 @@ unsigned long GSMConnectionHandler::getTime()
 
 NetworkConnectionState GSMConnectionHandler::update_handleInit()
 {
+  mkr_gsm_feed_watchdog();
+
   if (_gsm.begin(_pin) != GSM_READY)
   {
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
 
+  mkr_gsm_feed_watchdog();
+
   Debug.print(DBG_INFO, F("SIM card ok"));
   _gsm.setTimeout(GSM_TIMEOUT);
+
+  mkr_gsm_feed_watchdog();
 
   GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
   Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
