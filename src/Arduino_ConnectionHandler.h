@@ -217,12 +217,12 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleConnected    () = 0;
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
-
+    NetworkConnectionState _current_net_connection_state;
 
   private:
 
     unsigned long _lastConnectionTickTime;
-    NetworkConnectionState _current_net_connection_state;
+    
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
@@ -230,6 +230,7 @@ class ConnectionHandler {
 
 #if defined(BOARD_HAS_WIFI)
   #include "Arduino_WiFiConnectionHandler.h"
+  #include "Arduino_WiFiConnectionHandlerDynamic.h"
 #elif defined(BOARD_HAS_GSM)
   #include "Arduino_GSMConnectionHandler.h"
 #elif defined(BOARD_HAS_NB)
