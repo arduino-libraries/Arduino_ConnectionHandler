@@ -129,7 +129,7 @@ NetworkConnectionState WiFiConnectionHandlerDynamic::update_handleConnected()
   {
 #if !defined(__AVR__)
     Debug.print(DBG_VERBOSE, F("WiFi.status(): %d"), WiFi.status());
-    Debug.print(DBG_ERROR, F("Connection to \"%s\" lost."), _ssid);
+    Debug.print(DBG_ERROR, F("Connection to \"%s\" lost."), _ssid.c_str());
 #endif
     if (_keep_alive)
     {
