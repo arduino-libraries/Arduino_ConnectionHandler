@@ -28,6 +28,7 @@
  ******************************************************************************/
 
 static int const GSM_TIMEOUT = 30000;
+static int const GPRS_TIMEOUT = 30000;
 
 /******************************************************************************
    FUNCTION DEFINITION
@@ -82,6 +83,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
   Debug.print(DBG_INFO, F("SIM card ok"));
   _gsm.setTimeout(GSM_TIMEOUT);
+  _gprs.setTimeout(GPRS_TIMEOUT);
 
   mkr_gsm_feed_watchdog();
 
