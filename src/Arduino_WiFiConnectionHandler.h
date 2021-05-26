@@ -50,10 +50,10 @@ class WiFiConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState update_handleDisconnecting() override;
     virtual NetworkConnectionState update_handleDisconnected () override;
 
-  private:
+    String _ssid;
+    String _pass;
 
-    char const * _ssid;
-    char const * _pass;
+  private:
 
     WiFiUDP _wifi_udp;
     WiFiClient _wifi_client;

@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_WiFiConnectionHandler.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
@@ -30,33 +30,14 @@
    CLASS DECLARATION
  ******************************************************************************/
 
-class WiFiConnectionHandlerDynamic : public ConnectionHandler
+class WiFiConnectionHandlerDynamic : public WiFiConnectionHandler
 {
   public:
 
     WiFiConnectionHandlerDynamic(bool const keep_alive = true);
 
     void setWiFiCredentials(String ssid, String pass);
-    virtual unsigned long getTime() override;
-    virtual Client & getClient() override{ return _wifi_client; }
-    virtual UDP & getUDP() override { return _wifi_udp; }
 
-
-  protected:
-
-    virtual NetworkConnectionState update_handleInit         () override;
-    virtual NetworkConnectionState update_handleConnecting   () override;
-    virtual NetworkConnectionState update_handleConnected    () override;
-    virtual NetworkConnectionState update_handleDisconnecting() override;
-    virtual NetworkConnectionState update_handleDisconnected () override;
-
-  private:
-
-    String _ssid;
-    String _pass;
-
-    WiFiUDP _wifi_udp;
-    WiFiClient _wifi_client;
 };
 
 #endif /* #ifdef BOARD_HAS_WIFI */
