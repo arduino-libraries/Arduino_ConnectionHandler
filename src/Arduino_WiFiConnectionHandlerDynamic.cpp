@@ -36,7 +36,7 @@ WiFiConnectionHandlerDynamic::WiFiConnectionHandlerDynamic(bool const keep_alive
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-void WiFiConnectionHandlerDynamic::setWiFiCredentials(String ssid, String pass
+void WiFiConnectionHandlerDynamic::setWiFiCredentials(String ssid, String pass)
 {
   _ssid = ssid;
   _pass = pass;
