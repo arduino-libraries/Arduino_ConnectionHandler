@@ -86,12 +86,17 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   Debug.print(DBG_ERROR, F("WiFi status ESP: %d"), WiFi.status());
   WiFi.disconnect();
   delay(300);
+#if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
+defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
   if (strcmp(_user,"default")){
     WiFi.beginEnterprise(_ssid, _user, _pass);
   }
   else{
     WiFi.begin(_ssid, _pass);
   }
+#else
+  WiFi.begin(_ssid, _pass);
+#endif 
   delay(1000);
 #endif /* #if !defined(BOARD_ESP8266) && !defined(ESP32) */
 
@@ -101,8 +106,9 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 {
 #if !defined(BOARD_ESP8266) && !defined(ESP32)
-  if (WiFi.status() != WL_CONNECTED)
-  {
+#if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
+defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
+  if (WiFi.status() != WL_CONNECTED){
     if (strcmp(_user,"default")){
       WiFi.beginEnterprise(_ssid, _user, _pass);
     }
@@ -110,6 +116,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
       WiFi.begin(_ssid, _pass);
     }
   }
+#else
+  if (WiFi.status() != WL_CONNECTED){
+    WiFi.begin(_ssid, _pass);
+  }
+#endif
 #endif /* ifndef BOARD_ESP8266 */
 
   if (WiFi.status() != NETWORK_CONNECTED)
