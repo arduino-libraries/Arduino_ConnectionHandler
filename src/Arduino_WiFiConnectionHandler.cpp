@@ -86,7 +86,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   Debug.print(DBG_ERROR, F("WiFi status ESP: %d"), WiFi.status());
   WiFi.disconnect();
   delay(300);
-  if (_user != "default"){
+  if (strcmp(_user,"default")){
     WiFi.beginEnterprise(_ssid, _user, _pass);
   }
   else{
@@ -103,7 +103,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 #if !defined(BOARD_ESP8266) && !defined(ESP32)
   if (WiFi.status() != WL_CONNECTED)
   {
-    if (_user != "default"){
+    if (strcmp(_user,"default")){
       WiFi.beginEnterprise(_ssid, _user, _pass);
     }
     else{
