@@ -27,10 +27,11 @@
    CTOR/DTOR
  ******************************************************************************/
 
-WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
+WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, char const * user, bool const keep_alive)
 : ConnectionHandler{keep_alive}
 , _ssid{ssid}
 , _pass{pass}
+, _user{user}
 {
 
 }
@@ -85,7 +86,12 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   Debug.print(DBG_ERROR, F("WiFi status ESP: %d"), WiFi.status());
   WiFi.disconnect();
   delay(300);
-  WiFi.begin(_ssid, _pass);
+  if (_user != "default"){
+    WiFi.beginEnterprise(_ssid, _user, _pass);
+  }
+  else{
+    WiFi.begin(_ssid, _pass);
+  }
   delay(1000);
 #endif /* #if !defined(BOARD_ESP8266) && !defined(ESP32) */
 
@@ -97,7 +103,12 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 #if !defined(BOARD_ESP8266) && !defined(ESP32)
   if (WiFi.status() != WL_CONNECTED)
   {
-    WiFi.begin(_ssid, _pass);
+    if (_user != "default"){
+      WiFi.beginEnterprise(_ssid, _user, _pass);
+    }
+    else{
+      WiFi.begin(_ssid, _pass);
+    }
   }
 #endif /* ifndef BOARD_ESP8266 */
 

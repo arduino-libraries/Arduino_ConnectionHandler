@@ -34,7 +34,7 @@ class WiFiConnectionHandler : public ConnectionHandler
 {
   public:
 
-    WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
+    WiFiConnectionHandler(char const * ssid, char const * pass, char const * user = "default", bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override;
@@ -54,6 +54,7 @@ class WiFiConnectionHandler : public ConnectionHandler
 
     char const * _ssid;
     char const * _pass;
+    char const * _user;
 
     WiFiUDP _wifi_udp;
     WiFiClient _wifi_client;
