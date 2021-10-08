@@ -39,6 +39,20 @@ class LoRaConnectionHandler : public ConnectionHandler
     virtual int read() override;
     virtual bool available() override;
 
+    inline String getVersion() { return _modem.version(); }
+    inline String getDeviceEUI() { return _modem.deviceEUI(); }
+    inline int getChannelMaskSize(_lora_band band) { return _modem.getChannelMaskSize(band); }
+    inline String getChannelMask() { return _modem.getChannelMask(); }
+    inline int isChannelEnabled(int pos) { return _modem.isChannelEnabled(pos); }
+    inline int getDataRate() { return _modem.getDataRate(); }
+    inline int getADR() { return _modem.getADR(); }
+    inline String getDevAddr() { return _modem.getDevAddr(); }
+    inline String getNwkSKey() { return _modem.getNwkSKey(); }
+    inline String getAppSKey() { return _modem.getAppSKey(); }
+    inline int getRX2DR() { return _modem.getRX2DR(); }
+    inline uint32_t getRX2Freq() { return _modem.getRX2Freq(); }
+    inline int32_t getFCU() { return _modem.getFCU(); }
+    inline int32_t getFCD() { return _modem.getFCD(); }
 
   protected:
 
