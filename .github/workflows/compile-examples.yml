@@ -25,7 +25,15 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      LIBRARIES: Arduino_DebugUtils WiFi101 WiFiNINA MKRGSM MKRNB MKRWAN
+      LIBRARIES: |
+        # Install the Arduino_ConnectionHandler library from the repository
+        - source-path: ./
+        - name: Arduino_DebugUtils
+        - name: WiFi101
+        - name: WiFiNINA
+        - name: MKRGSM
+        - name: MKRNB
+        - name: MKRWAN
       ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
       ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
       SKETCHES_REPORTS_PATH: sketches-reports
@@ -123,8 +131,7 @@ jobs:
           platforms: ${{ matrix.platforms }}
           fqbn: ${{ matrix.board.fqbn }}
           libraries: ${{ env.LIBRARIES }}
-          size-report-sketch: 'ConnectionHandlerDemo'
-          enable-size-deltas-report: 'true'
+          enable-deltas-report: 'true'
           sketches-report-path: ${{ env.SKETCHES_REPORTS_PATH }}
 
       - name: Save memory usage change report as artifact
