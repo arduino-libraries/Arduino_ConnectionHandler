@@ -43,12 +43,12 @@ typedef enum
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
-
-LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, _lora_class const device_class)
+LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, uint8_t const sub_band_id, _lora_class const device_class)
 : ConnectionHandler{false}
 , _appeui(appeui)
 , _appkey(appkey)
 , _band(band)
+, _sub_band_id(sub_band_id)
 , _device_class(device_class)
 {
 
@@ -106,6 +106,18 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
   {
     Debug.print(DBG_ERROR, F("Something went wrong; are you indoor? Move near a window, then reset and retry."));
     return NetworkConnectionState::ERROR;
+  } 
+  // Set channelmask based on frequency sub band index
+  if (_sub_band_id) {
+    String mask;
+    for (int i = 12; i > 0; i--) {
+        if (i == _sub_band_id) {
+          mask.concat("FF");
+        } else {
+          mask.concat("00");
+        }
+    }      
+    _modem.sendMask(mask);
   }
   //A delay is required between _modem.begin(band) and _modem.joinOTAA(appeui, appkey) in order to let the chip to be correctly initialized before the connection attempt
   delay(100);
