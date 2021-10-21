@@ -16,6 +16,9 @@
  *    NBConnectionHandler conMan(SECRET_PIN);
  */
 
+
+//#define ARDUINO_ETHERNET_SHIELD /* Uncomment this line if you want to use a ethernet shield */
+
 #include "arduino_secrets.h"
 
 #include <Arduino_ConnectionHandler.h>
@@ -28,11 +31,18 @@ GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_
 NBConnectionHandler conMan(SECRET_PIN);
 #elif defined(BOARD_HAS_LORA)
 LoRaConnectionHandler conMan(SECRET_APP_EUI, SECRET_APP_KEY);
+#elif defined(BOARD_HAS_ETHERNET)
+byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
+EthernetConnectionHandler conMan(mac);
 #endif
 
 void setup() {
   Serial.begin(9600);
   /* Give a few seconds for the Serial connection to be available */
+  #if defined(BOARD_HAS_ETHERNET)
+    SPI.begin();
+    Ethernet.init(10); // CS pin on most Arduino shields
+  #endif
   delay(4000);
 
   setDebugMessageLevel(DBG_INFO);
