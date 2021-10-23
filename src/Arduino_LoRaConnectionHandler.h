@@ -32,7 +32,7 @@ class LoRaConnectionHandler : public ConnectionHandler
 {
   public:
 
-    LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, uint8_t const sub_band_id = 0, _lora_class const device_class = _lora_class::CLASS_A);
+    LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, char const * channelMask = NULL, _lora_class const device_class = _lora_class::CLASS_A);
 
     virtual int write(const uint8_t *buf, size_t size) override;
     virtual int read() override;
@@ -67,7 +67,7 @@ class LoRaConnectionHandler : public ConnectionHandler
     char const * _appeui;
     char const * _appkey;
     _lora_band _band;
-    uint8_t    _sub_band_id;
+    char const * _channelMask;
     _lora_class _device_class;
     LoRaModem _modem;
 };
