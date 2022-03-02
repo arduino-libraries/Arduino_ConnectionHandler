@@ -95,13 +95,13 @@ jobs:
                 source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       # It's necessary to checkout the platform before installing it so that the ArduinoCore-API dependency can be added
       - name: Checkout ArduinoCore-mbed
         # this step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
         if: matrix.board.platform-name == 'arduino:mbed'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: arduino/ArduinoCore-mbed
           # The arduino/actions/libraries/compile-examples action will install the platform from this path
@@ -110,7 +110,7 @@ jobs:
       - name: Checkout ArduinoCore-API
         # This step only needed when the Arduino mbed-Enabled Boards platform sourced from the repository is being used
         if: matrix.board.platform-name == 'arduino:mbed'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: arduino/ArduinoCore-API
           path: ${{ env.ARDUINOCORE_API_STAGING_PATH }}
