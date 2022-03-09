@@ -43,7 +43,7 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
 #endif
 
-#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M4) || defined(ARDUINO_NICLA_VISION)
+#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_NICLA_VISION)
   #include <WiFi.h>
   #include <WiFiUdp.h>
 
