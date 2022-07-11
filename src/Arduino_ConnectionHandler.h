@@ -25,6 +25,7 @@
   #include <WiFiUdp.h>
 
   #define BOARD_HAS_WIFI
+  #define BOARD_HAS_MKR_ETH_SHIELD
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED
@@ -55,7 +56,9 @@
 
 #ifdef ARDUINO_SAMD_MKRGSM1400
   #include <MKRGSM.h>
+
   #define BOARD_HAS_GSM
+  #define BOARD_HAS_MKR_ETH_SHIELD
   #define NETWORK_HARDWARE_ERROR GPRS_PING_ERROR
   #define NETWORK_IDLE_STATUS GSM3_NetworkStatus_t::IDLE
   #define NETWORK_CONNECTED GSM3_NetworkStatus_t::GPRS_READY
@@ -63,7 +66,9 @@
 
 #ifdef ARDUINO_SAMD_MKRNB1500
   #include <MKRNB.h>
+
   #define BOARD_HAS_NB
+  #define BOARD_HAS_MKR_ETH_SHIELD
   #define NETWORK_HARDWARE_ERROR
   #define NETWORK_IDLE_STATUS NB_NetworkStatus_t::IDLE
   #define NETWORK_CONNECTED NB_NetworkStatus_t::GPRS_READY
@@ -117,14 +122,19 @@
 #endif
 
 #if defined(ESP32)
-    #include <WiFi.h>
-    #include <WiFiUdp.h>
-    #define BOARD_HAS_WIFI
-    #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-    #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-    #define NETWORK_CONNECTED WL_CONNECTED
-    #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
 
+  #define BOARD_HAS_WIFI
+  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+  #define NETWORK_CONNECTED WL_CONNECTED
+  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
+#endif
+
+#if defined(BOARD_HAS_MKR_ETH_SHIELD)
+  #include <SPI.h>
+  #include <Ethernet.h>
 #endif
 
 /******************************************************************************
@@ -184,7 +194,7 @@ class ConnectionHandler {
 
     NetworkConnectionState check();
 
-    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
+    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_MKR_ETH_SHIELD)
       virtual unsigned long getTime() = 0;
       virtual Client &getClient() = 0;
       virtual UDP &getUDP() = 0;
@@ -236,6 +246,10 @@ class ConnectionHandler {
   #include "Arduino_NBConnectionHandler.h"
 #elif defined(BOARD_HAS_LORA)
   #include "Arduino_LoRaConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_MKR_ETH_SHIELD)
+  #include "Arduino_EthernetConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */
