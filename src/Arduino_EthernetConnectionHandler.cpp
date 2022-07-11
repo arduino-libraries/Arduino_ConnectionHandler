@@ -18,7 +18,7 @@
 
 #include "Arduino_EthernetConnectionHandler.h"
 
-#ifdef BOARD_HAS_MKR_ETH_SHIELD /* Only compile if the board has ethernet */
+#ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
 
 /******************************************************************************
    CTOR/DTOR
@@ -79,4 +79,4 @@ NetworkConnectionState EthernetConnectionHandler::update_handleDisconnected()
   return NetworkConnectionState::INIT;
 }
 
-#endif /* #ifdef BOARD_HAS_MKR_ETH_SHIELD */
+#endif /* #ifdef BOARD_HAS_ETHERNET */

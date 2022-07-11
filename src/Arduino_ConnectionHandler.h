@@ -49,6 +49,7 @@
   #include <WiFiUdp.h>
 
   #define BOARD_HAS_WIFI
+  #define BOARD_HAS_PORTENTA_VISION_SHIELD
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED
@@ -132,8 +133,9 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
-#if defined(BOARD_HAS_MKR_ETH_SHIELD)
-  #include <SPI.h>
+#if defined(BOARD_HAS_MKR_ETH_SHIELD) || defined(BOARD_HAS_PORTENTA_VISION_SHIELD)
+  #define BOARD_HAS_ETHERNET
+
   #include <Ethernet.h>
 #endif
 
@@ -194,7 +196,7 @@ class ConnectionHandler {
 
     NetworkConnectionState check();
 
-    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_MKR_ETH_SHIELD)
+    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET)
       virtual unsigned long getTime() = 0;
       virtual Client &getClient() = 0;
       virtual UDP &getUDP() = 0;
@@ -248,7 +250,7 @@ class ConnectionHandler {
   #include "Arduino_LoRaConnectionHandler.h"
 #endif
 
-#if defined(BOARD_HAS_MKR_ETH_SHIELD)
+#if defined(BOARD_HAS_ETHERNET)
   #include "Arduino_EthernetConnectionHandler.h"
 #endif
 

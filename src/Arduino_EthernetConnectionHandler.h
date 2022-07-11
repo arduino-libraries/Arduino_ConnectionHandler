@@ -21,7 +21,7 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-#ifdef BOARD_HAS_MKR_ETH_SHIELD /* Only compile if the board has ethernet */
+#ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
 
 /******************************************************************************
    CLASS DECLARATION
@@ -56,6 +56,6 @@ class EthernetConnectionHandler : public ConnectionHandler
 
 };
 
-#endif /* #ifdef BOARD_HAS_MKR_ETH_SHIELD */
+#endif /* #ifdef BOARD_HAS_ETHERNET */
 
 #endif /* ARDUINO_ETHERNET_CONNECTION_HANDLER_H_ */
