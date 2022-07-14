@@ -56,8 +56,6 @@ jobs:
             platform-name: arduino:samd
           - fqbn: "arduino:mbed:envie_m7"
             platform-name: arduino:mbed
-          - fqbn: "arduino:mbed:envie_m4"
-            platform-name: arduino:mbed
           - fqbn: "esp8266:esp8266:huzzah"
             platform-name: esp8266:esp8266
           - fqbn: "esp32:esp32:esp32"
