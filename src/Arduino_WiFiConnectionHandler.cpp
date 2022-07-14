@@ -41,7 +41,7 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
 
 unsigned long WiFiConnectionHandler::getTime()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ESP32)
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   return WiFi.getTime();
 #else
   return 0;
@@ -54,7 +54,7 @@ unsigned long WiFiConnectionHandler::getTime()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ESP32)
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
 #if !defined(__AVR__)
   Debug.print(DBG_INFO, F("WiFi.status(): %d"), WiFi.status());
 #endif
@@ -87,19 +87,19 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   delay(300);
   WiFi.begin(_ssid, _pass);
   delay(1000);
-#endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ESP32) */
+#endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
   return NetworkConnectionState::CONNECTING;
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ESP32)
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() != WL_CONNECTED)
   {
     WiFi.begin(_ssid, _pass);
   }
-#endif /* ifndef ARDUINO_ARCH_ESP8266 */
+#endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
@@ -114,7 +114,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 #if !defined(__AVR__)
     Debug.print(DBG_INFO, F("Connected to \"%s\""), _ssid);
 #endif
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ESP32)
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
     return NetworkConnectionState::CONNECTED;
@@ -149,9 +149,9 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ESP32)
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   WiFi.end();
-#endif /* ifndef ARDUINO_ARCH_ESP8266 */
+#endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
   if (_keep_alive)
   {
     return NetworkConnectionState::INIT;
