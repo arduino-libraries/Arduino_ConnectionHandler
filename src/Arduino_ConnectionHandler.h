@@ -74,38 +74,7 @@
   #define BOARD_HAS_LORA
 #endif
 
-#if    defined(ARDUINO_ESP8266_ESP12)    \
-    || defined(ESP8266)                  \
-    || defined(ESP8266_ESP01)            \
-    || defined(ESP8266_ESP13)            \
-    || defined(ESP8266_GENERIC)          \
-    || defined(ESP8266_ESPRESSO_LITE_V1) \
-    || defined(ESP8266_ESPRESSO_LITE_V2) \
-    || defined(ESP8266_PHOENIX_V1)       \
-    || defined(ESP8266_PHOENIX_V2)       \
-    || defined(ESP8266_NODEMCU)          \
-    || defined(MOD_WIFI_ESP8266)         \
-    || defined(ESP8266_THING)            \
-    || defined(ESP8266_THING_DEV)        \
-    || defined(ESP8266_ESP210)           \
-    || defined(ESP8266_WEMOS_D1MINI)     \
-    || defined(ESP8266_WEMOS_D1MINIPRO)  \
-    || defined(ESP8266_WEMOS_D1MINILITE) \
-    || defined(ESP8266_WEMOS_D1R1)       \
-    || defined(ESP8266_ESP12)            \
-    || defined(WIFINFO)                  \
-    || defined(ESP8266_ARDUINO)          \
-    || defined(GEN4_IOD)                 \
-    || defined(ESP8266_OAK)              \
-    || defined(WIFIDUINO_ESP8266)        \
-    || defined(AMPERKA_WIFI_SLOT)        \
-    || defined(ESP8266_WIO_LINK)         \
-    || defined(ESP8266_ESPECTRO_CORE)
-  
-  #define BOARD_ESP8266
-#endif
-
-#if defined(BOARD_ESP8266)
+#if defined(ARDUINO_ARCH_ESP8266)
   #include <ESP8266WiFi.h>
   #include <WiFiUdp.h>
 
