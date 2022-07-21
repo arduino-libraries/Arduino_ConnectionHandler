@@ -24,9 +24,8 @@
    CTOR/DTOR
  ******************************************************************************/
 
-EthernetConnectionHandler::EthernetConnectionHandler(uint8_t * mac, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
 : ConnectionHandler{keep_alive}
-, _mac{mac}
 {
 
 }
@@ -37,7 +36,7 @@ EthernetConnectionHandler::EthernetConnectionHandler(uint8_t * mac, bool const k
 
 NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 {
-  if (Ethernet.begin(const_cast<uint8_t *>(_mac)) == 0) {
+  if (Ethernet.begin() == 0) {
     Debug.print(DBG_ERROR, F("Failed to configure Ethernet using DHCP"));
 
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {

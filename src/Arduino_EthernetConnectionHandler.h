@@ -31,7 +31,7 @@ class EthernetConnectionHandler : public ConnectionHandler
 {
   public:
 
-    EthernetConnectionHandler(uint8_t * mac, bool const keep_alive = true);
+    EthernetConnectionHandler(bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override { return 0; }
@@ -48,8 +48,6 @@ class EthernetConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState update_handleDisconnected () override;
 
   private:
-
-    uint8_t const * _mac;
 
     EthernetUDP _eth_udp;
     EthernetClient _eth_client;
