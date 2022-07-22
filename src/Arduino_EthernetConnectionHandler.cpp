@@ -25,7 +25,7 @@
  ******************************************************************************/
 
 EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
-: ConnectionHandler{keep_alive}
+: ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 {
 
 }

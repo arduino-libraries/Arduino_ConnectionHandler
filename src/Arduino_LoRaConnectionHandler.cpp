@@ -44,7 +44,7 @@ typedef enum
    CTOR/DTOR
  ******************************************************************************/
 LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, char const * channelMask, _lora_class const device_class)
-: ConnectionHandler{false}
+: ConnectionHandler{false, NetworkAdapter::LORA}
 , _appeui(appeui)
 , _appkey(appkey)
 , _band(band)

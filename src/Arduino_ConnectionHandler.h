@@ -141,6 +141,14 @@ enum class NetworkConnectionEvent {
   ERROR
 };
 
+enum class NetworkAdapter {
+  WIFI,
+  ETHERNET,
+  NB,
+  GSM,
+  LORA
+};
+
 typedef void (*OnNetworkEventCallback)();
 
 /******************************************************************************
@@ -165,7 +173,7 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
 class ConnectionHandler {
   public:
 
-    ConnectionHandler(bool const keep_alive);
+    ConnectionHandler(bool const keep_alive, NetworkAdapter interface);
 
 
     NetworkConnectionState check();
@@ -186,6 +194,10 @@ class ConnectionHandler {
       return _current_net_connection_state;
     }
 
+    NetworkAdapter getInterface() {
+      return _interface;
+    }
+
     void connect();
     void disconnect();
 
@@ -197,6 +209,7 @@ class ConnectionHandler {
   protected:
 
     bool _keep_alive;
+    NetworkAdapter _interface;
 
     virtual NetworkConnectionState update_handleInit         () = 0;
     virtual NetworkConnectionState update_handleConnecting   () = 0;

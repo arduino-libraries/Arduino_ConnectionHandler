@@ -57,7 +57,7 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, boo
 }
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive}
+: ConnectionHandler{keep_alive, NetworkAdapter::NB}
 , _pin(pin)
 , _apn(apn)
 , _login(login)
