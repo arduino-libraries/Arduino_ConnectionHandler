@@ -26,6 +26,20 @@
 
 EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
+,_ip{INADDR_NONE}
+,_dns{INADDR_NONE}
+,_gateway{INADDR_NONE}
+,_subnet{INADDR_NONE}
+{
+
+}
+
+EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet, bool const keep_alive)
+: ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
+,_ip{ip}
+,_dns{dns}
+,_gateway{gateway}
+,_subnet{subnet}
 {
 
 }
@@ -47,11 +61,20 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
-  if (Ethernet.begin(nullptr, 15000, 4000) == 0) {
+  if (_ip != INADDR_NONE) {
+    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _subnet, 15000, 4000) == 0) {
 #if !defined(__AVR__)
-    Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
+      Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
 #endif
-    return NetworkConnectionState::CONNECTING;
+      return NetworkConnectionState::CONNECTING;
+    }
+  } else {
+    if (Ethernet.begin(nullptr, 15000, 4000) == 0) {
+#if !defined(__AVR__)
+      Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
+#endif
+      return NetworkConnectionState::CONNECTING;
+    }
   }
   return NetworkConnectionState::CONNECTED;
 }

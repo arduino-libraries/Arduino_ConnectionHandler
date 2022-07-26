@@ -32,6 +32,7 @@ class EthernetConnectionHandler : public ConnectionHandler
   public:
 
     EthernetConnectionHandler(bool const keep_alive = true);
+    EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override { return 0; }
@@ -48,6 +49,11 @@ class EthernetConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState update_handleDisconnected () override;
 
   private:
+
+    IPAddress _ip;
+    IPAddress _dns;
+    IPAddress _gateway;
+    IPAddress _subnet;
 
     EthernetUDP _eth_udp;
     EthernetClient _eth_client;
