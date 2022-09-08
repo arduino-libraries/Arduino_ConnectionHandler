@@ -80,6 +80,16 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(ARDUINO_GIGA)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+
+  #define BOARD_HAS_WIFI
+  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+  #define NETWORK_CONNECTED WL_CONNECTED
+#endif
+
 #ifdef ARDUINO_SAMD_MKRGSM1400
   #include <MKRGSM.h>
   #define BOARD_HAS_GSM
