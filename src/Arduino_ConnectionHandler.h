@@ -54,6 +54,13 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET)
+  #include <Ethernet.h>
+  #include <PortentaEthernet.h>
+
+  #define BOARD_HAS_ETHERNET
+#endif
+
 #if defined(ARDUINO_NICLA_VISION)
   #include <WiFi.h>
   #include <WiFiUdp.h>
@@ -105,12 +112,6 @@
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
-#endif
-
-#if defined(BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET)
-  #define BOARD_HAS_ETHERNET
-
-  #include <Ethernet.h>
 #endif
 
 /******************************************************************************
