@@ -51,9 +51,7 @@ EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns
 NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 {
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-#if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Error, ethernet shield was not found."));
-#endif
     return NetworkConnectionState::ERROR;
   }
   return NetworkConnectionState::CONNECTING;
@@ -63,33 +61,26 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
   if (_ip != INADDR_NONE) {
     if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _subnet, 15000, 4000) == 0) {
-#if !defined(__AVR__)
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
-#endif
       return NetworkConnectionState::CONNECTING;
     }
   } else {
     if (Ethernet.begin(nullptr, 15000, 4000) == 0) {
-#if !defined(__AVR__)
       Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
-#endif
       return NetworkConnectionState::CONNECTING;
     }
   }
+
   return NetworkConnectionState::CONNECTED;
 }
 
 NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
 {
   if (Ethernet.linkStatus() == LinkOFF) {
-#if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Ethernet link OFF, connection lost."));
-#endif
     if (_keep_alive)
     {
-#if !defined(__AVR__)
       Debug.print(DBG_ERROR, F("Attempting reconnection"));
-#endif
     }
     return NetworkConnectionState::DISCONNECTED;
   }
