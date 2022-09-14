@@ -105,7 +105,6 @@ NetworkConnectionState EthernetConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleDisconnected()
 {
-  Ethernet.end();
   if (_keep_alive)
   {
     return NetworkConnectionState::INIT;
