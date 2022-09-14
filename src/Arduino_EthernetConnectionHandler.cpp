@@ -83,8 +83,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
 {
   if (Ethernet.linkStatus() == LinkOFF) {
 #if !defined(__AVR__)
-    Debug.print(DBG_VERBOSE, F("Ethernet.status(): %d"), Ethernet.status());
-    Debug.print(DBG_ERROR, F("Connection lost."));
+    Debug.print(DBG_ERROR, F("Ethernet link OFF, connection lost."));
 #endif
     if (_keep_alive)
     {
