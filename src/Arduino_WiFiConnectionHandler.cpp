@@ -132,7 +132,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
     if (_keep_alive)
     {
 #if !defined(__AVR__)
-      Debug.print(DBG_ERROR, F("Attempting reconnection"));
+      Debug.print(DBG_INFO, F("Attempting reconnection"));
 #endif
     }
   
