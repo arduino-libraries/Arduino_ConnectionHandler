@@ -67,7 +67,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
     return NetworkConnectionState::ERROR;
   }
 #if !defined(__AVR__)
-  Debug.print(DBG_ERROR, F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
+  Debug.print(DBG_INFO, F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
 #endif
 
 #if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
@@ -82,7 +82,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 #endif
 
 #else
-  Debug.print(DBG_ERROR, F("WiFi status ESP: %d"), WiFi.status());
+  Debug.print(DBG_INFO, F("WiFi status ESP: %d"), WiFi.status());
   WiFi.disconnect();
   delay(300);
   WiFi.begin(_ssid, _pass);
