@@ -32,7 +32,7 @@ class EthernetConnectionHandler : public ConnectionHandler
   public:
 
     EthernetConnectionHandler(bool const keep_alive = true);
-    EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet, bool const keep_alive = true);
+    EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress netmask, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override { return 0; }
@@ -53,7 +53,7 @@ class EthernetConnectionHandler : public ConnectionHandler
     IPAddress _ip;
     IPAddress _dns;
     IPAddress _gateway;
-    IPAddress _subnet;
+    IPAddress _netmask;
 
     EthernetUDP _eth_udp;
     EthernetClient _eth_client;

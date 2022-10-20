@@ -29,17 +29,17 @@ EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
 ,_ip{INADDR_NONE}
 ,_dns{INADDR_NONE}
 ,_gateway{INADDR_NONE}
-,_subnet{INADDR_NONE}
+,_netmask{INADDR_NONE}
 {
 
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress subnet, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress netmask, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 ,_ip{ip}
 ,_dns{dns}
 ,_gateway{gateway}
-,_subnet{subnet}
+,_netmask{netmask}
 {
 
 }
@@ -60,7 +60,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
   if (_ip != INADDR_NONE) {
-    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _subnet, 15000, 4000) == 0) {
+    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask, 15000, 4000) == 0) {
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
       return NetworkConnectionState::CONNECTING;
     }
