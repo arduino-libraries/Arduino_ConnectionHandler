@@ -34,7 +34,7 @@ EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
 
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress netmask, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 ,_ip{ip}
 ,_dns{dns}

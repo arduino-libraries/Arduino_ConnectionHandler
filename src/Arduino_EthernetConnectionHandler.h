@@ -32,7 +32,7 @@ class EthernetConnectionHandler : public ConnectionHandler
   public:
 
     EthernetConnectionHandler(bool const keep_alive = true);
-    EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress netmask, bool const keep_alive = true);
+    EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, bool const keep_alive = true);
     EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, bool const keep_alive = true);
 
 
