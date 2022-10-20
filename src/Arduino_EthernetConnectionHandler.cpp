@@ -44,6 +44,27 @@ EthernetConnectionHandler::EthernetConnectionHandler(IPAddress ip, IPAddress dns
 
 }
 
+EthernetConnectionHandler::EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, bool const keep_alive)
+: ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
+,_ip{INADDR_NONE}
+,_dns{INADDR_NONE}
+,_gateway{INADDR_NONE}
+,_netmask{INADDR_NONE}
+{
+  if(!_ip.fromString(ip)) {
+    _ip = INADDR_NONE;
+  }
+  if(!_dns.fromString(dns)) {
+    _dns = INADDR_NONE;
+  }
+  if(!_gateway.fromString(gateway)) {
+    _gateway = INADDR_NONE;
+  }
+  if(!_netmask.fromString(netmask)) {
+    _netmask = INADDR_NONE;
+  }
+}
+
 /******************************************************************************
    PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/

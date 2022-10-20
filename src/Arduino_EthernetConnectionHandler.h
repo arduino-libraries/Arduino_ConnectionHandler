@@ -33,6 +33,7 @@ class EthernetConnectionHandler : public ConnectionHandler
 
     EthernetConnectionHandler(bool const keep_alive = true);
     EthernetConnectionHandler(IPAddress ip, IPAddress dns, IPAddress gateway, IPAddress netmask, bool const keep_alive = true);
+    EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override { return 0; }
