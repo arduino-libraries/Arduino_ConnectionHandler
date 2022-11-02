@@ -14,13 +14,26 @@
  * If using a MKR NB1500 you'll need a NBConnectionHandler object as follows
  *
  *    NBConnectionHandler conMan(SECRET_PIN);
+ *
+ * If using a Portenta + Ethernet shield you'll need a EthernetConnectionHandler object as follows:
+ *
+ * DHCP mode
+ *    EthernetConnectionHandler conMan();
+ *
+ * Manual configuration
+ *    EthernetConnectionHandler conMan(SECRET_IP, SECRET_DNS, SECRET_GATEWAY, SECRET_NETMASK);
+ *
+ * Manual configuration will fallback on DHCP mode if SECRET_IP is invalid or equal to INADDR_NONE.
+ *
  */
 
 #include "arduino_secrets.h"
 
 #include <Arduino_ConnectionHandler.h>
 
-#if defined(BOARD_HAS_WIFI)
+#if defined(BOARD_HAS_ETHERNET)
+EthernetConnectionHandler conMan(SECRET_IP, SECRET_DNS, SECRET_GATEWAY, SECRET_NETMASK);
+#elif defined(BOARD_HAS_WIFI)
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 #elif defined(BOARD_HAS_GSM)
 GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
