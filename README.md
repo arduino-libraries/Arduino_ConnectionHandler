@@ -17,7 +17,9 @@ Library for handling and managing network connections by providing keep-alive fu
 ```C++
 #include <Arduino_ConnectionHandler.h>
 /* ... */
-#if defined(BOARD_HAS_WIFI)
+#if defined(BOARD_HAS_ETHERNET)
+EthernetConnectionHandler conMan;
+#elif defined(BOARD_HAS_WIFI)
 WiFiConnectionHandler conMan("SECRET_SSID", "SECRET_PASS");
 #elif defined(BOARD_HAS_GSM)
 GSMConnectionHandler conMan("SECRET_PIN", "SECRET_APN", "SECRET_GSM_LOGIN", "SECRET_GSM_PASS");
