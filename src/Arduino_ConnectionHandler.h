@@ -43,7 +43,21 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
 #endif
 
-#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_NICLA_VISION)
+#if defined(ARDUINO_PORTENTA_H7_M7)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+  #include <Ethernet.h>
+  #include <PortentaEthernet.h>
+
+  #define BOARD_HAS_WIFI
+  #define BOARD_HAS_ETHERNET
+  #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
+  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+  #define NETWORK_CONNECTED WL_CONNECTED
+#endif
+
+#if defined(ARDUINO_NICLA_VISION)
   #include <WiFi.h>
   #include <WiFiUdp.h>
 
@@ -124,6 +138,14 @@ enum class NetworkConnectionEvent {
   ERROR
 };
 
+enum class NetworkAdapter {
+  WIFI,
+  ETHERNET,
+  NB,
+  GSM,
+  LORA
+};
+
 typedef void (*OnNetworkEventCallback)();
 
 /******************************************************************************
@@ -148,12 +170,12 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
 class ConnectionHandler {
   public:
 
-    ConnectionHandler(bool const keep_alive);
+    ConnectionHandler(bool const keep_alive, NetworkAdapter interface);
 
 
     NetworkConnectionState check();
 
-    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB)
+    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET)
       virtual unsigned long getTime() = 0;
       virtual Client &getClient() = 0;
       virtual UDP &getUDP() = 0;
@@ -169,6 +191,10 @@ class ConnectionHandler {
       return _current_net_connection_state;
     }
 
+    NetworkAdapter getInterface() {
+      return _interface;
+    }
+
     void connect();
     void disconnect();
 
@@ -180,6 +206,7 @@ class ConnectionHandler {
   protected:
 
     bool _keep_alive;
+    NetworkAdapter _interface;
 
     virtual NetworkConnectionState update_handleInit         () = 0;
     virtual NetworkConnectionState update_handleConnecting   () = 0;
@@ -205,6 +232,10 @@ class ConnectionHandler {
   #include "Arduino_NBConnectionHandler.h"
 #elif defined(BOARD_HAS_LORA)
   #include "Arduino_LoRaConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_ETHERNET)
+  #include "Arduino_EthernetConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

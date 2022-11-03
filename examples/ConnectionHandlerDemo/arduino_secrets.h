@@ -8,3 +8,8 @@ const char SECRET_GSM_PASS[]	= "GSM PASSWORD";
 
 const char SECRET_APP_EUI[]  = "APP_EUI";
 const char SECRET_APP_KEY[]  = "APP_KEY";
+
+const char SECRET_IP[]       = "IP ADDRESS";
+const char SECRET_DNS[]      = "DNS ADDRESS";
+const char SECRET_GATEWAY[]  = "GATEWAY ADDRESS";
+const char SECRET_NETMASK[]  = "NETWORK MASK";

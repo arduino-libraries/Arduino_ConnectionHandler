@@ -47,7 +47,7 @@ __attribute__((weak)) void mkr_gsm_feed_watchdog()
  ******************************************************************************/
 
 GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive}
+: ConnectionHandler{keep_alive, NetworkAdapter::GSM}
 , _pin(pin)
 , _apn(apn)
 , _login(login)

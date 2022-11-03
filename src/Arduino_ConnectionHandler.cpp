@@ -25,8 +25,9 @@
    CONSTRUCTOR/DESTRUCTOR
  ******************************************************************************/
 
-ConnectionHandler::ConnectionHandler(bool const keep_alive)
+ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface)
 : _keep_alive{keep_alive}
+, _interface{interface}
 , _lastConnectionTickTime{millis()}
 , _current_net_connection_state{NetworkConnectionState::INIT}
 {

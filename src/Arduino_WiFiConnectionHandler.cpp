@@ -28,7 +28,7 @@
  ******************************************************************************/
 
 WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive}
+: ConnectionHandler{keep_alive, NetworkAdapter::WIFI}
 , _ssid{ssid}
 , _pass{pass}
 {
