@@ -18,7 +18,7 @@
  * If using a Portenta + Ethernet shield you'll need a EthernetConnectionHandler object as follows:
  *
  * DHCP mode
- *    EthernetConnectionHandler conMan();
+ *    EthernetConnectionHandler conMan;
  *
  * Manual configuration
  *    EthernetConnectionHandler conMan(SECRET_IP, SECRET_DNS, SECRET_GATEWAY, SECRET_NETMASK);
