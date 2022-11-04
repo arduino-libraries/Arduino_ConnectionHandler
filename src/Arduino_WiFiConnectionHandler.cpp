@@ -24,6 +24,15 @@
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
 /******************************************************************************
+   CONSTANTS
+ ******************************************************************************/
+#if defined(ARDUINO_ARCH_ESP8266)
+static int const ESP_WIFI_CONNECTION_TIMEOUT = 3000;
+#elif defined(ARDUINO_ARCH_ESP32)
+static int const ESP_WIFI_CONNECTION_TIMEOUT = 1000;
+#endif
+
+/******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
 
@@ -93,12 +102,14 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
   if (WiFi.status() != WL_CONNECTED)
   {
     WiFi.begin(_ssid, _pass);
-#if defined(ARDUINO_ARCH_ESP8266)
-    WiFi.waitForConnectResult();
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+    /* Wait connection otherwise board won't connect */
+    unsigned long start = millis();
+    while((WiFi.status() != WL_CONNECTED) && (millis() - start) < ESP_WIFI_CONNECTION_TIMEOUT) {
+      delay(100);
+    }
 #endif
-#if defined(ARDUINO_ARCH_ESP32)
-    WiFi.waitForConnectResult(1000);
-#endif
+
   }
 
   if (WiFi.status() != NETWORK_CONNECTED)
