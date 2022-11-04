@@ -90,12 +90,16 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() != WL_CONNECTED)
   {
     WiFi.begin(_ssid, _pass);
+#if defined(ARDUINO_ARCH_ESP8266)
+    WiFi.waitForConnectResult();
+#endif
+#if defined(ARDUINO_ARCH_ESP32)
+    WiFi.waitForConnectResult(1000);
+#endif
   }
-#endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
