@@ -155,7 +155,11 @@ typedef void (*OnNetworkEventCallback)();
 static unsigned int const CHECK_INTERVAL_TABLE[] =
 {
   /* INIT          */ 100,
+#if defined(ARDUINO_ARCH_ESP32)
+  /* CONNECTING    */ 2000,
+#else
   /* CONNECTING    */ 500,
+#endif
   /* CONNECTED     */ 10000,
   /* DISCONNECTING */ 100,
   /* DISCONNECTED  */ 1000,
