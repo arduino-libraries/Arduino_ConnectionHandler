@@ -80,13 +80,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
     delay(5000);
   }
 #endif
-
 #else
-  Debug.print(DBG_INFO, F("WiFi status ESP: %d"), WiFi.status());
-  WiFi.disconnect();
-  delay(300);
-  WiFi.begin(_ssid, _pass);
-  delay(1000);
+  WiFi.mode(WIFI_STA);
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
   return NetworkConnectionState::CONNECTING;
