@@ -54,10 +54,11 @@ unsigned long WiFiConnectionHandler::getTime()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
 #if !defined(__AVR__)
   Debug.print(DBG_INFO, F("WiFi.status(): %d"), WiFi.status());
 #endif
+
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
 #if !defined(__AVR__)
