@@ -24,7 +24,6 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-
 #ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
 
 /******************************************************************************
