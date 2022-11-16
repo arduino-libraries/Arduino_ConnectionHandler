@@ -24,6 +24,8 @@
 
 #include "Arduino_ConnectionHandler.h"
 
+#ifdef BOARD_HAS_LORA /* Only compile if this is a board with LoRa */
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
@@ -71,5 +73,7 @@ class LoRaConnectionHandler : public ConnectionHandler
     _lora_class _device_class;
     LoRaModem _modem;
 };
+
+#endif /* #ifdef BOARD_HAS_LORA  */
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */

@@ -44,17 +44,22 @@
 #endif
 
 #if defined(ARDUINO_PORTENTA_H7_M7)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-  #include <Ethernet.h>
-  #include <PortentaEthernet.h>
+  #if __has_include("Arduino_LoRaConnectionHandler.h")
+    #include <MKRWAN.h>
+    #define BOARD_HAS_LORA
+  #else
+    #include <WiFi.h>
+    #include <WiFiUdp.h>
+    #include <Ethernet.h>
+    #include <PortentaEthernet.h>
 
-  #define BOARD_HAS_WIFI
-  #define BOARD_HAS_ETHERNET
-  #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
+    #define BOARD_HAS_WIFI
+    #define BOARD_HAS_ETHERNET
+    #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
+    #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+    #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+    #define NETWORK_CONNECTED WL_CONNECTED
+  #endif
 #endif
 
 #if defined(ARDUINO_NICLA_VISION)
