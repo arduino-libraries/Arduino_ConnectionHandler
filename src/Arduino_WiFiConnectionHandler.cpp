@@ -71,7 +71,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 #endif
 
 #if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
-  if (WiFi.firmwareVersion() < WIFI_FIRMWARE_VERSION_REQUIRED)
+  if (String(WiFi.firmwareVersion()) < String(WIFI_FIRMWARE_VERSION_REQUIRED))
   {
 #if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
