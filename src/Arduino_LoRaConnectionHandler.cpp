@@ -124,8 +124,9 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
   bool const network_status = _modem.joinOTAA(_appeui, _appkey);
   if (network_status != true)
   {
-    Debug.print(DBG_ERROR, F("Something went wrong; are you indoor? Move near a window, then reset and retry."));
-    return NetworkConnectionState::ERROR;
+    Debug.print(DBG_ERROR, F("Connection to the network failed"));
+    Debug.print(DBG_INFO, F("Retrying in \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::INIT;
   }
   else
   {
