@@ -156,7 +156,7 @@ static unsigned int const CHECK_INTERVAL_TABLE[] =
 {
   /* INIT          */ 100,
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  /* CONNECTING    */ 2000,
+  /* CONNECTING    */ 4000,
 #else
   /* CONNECTING    */ 500,
 #endif
