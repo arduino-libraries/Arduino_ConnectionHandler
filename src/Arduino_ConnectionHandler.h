@@ -67,6 +67,19 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(ARDUINO_OPTA)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+  #include <Ethernet.h>
+  #include <PortentaEthernet.h>
+
+  #define BOARD_HAS_WIFI
+  #define BOARD_HAS_ETHERNET
+  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+  #define NETWORK_CONNECTED WL_CONNECTED
+#endif
+
 #ifdef ARDUINO_SAMD_MKRGSM1400
   #include <MKRGSM.h>
   #define BOARD_HAS_GSM
