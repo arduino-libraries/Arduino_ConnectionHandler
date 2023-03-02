@@ -66,6 +66,8 @@ jobs:
             platform-name: arduino:mbed_nicla
           - fqbn: arduino:mbed_opta:opta
             platform-name: arduino:mbed_opta
+          - fqbn: arduino:mbed_giga:giga
+            platform-name: arduino:mbed_giga
 
         # Make board type-specific customizations to the matrix jobs
         include:
