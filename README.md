@@ -10,7 +10,7 @@ Library for handling and managing network connections by providing keep-alive fu
 * **GSM**: [`MKR GSM 1400`](https://store.arduino.cc/arduino-mkr-gsm-1400-1415)
 * **5G**: [`MKR NB 1500`](https://store.arduino.cc/arduino-mkr-nb-1500-1413)
 * **LoRa**: [`MKR WAN 1300/1310`](https://store.arduino.cc/mkr-wan-1310)
-* **Ethernet**: [`Portenta H7`](https://store.arduino.cc/products/portenta-h7) + [`Vision Shield Ethernet`](https://store.arduino.cc/products/arduino-portenta-vision-shield-ethernet), [`Max Carrier`](https://store.arduino.cc/products/portenta-max-carrier), [`Breakout`](https://store.arduino.cc/products/arduino-portenta-breakout), [`Portenta Machine Control`](https://store.arduino.cc/products/arduino-portenta-machine-control), [`OPTA Lite`](https://store.arduino.cc/products/opta-lite)
+* **Ethernet**: [`Portenta H7`](https://store.arduino.cc/products/portenta-h7) + [`Vision Shield Ethernet`](https://store.arduino.cc/products/arduino-portenta-vision-shield-ethernet), [`Max Carrier`](https://store.arduino.cc/products/portenta-max-carrier), [`Breakout`](https://store.arduino.cc/products/arduino-portenta-breakout), [`Portenta Machine Control`](https://store.arduino.cc/products/arduino-portenta-machine-control), [`OPTA WiFi`](https://store.arduino.cc/products/opta-wifi), [`OPTA RS485`](https://store.arduino.cc/products/opta-rs485), [`OPTA Lite`](https://store.arduino.cc/products/opta-lite)
 
 ### How-to-use
 
