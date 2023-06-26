@@ -68,6 +68,8 @@ jobs:
             platform-name: arduino:mbed_opta
           - fqbn: arduino:mbed_giga:giga
             platform-name: arduino:mbed_giga
+          - fqbn: arduino:renesas_portenta:portenta_c33
+            platform-name: arduino:renesas_portenta
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -84,6 +86,11 @@ jobs:
               # Overwrite the Arduino mbed-Enabled Boards release version with version from the tip of the default branch (located in local path because of the need to first install ArduinoCore-API)
               - source-path: extras/ArduinoCore-mbed
                 name: arduino:mbed
+          - board:
+              platform-name: arduino:renesas_portenta
+            platforms: |
+              # Install Arduino Renesas portenta Boards via Boards Manager
+              - name: arduino:renesas_portenta
           - board:
               platform-name: esp8266:esp8266
             platforms: |
