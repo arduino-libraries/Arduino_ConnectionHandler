@@ -147,6 +147,16 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
 #endif
 
+#if defined(ARDUINO_UNOR4_WIFI)
+  #include <WiFiS3.h>
+
+  #define BOARD_HAS_WIFI
+  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
+  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
+  #define NETWORK_CONNECTED WL_CONNECTED
+  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
+#endif
+
 /******************************************************************************
    INCLUDES
  ******************************************************************************/
