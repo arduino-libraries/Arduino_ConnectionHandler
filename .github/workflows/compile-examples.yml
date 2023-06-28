@@ -70,6 +70,8 @@ jobs:
             platform-name: arduino:mbed_giga
           - fqbn: arduino:renesas_portenta:portenta_c33
             platform-name: arduino:renesas_portenta
+          - fqbn: arduino:renesas_uno:unor4wifi
+            platform-name: arduino:renesas_uno
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -91,6 +93,11 @@ jobs:
             platforms: |
               # Install Arduino Renesas portenta Boards via Boards Manager
               - name: arduino:renesas_portenta
+          - board:
+              platform-name: arduino:renesas_uno
+            platforms: |
+              # Install Arduino Renesas uno Boards via Boards Manager
+              - name: arduino:renesas_uno
           - board:
               platform-name: esp8266:esp8266
             platforms: |
