@@ -72,6 +72,8 @@ jobs:
             platform-name: arduino:renesas_portenta
           - fqbn: arduino:renesas_uno:unor4wifi
             platform-name: arduino:renesas_uno
+          - fqbn: arduino:esp32:nano_nora
+            platform-name: arduino:esp32
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -98,6 +100,11 @@ jobs:
             platforms: |
               # Install Arduino Renesas uno Boards via Boards Manager
               - name: arduino:renesas_uno
+          - board:
+              platform-name: arduino:esp32
+            platforms: |
+              # Install Arduino ESP32 Boards via Boards Manager
+              - name: arduino:esp32
           - board:
               platform-name: esp8266:esp8266
             platforms: |
