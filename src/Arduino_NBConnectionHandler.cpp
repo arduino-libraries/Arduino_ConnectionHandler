@@ -100,7 +100,7 @@ NetworkConnectionState NBConnectionHandler::update_handleConnecting()
 {
   NB_NetworkStatus_t const network_status = _nb_gprs.attachGPRS(true);
   Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
-  if (network_status == NB_NetworkStatus_t::ERROR)
+  if (network_status == NB_NetworkStatus_t::NB_ERROR)
   {
     Debug.print(DBG_ERROR, F("GPRS.attachGPRS() failed"));
     return NetworkConnectionState::ERROR;
