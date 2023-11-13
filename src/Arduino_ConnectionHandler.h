@@ -168,6 +168,13 @@
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
 #endif
 
+#ifdef ARDUINO_EDGE_CONTROL
+  #include <GSM.h>
+  #define BOARD_HAS_CATM1_NBIOT
+  #define BOARD_HAS_PORTENTA_CATM1_NBIOT_SHIELD
+  #define NETWORK_HARDWARE_ERROR
+#endif
+
 /******************************************************************************
    TYPEDEFS
  ******************************************************************************/
