@@ -76,6 +76,8 @@ jobs:
             platform-name: arduino:renesas_uno
           - fqbn: arduino:esp32:nano_nora
             platform-name: arduino:esp32
+          - fqbn: arduino:mbed_edge:edge_control
+            platform-name: arduino:mbed_edge
 
         # Make board type-specific customizations to the matrix jobs
         include:
