@@ -54,6 +54,10 @@ unsigned long CatM1ConnectionHandler::getTime()
 
 NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
 {
+#if defined (ARDUINO_EDGE_CONTROL)
+  pinMode(ON_MKR2, OUTPUT);
+  digitalWrite(ON_MKR2, HIGH);
+#endif
   return NetworkConnectionState::CONNECTING;
 }
 
