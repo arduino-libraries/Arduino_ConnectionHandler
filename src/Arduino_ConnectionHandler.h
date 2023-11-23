@@ -18,6 +18,14 @@
 #ifndef ARDUINO_CONNECTION_HANDLER_H_
 #define ARDUINO_CONNECTION_HANDLER_H_
 
+/******************************************************************************
+   INCLUDES
+ ******************************************************************************/
+
+#if !defined(__AVR__)
+#  include <Arduino_DebugUtils.h>
+#endif
+
 #include <Arduino.h>
 
 #ifdef ARDUINO_SAMD_MKR1000
@@ -158,14 +166,6 @@
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
   #define NETWORK_CONNECTED WL_CONNECTED
   #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
-#endif
-
-/******************************************************************************
-   INCLUDES
- ******************************************************************************/
-
-#if !defined(__AVR__)
-#  include <Arduino_DebugUtils.h>
 #endif
 
 /******************************************************************************
