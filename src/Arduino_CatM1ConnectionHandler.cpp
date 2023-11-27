@@ -28,7 +28,7 @@
  ******************************************************************************/
 
 CatM1ConnectionHandler::CatM1ConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, RadioAccessTechnologyType rat, uint32_t band, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::GSM}
+: ConnectionHandler{keep_alive, NetworkAdapter::CATM1}
 , _pin(pin)
 , _apn(apn)
 , _login(login)
