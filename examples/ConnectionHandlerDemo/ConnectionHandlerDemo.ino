@@ -41,6 +41,8 @@ GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_
 NBConnectionHandler conMan(SECRET_PIN);
 #elif defined(BOARD_HAS_LORA)
 LoRaConnectionHandler conMan(SECRET_APP_EUI, SECRET_APP_KEY);
+#elif defined(BOARD_HAS_CATM1_NBIOT)
+CatM1ConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #endif
 
 void setup() {

@@ -11,6 +11,7 @@ GSMConnectionHandler	KEYWORD1
 NBConnectionHandler	KEYWORD1
 LoRaConnectionHandler	KEYWORD1
 EthernetConnectionHandler	KEYWORD1
+CatM1ConnectionHandler KEYWORD1
 
 ####################################################
 # Methods and Functions (KEYWORD2)
