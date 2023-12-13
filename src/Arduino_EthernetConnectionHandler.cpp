@@ -24,32 +24,38 @@
    CTOR/DTOR
  ******************************************************************************/
 
-EthernetConnectionHandler::EthernetConnectionHandler(bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 ,_ip{INADDR_NONE}
 ,_dns{INADDR_NONE}
 ,_gateway{INADDR_NONE}
 ,_netmask{INADDR_NONE}
+,_timeout{timeout}
+,_response_timeout{responseTimeout}
 {
 
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 ,_ip{ip}
 ,_dns{dns}
 ,_gateway{gateway}
 ,_netmask{netmask}
+,_timeout{timeout}
+,_response_timeout{responseTimeout}
 {
 
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 ,_ip{INADDR_NONE}
 ,_dns{INADDR_NONE}
 ,_gateway{INADDR_NONE}
 ,_netmask{INADDR_NONE}
+,_timeout{timeout}
+,_response_timeout{responseTimeout}
 {
   if(!_ip.fromString(ip)) {
     _ip = INADDR_NONE;
@@ -81,13 +87,15 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
   if (_ip != INADDR_NONE) {
-    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask, 15000, 4000) == 0) {
+    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask, _timeout, _response_timeout) == 0) {
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
+      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
       return NetworkConnectionState::CONNECTING;
     }
   } else {
-    if (Ethernet.begin(nullptr, 15000, 4000) == 0) {
+    if (Ethernet.begin(nullptr, _timeout, _response_timeout) == 0) {
       Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
+      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
       return NetworkConnectionState::CONNECTING;
     }
   }
