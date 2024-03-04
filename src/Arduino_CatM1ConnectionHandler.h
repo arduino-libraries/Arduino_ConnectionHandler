@@ -39,6 +39,7 @@ class CatM1ConnectionHandler : public ConnectionHandler
 
 
     virtual unsigned long getTime() override;
+    virtual Client *getNewClient() override { return new GSMClient(); };
     virtual Client & getClient() override { return _gsm_client; };
     virtual UDP & getUDP() override { return _gsm_udp; };
 
