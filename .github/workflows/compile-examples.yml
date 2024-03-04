@@ -42,42 +42,61 @@ jobs:
         board:
           - fqbn: "arduino:samd:mkr1000"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkr1000
           - fqbn: "arduino:samd:mkrwifi1010"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrwifi1010
           - fqbn: "arduino:samd:nano_33_iot"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-nano_33_iot
           - fqbn: "arduino:samd:mkrgsm1400"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrgsm1400
           - fqbn: "arduino:samd:mkrnb1500"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrnb1500
           - fqbn: "arduino:samd:mkrwan1300"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrwan1300
           - fqbn: "arduino:samd:mkrwan1310"
             platform-name: arduino:samd
+            artifact-name-suffix: arduino-samd-mkrwan1310
           - fqbn: "arduino:mbed:envie_m7"
             platform-name: arduino:mbed
+            artifact-name-suffix: arduino-mbed-envie_m7
           - fqbn: "arduino:mbed_portenta:envie_m7"
             platform-name: arduino:mbed_portenta
+            artifact-name-suffix: arduino-mbed_portenta-envie_m7
           - fqbn: "esp8266:esp8266:huzzah"
             platform-name: esp8266:esp8266
+            artifact-name-suffix: esp8266-esp8266-huzzah
           - fqbn: "esp32:esp32:esp32"
             platform-name: esp32:esp32
+            artifact-name-suffix: esp32-esp32-esp32
           - fqbn: arduino:mbed_nano:nanorp2040connect
             platform-name: arduino:mbed_nano
+            artifact-name-suffix: arduino-mbed_nano-nanorp2040connect
           - fqbn: arduino:mbed_nicla:nicla_vision
             platform-name: arduino:mbed_nicla
+            artifact-name-suffix: arduino-mbed_nicla-nicla_vision
           - fqbn: arduino:mbed_opta:opta
             platform-name: arduino:mbed_opta
+            artifact-name-suffix: arduino-mbed_opta-opta
           - fqbn: arduino:mbed_giga:giga
             platform-name: arduino:mbed_giga
+            artifact-name-suffix: arduino-mbed_giga-giga
           - fqbn: arduino:renesas_portenta:portenta_c33
             platform-name: arduino:renesas_portenta
+            artifact-name-suffix: arduino-renesas_portenta-portenta_c33
           - fqbn: arduino:renesas_uno:unor4wifi
             platform-name: arduino:renesas_uno
+            artifact-name-suffix: arduino-renesas_uno-unor4wifi
           - fqbn: arduino:esp32:nano_nora
             platform-name: arduino:esp32
+            artifact-name-suffix: arduino-esp32-nano_nora
           - fqbn: arduino:mbed_edge:edge_control
             platform-name: arduino:mbed_edge
+            artifact-name-suffix: arduino-mbed_edge-edge_control
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -168,5 +187,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           if-no-files-found: error
-          name: ${{ env.SKETCHES_REPORTS_PATH }}
+          name: sketches-report-${{ matrix.board.artifact-name-suffix }}
           path: ${{ env.SKETCHES_REPORTS_PATH }}
