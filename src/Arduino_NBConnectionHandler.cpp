@@ -147,4 +147,8 @@ NetworkConnectionState NBConnectionHandler::update_handleDisconnected()
   }
 }
 
+Client* NBConnectionHandler::getNewSSLClient() {
+  return new NBSSLClient();
+}
+
 #endif /* #ifdef BOARD_HAS_NB  */

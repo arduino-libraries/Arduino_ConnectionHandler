@@ -39,6 +39,7 @@ class EthernetConnectionHandler : public ConnectionHandler
     virtual unsigned long getTime() override { return 0; }
     virtual Client & getClient() override{ return _eth_client; }
     virtual Client *getNewClient() override { return new EthernetClient(); }
+    virtual Client *getNewSSLClient() override;
     virtual UDP & getUDP() override { return _eth_udp; }
 
 

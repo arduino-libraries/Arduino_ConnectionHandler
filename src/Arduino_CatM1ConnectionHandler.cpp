@@ -100,4 +100,8 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnected()
   }
 }
 
+Client* CatM1ConnectionHandler::getNewSSLClient() {
+  return new GSMSSLClient();
+}
+
 #endif /* #ifdef BOARD_HAS_CATM1_NBIOT  */

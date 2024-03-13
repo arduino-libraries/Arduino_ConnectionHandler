@@ -57,6 +57,8 @@
   #include <Ethernet.h>
   #include <PortentaEthernet.h>
   #include <GSM.h>
+  #include "EthernetSSLClient.h"
+  #include <WiFiSSLClient.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
@@ -73,6 +75,8 @@
   #include <WiFiUdp.h>
   #include <EthernetC33.h>
   #include <EthernetUdp.h>
+  #include "EthernetSSLClient.h"
+  #include <WiFiSSLClient.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
@@ -85,6 +89,7 @@
 #if defined(ARDUINO_NICLA_VISION)
   #include <WiFi.h>
   #include <WiFiUdp.h>
+  #include <WiFiSSLClient.h>
 
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
@@ -97,6 +102,8 @@
   #include <WiFiUdp.h>
   #include <Ethernet.h>
   #include <PortentaEthernet.h>
+  #include "EthernetSSLClient.h"
+  #include <WiFiSSLClient.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
@@ -139,6 +146,7 @@
 #if defined(ARDUINO_ARCH_ESP8266)
   #include <ESP8266WiFi.h>
   #include <WiFiUdp.h>
+  #include <WiFiClientSecure.h>
 
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
@@ -150,7 +158,8 @@
 #if defined(ARDUINO_ARCH_ESP32)
   #include <WiFi.h>
   #include <WiFiUdp.h>
-  
+  #include <WiFiClientSecure.h>
+
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -160,6 +169,7 @@
 
 #if defined(ARDUINO_UNOR4_WIFI)
   #include <WiFiS3.h>
+  #include <WiFiSSLClient.h>
 
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
@@ -241,6 +251,7 @@ class ConnectionHandler {
       virtual unsigned long getTime() = 0;
       virtual Client &getClient() = 0;
       virtual Client *getNewClient() = 0;
+      virtual Client *getNewSSLClient() = 0;
       virtual UDP &getUDP() = 0;
     #endif
 

@@ -42,6 +42,7 @@ class NBConnectionHandler : public ConnectionHandler
     virtual unsigned long getTime() override;
     virtual Client & getClient() override { return _nb_client; };
     virtual Client *getNewClient() override { return new NBClient(); }
+    virtual Client *getNewSSLClient() override;
     virtual UDP & getUDP() override { return _nb_udp; };
 
 

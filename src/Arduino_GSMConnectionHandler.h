@@ -41,6 +41,7 @@ class GSMConnectionHandler : public ConnectionHandler
     virtual unsigned long getTime() override;
     virtual Client & getClient() override { return _gsm_client; };
     virtual Client *getNewClient() override { return new GSMClient(); }
+    virtual Client *getNewSSLClient() override;
     virtual UDP & getUDP() override { return _gsm_udp; };
 
 

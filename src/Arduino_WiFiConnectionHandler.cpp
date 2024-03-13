@@ -20,7 +20,6 @@
  ******************************************************************************/
 
 #include "Arduino_WiFiConnectionHandler.h"
-
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 
 /******************************************************************************
@@ -168,6 +167,16 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
   {
     return NetworkConnectionState::CLOSED;
   }
+}
+
+Client* WiFiConnectionHandler::getNewSSLClient() {
+#ifdef ARDUINO_ARCH_ESP32
+  return new WiFiClientSecure();
+#elif defined(ARDUINO_ARCH_ESP8266)
+  return new WiFiClientSecure();
+#else
+  return new WiFiSSLClient();
+#endif
 }
 
 #endif /* #ifdef BOARD_HAS_WIFI */
