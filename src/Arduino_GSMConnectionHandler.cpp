@@ -145,4 +145,8 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
   }
 }
 
+Client* GSMConnectionHandler::getNewSSLClient() {
+  return new GSMSSLClient();
+}
+
 #endif /* #ifdef BOARD_HAS_GSM  */

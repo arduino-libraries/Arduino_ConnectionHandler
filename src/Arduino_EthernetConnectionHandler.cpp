@@ -126,4 +126,8 @@ NetworkConnectionState EthernetConnectionHandler::update_handleDisconnected()
   }
 }
 
+Client* EthernetConnectionHandler::getNewSSLClient() {
+  return new EthernetSSLClient();
+}
+
 #endif /* #ifdef BOARD_HAS_ETHERNET */
