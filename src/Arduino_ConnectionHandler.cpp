@@ -108,9 +108,10 @@ void ConnectionHandler::addCallback(NetworkConnectionEvent const event, OnNetwor
 {
   switch (event)
   {
-    case NetworkConnectionEvent::CONNECTED:    _on_connect_event_callback    = callback; break;
-    case NetworkConnectionEvent::DISCONNECTED: _on_disconnect_event_callback = callback; break;
-    case NetworkConnectionEvent::ERROR:        _on_error_event_callback      = callback; break;
+    case NetworkConnectionEvent::CONNECTED:         _on_connect_event_callback           = callback; break;
+    case NetworkConnectionEvent::DISCONNECTED:      _on_disconnect_event_callback        = callback; break;
+    case NetworkConnectionEvent::ERROR:             _on_error_event_callback             = callback; break;
+    case NetworkConnectionEvent::CONNECTION_FAILED: _on_connection_failed_event_callback = callback; break;
   }
 }
 
