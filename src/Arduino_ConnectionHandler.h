@@ -75,9 +75,11 @@
   #include <WiFiUdp.h>
   #include <EthernetC33.h>
   #include <EthernetUdp.h>
+  #include <Arduino_Cellular.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
+  #define BOARD_HAS_CELLULAR
   #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
