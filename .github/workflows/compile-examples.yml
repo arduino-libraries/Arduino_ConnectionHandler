@@ -34,6 +34,7 @@ jobs:
         - name: MKRGSM
         - name: MKRNB
         - name: MKRWAN
+        - name: Arduino_Cellular
       ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
       ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
       SKETCHES_REPORTS_PATH: sketches-reports

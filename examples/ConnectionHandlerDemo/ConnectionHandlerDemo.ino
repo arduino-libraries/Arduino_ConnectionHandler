@@ -43,6 +43,8 @@ NBConnectionHandler conMan(SECRET_PIN);
 LoRaConnectionHandler conMan(SECRET_APP_EUI, SECRET_APP_KEY);
 #elif defined(BOARD_HAS_CATM1_NBIOT)
 CatM1ConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
+#elif defined(BOARD_HAS_CELLULAR)
+CellularConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #endif
 
 void setup() {
