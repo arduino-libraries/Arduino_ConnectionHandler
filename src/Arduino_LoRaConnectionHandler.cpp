@@ -19,9 +19,9 @@
    INCLUDE
  ******************************************************************************/
 
-#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310) /* Only compile if the board has LoRa */
-
 #include "Arduino_LoRaConnectionHandler.h"
+
+#if defined(BOARD_HAS_LORA) /* Only compile if the board has LoRa */
 
 /******************************************************************************
    TYPEDEF
@@ -106,7 +106,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleInit()
   {
     Debug.print(DBG_ERROR, F("Something went wrong; are you indoor? Move near a window, then reset and retry."));
     return NetworkConnectionState::ERROR;
-  } 
+  }
   // Set channelmask based on configuration
   if (_channelMask) {
     _modem.sendMask(_channelMask);
