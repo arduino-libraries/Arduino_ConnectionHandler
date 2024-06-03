@@ -31,9 +31,9 @@ class EthernetConnectionHandler : public ConnectionHandler
 {
   public:
 
-    EthernetConnectionHandler(bool const keep_alive = true);
-    EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, bool const keep_alive = true);
-    EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, bool const keep_alive = true);
+    EthernetConnectionHandler(unsigned long const timeout = 15000, unsigned long const responseTimeout = 4000, bool const keep_alive = true);
+    EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, unsigned long const timeout = 15000, unsigned long const responseTimeout = 4000, bool const keep_alive = true);
+    EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, unsigned long const timeout = 15000, unsigned long const responseTimeout = 4000, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override { return 0; }
@@ -55,6 +55,9 @@ class EthernetConnectionHandler : public ConnectionHandler
     IPAddress _dns;
     IPAddress _gateway;
     IPAddress _netmask;
+
+    unsigned long _timeout;
+    unsigned long _response_timeout;
 
     EthernetUDP _eth_udp;
     EthernetClient _eth_client;
