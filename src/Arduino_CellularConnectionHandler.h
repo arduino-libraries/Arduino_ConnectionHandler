@@ -18,7 +18,6 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-
 #ifdef BOARD_HAS_CELLULAR /* Only compile if the board has Cellular */
 
 /******************************************************************************
@@ -34,7 +33,7 @@ class CellularConnectionHandler : public ConnectionHandler
 
     virtual unsigned long getTime() override;
     virtual Client & getClient() override { return _gsm_client; };
-    virtual UDP & getUDP() override { } __attribute__((error("CellularConnectionHandler has no UDP support")));
+    virtual UDP & getUDP() override;
 
 
   protected:

@@ -40,6 +40,12 @@ unsigned long CellularConnectionHandler::getTime()
   return _cellular.getCellularTime().getUNIXTimestamp();
 }
 
+UDP & CellularConnectionHandler::getUDP()
+{
+  Debug.print(DBG_ERROR, F("CellularConnectionHandler has no UDP support"));
+  while(1) {};
+}
+
 /******************************************************************************
    PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
