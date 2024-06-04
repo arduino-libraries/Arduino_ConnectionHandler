@@ -36,13 +36,13 @@ EthernetConnectionHandler conMan(SECRET_IP, SECRET_DNS, SECRET_GATEWAY, SECRET_N
 #elif defined(BOARD_HAS_WIFI)
 WiFiConnectionHandler conMan(SECRET_SSID, SECRET_PASS);
 #elif defined(BOARD_HAS_GSM)
-GSMConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
+GSMConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #elif defined(BOARD_HAS_NB)
 NBConnectionHandler conMan(SECRET_PIN);
 #elif defined(BOARD_HAS_LORA)
 LoRaConnectionHandler conMan(SECRET_APP_EUI, SECRET_APP_KEY);
 #elif defined(BOARD_HAS_CATM1_NBIOT)
-CatM1ConnectionHandler conMan(SECRET_APN, SECRET_PIN, SECRET_GSM_USER, SECRET_GSM_PASS);
+CatM1ConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #elif defined(BOARD_HAS_CELLULAR)
 CellularConnectionHandler conMan(SECRET_PIN, SECRET_APN, SECRET_GSM_USER, SECRET_GSM_PASS);
 #endif
