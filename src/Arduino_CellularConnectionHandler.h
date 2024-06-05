@@ -18,11 +18,14 @@
 
 #include "Arduino_ConnectionHandler.h"
 
-#ifdef BOARD_HAS_CELLULAR /* Only compile if the board has Cellular */
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
+
+#if defined(ARDUINO_PORTENTA_C33) || defined(ARDUINO_PORTENTA_H7_M7)
+#include <Arduino_Cellular.h>
+#endif
 
 class CellularConnectionHandler : public ConnectionHandler
 {
@@ -55,7 +58,5 @@ class CellularConnectionHandler : public ConnectionHandler
     ArduinoCellular _cellular;
     TinyGsmClient _gsm_client = _cellular.getNetworkClient();
 };
-
-#endif /* #ifdef BOARD_HAS_CELLULAR  */
 
 #endif /* #ifndef ARDUINO_CELLULAR_CONNECTION_HANDLER_H_ */

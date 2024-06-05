@@ -22,9 +22,31 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
-#ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
+#ifdef ARDUINO_SAMD_MKR1000
+  #include <WiFi101.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
+  defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
+  #include <WiFiNINA.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M7) || \
+  defined(ARDUINO_NICLA_VISION) || defined(ARDUINO_OPTA) || defined(ARDUINO_GIGA)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_PORTENTA_C33)
+  #include <WiFiC3.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_ARCH_ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_ARCH_ESP32)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_UNOR4_WIFI)
+  #include <WiFiS3.h>
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
@@ -58,7 +80,5 @@ class WiFiConnectionHandler : public ConnectionHandler
     WiFiUDP _wifi_udp;
     WiFiClient _wifi_client;
 };
-
-#endif /* #ifdef BOARD_HAS_WIFI */
 
 #endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */

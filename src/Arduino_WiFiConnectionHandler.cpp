@@ -19,9 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_WiFiConnectionHandler.h"
+#include "Arduino_ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
+#include "Arduino_WiFiConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS
@@ -143,7 +144,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
       Debug.print(DBG_INFO, F("Attempting reconnection"));
 #endif
     }
-  
+
     return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTED;

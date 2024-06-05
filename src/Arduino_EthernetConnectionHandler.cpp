@@ -16,9 +16,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_EthernetConnectionHandler.h"
+#include "Arduino_ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
+#include "Arduino_EthernetConnectionHandler.h"
 
 /******************************************************************************
    CTOR/DTOR

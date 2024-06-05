@@ -22,9 +22,11 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
-#ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
+#ifdef ARDUINO_SAMD_MKRNB1500
+  #include <MKRNB.h>
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
@@ -67,7 +69,5 @@ class NBConnectionHandler : public ConnectionHandler
     NBUDP _nb_udp;
     NBClient _nb_client;
 };
-
-#endif /* #ifdef BOARD_HAS_NB  */
 
 #endif /* #ifndef NB_CONNECTION_MANAGER_H_ */
