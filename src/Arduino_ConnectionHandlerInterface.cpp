@@ -19,7 +19,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
 /******************************************************************************
    CONSTRUCTOR/DESTRUCTOR
