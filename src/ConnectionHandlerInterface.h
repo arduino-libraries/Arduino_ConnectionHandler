@@ -29,6 +29,7 @@
 #include <Client.h>
 #include <Udp.h>
 #include "ConnectionHandlerDefinitions.h"
+#include "settings/settings.h"
 
 /******************************************************************************
    TYPEDEFS
@@ -40,10 +41,13 @@ typedef void (*OnNetworkEventCallback)();
    CLASS DECLARATION
  ******************************************************************************/
 
+// forward declaration FIXME
+class GenericConnectionHandler;
+
 class ConnectionHandler {
   public:
 
-    ConnectionHandler(bool const keep_alive, NetworkAdapter interface);
+    ConnectionHandler(bool const keep_alive=true, NetworkAdapter interface=NetworkAdapter::NONE);
 
 
     NetworkConnectionState check();
@@ -77,6 +81,22 @@ class ConnectionHandler {
     void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
     void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
 
+    /**
+     * Update the interface settings. This can be performed only when the interface is
+     * in INIT state. otherwise nothing is performed. The type of the interface should match
+     * the type of the settings provided
+     *
+     * @return true if the update is successful, false otherwise
+     */
+    virtual bool updateSetting(const models::NetworkSetting& s) {
+      if(_current_net_connection_state == NetworkConnectionState::INIT && s.type == _interface) {
+        memcpy(&_settings, &s, sizeof(s));
+        return true;
+      }
+
+      return false;
+    }
+
   protected:
 
     bool _keep_alive;
@@ -88,6 +108,8 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
 
+    models::NetworkSetting _settings;
+
   private:
 
     unsigned long _lastConnectionTickTime;
@@ -95,5 +117,7 @@ class ConnectionHandler {
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
+
+    friend GenericConnectionHandler;
 };
 
