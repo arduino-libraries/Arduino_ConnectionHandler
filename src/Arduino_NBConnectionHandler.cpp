@@ -19,9 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_NBConnectionHandler.h"
+#include "Arduino_ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
+#include "Arduino_NBConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS

@@ -22,7 +22,11 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
+
+#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
+  #include <MKRWAN.h>
+#endif
 
 #ifdef BOARD_HAS_LORA /* Only compile if the board has LoRa */
 

@@ -22,10 +22,11 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
-
-#ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
+#if defined(ARDUINO_SAMD_MKRGSM1400)
+  #include <MKRGSM.h>
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
@@ -64,7 +65,5 @@ class GSMConnectionHandler : public ConnectionHandler
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 };
-
-#endif /* #ifdef BOARD_HAS_GSM  */
 
 #endif /* #ifndef GSM_CONNECTION_MANAGER_H_ */

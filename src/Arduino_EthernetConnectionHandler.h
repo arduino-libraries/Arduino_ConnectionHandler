@@ -19,9 +19,18 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
-#ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
+#if defined(ARDUINO_PORTENTA_H7_M7)
+  #include <Ethernet.h>
+  #include <PortentaEthernet.h>
+#elif defined(ARDUINO_PORTENTA_C33)
+  #include <EthernetC33.h>
+  #include <EthernetUdp.h>
+#elif defined(ARDUINO_OPTA)
+  #include <Ethernet.h>
+  #include <PortentaEthernet.h>
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
@@ -63,7 +72,5 @@ class EthernetConnectionHandler : public ConnectionHandler
     EthernetClient _eth_client;
 
 };
-
-#endif /* #ifdef BOARD_HAS_ETHERNET */
 
 #endif /* ARDUINO_ETHERNET_CONNECTION_HANDLER_H_ */

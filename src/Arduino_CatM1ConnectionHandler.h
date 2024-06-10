@@ -22,10 +22,11 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "Arduino_ConnectionHandlerInterface.h"
 
-
-#ifdef BOARD_HAS_CATM1_NBIOT /* Only compile if the board has CatM1 BN-IoT */
+#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_EDGE_CONTROL)
+  #include <GSM.h>
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
@@ -65,7 +66,5 @@ class CatM1ConnectionHandler : public ConnectionHandler
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 };
-
-#endif /* #ifdef BOARD_HAS_CATM1_NBIOT  */
 
 #endif /* #ifndef ARDUINO_CATM1_CONNECTION_HANDLER_H_ */
