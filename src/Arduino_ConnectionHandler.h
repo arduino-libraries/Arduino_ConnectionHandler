@@ -57,10 +57,12 @@
   #include <Ethernet.h>
   #include <PortentaEthernet.h>
   #include <GSM.h>
+  #include <Arduino_Cellular.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
   #define BOARD_HAS_CATM1_NBIOT
+  #define BOARD_HAS_CELLULAR
   #define BOARD_HAS_PORTENTA_CATM1_NBIOT_SHIELD
   #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
@@ -73,9 +75,11 @@
   #include <WiFiUdp.h>
   #include <EthernetC33.h>
   #include <EthernetUdp.h>
+  #include <Arduino_Cellular.h>
 
   #define BOARD_HAS_WIFI
   #define BOARD_HAS_ETHERNET
+  #define BOARD_HAS_CELLULAR
   #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -150,7 +154,7 @@
 #if defined(ARDUINO_ARCH_ESP32)
   #include <WiFi.h>
   #include <WiFiUdp.h>
-  
+
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -201,7 +205,8 @@ enum class NetworkAdapter {
   NB,
   GSM,
   LORA,
-  CATM1
+  CATM1,
+  CELL
 };
 
 typedef void (*OnNetworkEventCallback)();
@@ -237,13 +242,11 @@ class ConnectionHandler {
 
     NetworkConnectionState check();
 
-    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET) || defined(BOARD_HAS_CATM1_NBIOT)
+    #if !defined(BOARD_HAS_LORA)
       virtual unsigned long getTime() = 0;
       virtual Client &getClient() = 0;
       virtual UDP &getUDP() = 0;
-    #endif
-
-    #if defined(BOARD_HAS_LORA)
+    #else
       virtual int write(const uint8_t *buf, size_t size) = 0;
       virtual int read() = 0;
       virtual bool available() = 0;
@@ -302,6 +305,10 @@ class ConnectionHandler {
 
 #if defined(BOARD_HAS_CATM1_NBIOT)
   #include "Arduino_CatM1ConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_CELLULAR)
+  #include "Arduino_CellularConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */
