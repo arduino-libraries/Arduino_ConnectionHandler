@@ -46,6 +46,9 @@
   #include <WiFiUdp.h>
 #elif defined(ARDUINO_UNOR4_WIFI)
   #include <WiFiS3.h>
+#elif defined(ARDUINO_RASPBERRY_PI_PICO_W)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
 #endif
 
 #ifndef BOARD_HAS_WIFI
