@@ -28,6 +28,10 @@
   #include <GSM.h>
 #endif
 
+#ifndef BOARD_HAS_CATM1_NBIOT
+  #error "Board doesn't support CATM1_NBIOT"
+#endif
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/

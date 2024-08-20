@@ -28,6 +28,10 @@
   #include <MKRGSM.h>
 #endif
 
+#ifndef BOARD_HAS_GSM
+  #error "Board doesn't support GSM"
+#endif
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/

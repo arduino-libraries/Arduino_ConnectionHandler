@@ -28,7 +28,10 @@
   #include <MKRWAN.h>
 #endif
 
-#ifdef BOARD_HAS_LORA /* Only compile if the board has LoRa */
+#ifndef BOARD_HAS_LORA
+  #error "Board doesn't support LORA"
+#endif
+
 
 /******************************************************************************
    CLASS DECLARATION
@@ -77,7 +80,5 @@ class LoRaConnectionHandler : public ConnectionHandler
     _lora_class _device_class;
     LoRaModem _modem;
 };
-
-#endif /* #ifdef BOARD_HAS_LORA */
 
 #endif /* ARDUINO_LORA_CONNECTION_HANDLER_H_ */

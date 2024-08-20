@@ -32,6 +32,10 @@
   #include <PortentaEthernet.h>
 #endif
 
+#ifndef BOARD_HAS_ETHERNET
+  #error "Board doesn't support ETHERNET"
+#endif
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/

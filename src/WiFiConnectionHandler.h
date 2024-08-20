@@ -48,6 +48,10 @@
   #include <WiFiS3.h>
 #endif
 
+#ifndef BOARD_HAS_WIFI
+  #error "Board doesn't support WIFI"
+#endif
+
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/

@@ -27,6 +27,10 @@
 #include <Arduino_Cellular.h>
 #endif
 
+#ifndef BOARD_HAS_CELLULAR
+  #error "Board doesn't support CELLULAR"
+#endif
+
 class CellularConnectionHandler : public ConnectionHandler
 {
   public:
