@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerDefinitions.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
-#include "Arduino_GSMConnectionHandler.h"
+#include "GSMConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS

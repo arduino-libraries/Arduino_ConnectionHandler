@@ -13,10 +13,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerDefinitions.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_CELLULAR /* Only compile if the board has Cellular */
-#include "Arduino_CellularConnectionHandler.h"
+#include "CellularConnectionHandler.h"
 
 /******************************************************************************
    CTOR/DTOR

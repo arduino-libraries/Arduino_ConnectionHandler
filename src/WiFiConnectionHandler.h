@@ -15,35 +15,53 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef NB_CONNECTION_MANAGER_H_
-#define NB_CONNECTION_MANAGER_H_
+#ifndef ARDUINO_WIFI_CONNECTION_HANDLER_H_
+#define ARDUINO_WIFI_CONNECTION_HANDLER_H_
 
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerInterface.h"
+#include "ConnectionHandlerInterface.h"
 
-#ifdef ARDUINO_SAMD_MKRNB1500
-  #include <MKRNB.h>
+#ifdef ARDUINO_SAMD_MKR1000
+  #include <WiFi101.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
+  defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
+  #include <WiFiNINA.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M7) || \
+  defined(ARDUINO_NICLA_VISION) || defined(ARDUINO_OPTA) || defined(ARDUINO_GIGA)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_PORTENTA_C33)
+  #include <WiFiC3.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_ARCH_ESP8266)
+  #include <ESP8266WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_ARCH_ESP32)
+  #include <WiFi.h>
+  #include <WiFiUdp.h>
+#elif defined(ARDUINO_UNOR4_WIFI)
+  #include <WiFiS3.h>
 #endif
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class NBConnectionHandler : public ConnectionHandler
+class WiFiConnectionHandler : public ConnectionHandler
 {
   public:
 
-    NBConnectionHandler(char const * pin, bool const keep_alive = true);
-    NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
-    NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
+    WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override;
-    virtual Client & getClient() override { return _nb_client; };
-    virtual UDP & getUDP() override { return _nb_udp; };
+    virtual Client & getClient() override { return _wifi_client; }
+    virtual UDP & getUDP() override { return _wifi_udp; }
 
 
   protected:
@@ -54,20 +72,13 @@ class NBConnectionHandler : public ConnectionHandler
     virtual NetworkConnectionState update_handleDisconnecting() override;
     virtual NetworkConnectionState update_handleDisconnected () override;
 
-
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
-
-    char const * _pin;
-    char const * _apn;
-    char const * _login;
+    char const * _ssid;
     char const * _pass;
 
-    NB _nb;
-    GPRS _nb_gprs;
-    NBUDP _nb_udp;
-    NBClient _nb_client;
+    WiFiUDP _wifi_udp;
+    WiFiClient _wifi_client;
 };
 
-#endif /* #ifndef NB_CONNECTION_MANAGER_H_ */
+#endif /* ARDUINO_WIFI_CONNECTION_HANDLER_H_ */

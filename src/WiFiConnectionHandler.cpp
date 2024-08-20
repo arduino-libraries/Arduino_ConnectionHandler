@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerDefinitions.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-#include "Arduino_WiFiConnectionHandler.h"
+#include "WiFiConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS

@@ -27,34 +27,34 @@
 #endif
 
 #include <Arduino.h>
-#include "Arduino_ConnectionHandlerDefinitions.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #if defined(BOARD_HAS_WIFI)
-  #include "Arduino_WiFiConnectionHandler.h"
+  #include "WiFiConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_GSM)
-  #include "Arduino_GSMConnectionHandler.h"
+  #include "GSMConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_NB)
-  #include "Arduino_NBConnectionHandler.h"
+  #include "NBConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_LORA)
-  #include "Arduino_LoRaConnectionHandler.h"
+  #include "LoRaConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_ETHERNET)
-  #include "Arduino_EthernetConnectionHandler.h"
+  #include "EthernetConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_CATM1_NBIOT)
-  #include "Arduino_CatM1ConnectionHandler.h"
+  #include "CatM1ConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_CELLULAR)
-  #include "Arduino_CellularConnectionHandler.h"
+  #include "CellularConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

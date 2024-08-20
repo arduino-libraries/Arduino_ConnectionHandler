@@ -19,7 +19,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerInterface.h"
+#include "ConnectionHandlerInterface.h"
 
 #if defined(ARDUINO_PORTENTA_H7_M7)
   #include <Ethernet.h>

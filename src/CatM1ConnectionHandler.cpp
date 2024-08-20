@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerDefinitions.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_CATM1_NBIOT /* Only compile if the board has CatM1 BN-IoT */
-#include "Arduino_CatM1ConnectionHandler.h"
+#include "CatM1ConnectionHandler.h"
 
 /******************************************************************************
    CTOR/DTOR

@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandlerInterface.h"
+#include "ConnectionHandlerInterface.h"
 
 #if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
   #include <MKRWAN.h>
