@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "ConnectionHandlerDefinitions.h"
+#include "definitions/ConnectionHandlerDefinitions.h"
 
 #if defined(BOARD_HAS_LORA) /* Only compile if the board has LoRa */
-#include "LoRaConnectionHandler.h"
+#include "handlers/LoRaConnectionHandler.h"
 
 /******************************************************************************
    TYPEDEF

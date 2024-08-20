@@ -28,7 +28,7 @@
 #include <Arduino.h>
 #include <Client.h>
 #include <Udp.h>
-#include "ConnectionHandlerDefinitions.h"
+#include "definitions/ConnectionHandlerDefinitions.h"
 
 /******************************************************************************
    TYPEDEFS

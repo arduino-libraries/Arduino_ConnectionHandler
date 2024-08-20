@@ -22,7 +22,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "ConnectionHandlerInterface.h"
+#include "interface/ConnectionHandlerInterface.h"
 
 #if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_EDGE_CONTROL)
   #include <GSM.h>

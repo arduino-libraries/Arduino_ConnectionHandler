@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "ConnectionHandlerDefinitions.h"
+#include "definitions/ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
-#include "WiFiConnectionHandler.h"
+#include "handlers/WiFiConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS
