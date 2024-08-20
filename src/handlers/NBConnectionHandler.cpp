@@ -19,10 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "ConnectionHandlerDefinitions.h"
+#include "definitions/ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
-#include "NBConnectionHandler.h"
+#include "handlers/NBConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS

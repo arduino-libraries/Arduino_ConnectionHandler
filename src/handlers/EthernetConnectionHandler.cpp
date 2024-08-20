@@ -16,10 +16,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "ConnectionHandlerDefinitions.h"
+#include "definitions/ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
-#include "EthernetConnectionHandler.h"
+#include "handlers/EthernetConnectionHandler.h"
 
 /******************************************************************************
    CTOR/DTOR
