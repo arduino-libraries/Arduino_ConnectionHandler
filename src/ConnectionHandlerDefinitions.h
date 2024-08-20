@@ -33,7 +33,6 @@
 
 #if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
   defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
-
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_MODULE
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -79,7 +78,6 @@
 #endif
 
 #if defined(ARDUINO_GIGA)
-
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -105,7 +103,6 @@
 #endif
 
 #if defined(ARDUINO_ARCH_ESP8266)
-
   #define BOARD_HAS_WIFI
   #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
   #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
@@ -134,6 +131,12 @@
   #define BOARD_HAS_CATM1_NBIOT
   #define BOARD_HAS_PORTENTA_CATM1_NBIOT_SHIELD
   #define NETWORK_HARDWARE_ERROR
+#endif
+
+#if defined __has_include
+  #if __has_include (<ConnectionHandlerConfig.h>)
+    #include <ConnectionHandlerConfig.h>
+  #endif
 #endif
 
 /******************************************************************************
