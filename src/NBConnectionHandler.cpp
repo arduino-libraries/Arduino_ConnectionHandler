@@ -19,22 +19,22 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_GSMConnectionHandler.h"
+#include "ConnectionHandlerDefinitions.h"
 
-#ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
+#ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
+#include "NBConnectionHandler.h"
 
 /******************************************************************************
    CONSTANTS
  ******************************************************************************/
 
-static int const GSM_TIMEOUT = 30000;
-static int const GPRS_TIMEOUT = 30000;
+static int const NB_TIMEOUT = 30000;
 
 /******************************************************************************
    FUNCTION DEFINITION
  ******************************************************************************/
 
-__attribute__((weak)) void mkr_gsm_feed_watchdog()
+__attribute__((weak)) void mkr_nb_feed_watchdog()
 {
     /* This function can be overwritten by a "strong" implementation
      * in a higher level application, such as the ArduinoIoTCloud
@@ -45,9 +45,20 @@ __attribute__((weak)) void mkr_gsm_feed_watchdog()
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
+NBConnectionHandler::NBConnectionHandler(char const * pin, bool const keep_alive)
+: NBConnectionHandler(pin, "", keep_alive)
+{
 
-GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::GSM}
+}
+
+NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive)
+: NBConnectionHandler(pin, apn, "", "", keep_alive)
+{
+
+}
+
+NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
+: ConnectionHandler{keep_alive, NetworkAdapter::NB}
 , _pin(pin)
 , _apn(apn)
 , _login(login)
@@ -60,55 +71,40 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
    PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
-unsigned long GSMConnectionHandler::getTime()
+unsigned long NBConnectionHandler::getTime()
 {
-  return _gsm.getTime();
+  return _nb.getTime();
 }
 
 /******************************************************************************
-   PROTECTED MEMBER FUNCTIONS
+   PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
-NetworkConnectionState GSMConnectionHandler::update_handleInit()
+NetworkConnectionState NBConnectionHandler::update_handleInit()
 {
-  mkr_gsm_feed_watchdog();
+  mkr_nb_feed_watchdog();
 
-  if (_gsm.begin(_pin) != GSM_READY)
+  if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY)
+  {
+    Debug.print(DBG_INFO, F("SIM card ok"));
+    _nb.setTimeout(NB_TIMEOUT);
+    return NetworkConnectionState::CONNECTING;
+  }
+  else
   {
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
-
-  mkr_gsm_feed_watchdog();
-
-  Debug.print(DBG_INFO, F("SIM card ok"));
-  _gsm.setTimeout(GSM_TIMEOUT);
-  _gprs.setTimeout(GPRS_TIMEOUT);
-
-  mkr_gsm_feed_watchdog();
-
-  GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(_apn, _login, _pass, true);
-  Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
-  if (network_status == GSM3_NetworkStatus_t::ERROR)
-  {
-    Debug.print(DBG_ERROR, F("GPRS attach failed"));
-    Debug.print(DBG_ERROR, F("Make sure the antenna is connected and reset your board."));
-    return NetworkConnectionState::ERROR;
-  }
-
-  return NetworkConnectionState::CONNECTING;
 }
 
-NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
+NetworkConnectionState NBConnectionHandler::update_handleConnecting()
 {
-  Debug.print(DBG_INFO, F("Sending PING to outer space..."));
-  int const ping_result = _gprs.ping("time.arduino.cc");
-  Debug.print(DBG_INFO, F("GPRS.ping(): %d"), ping_result);
-  if (ping_result < 0)
+  NB_NetworkStatus_t const network_status = _nb_gprs.attachGPRS(true);
+  Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
+  if (network_status == NB_NetworkStatus_t::NB_ERROR)
   {
-    Debug.print(DBG_ERROR, F("PING failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
-    return NetworkConnectionState::CONNECTING;
+    Debug.print(DBG_ERROR, F("GPRS.attachGPRS() failed"));
+    return NetworkConnectionState::ERROR;
   }
   else
   {
@@ -117,23 +113,30 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   }
 }
 
-NetworkConnectionState GSMConnectionHandler::update_handleConnected()
+NetworkConnectionState NBConnectionHandler::update_handleConnected()
 {
-  int const is_gsm_access_alive = _gsm.isAccessAlive();
-  if (is_gsm_access_alive != 1)
+  int const nb_is_access_alive = _nb.isAccessAlive();
+  Debug.print(DBG_VERBOSE, F("GPRS.isAccessAlive(): %d"), nb_is_access_alive);
+  if (nb_is_access_alive != 1)
   {
+    Debug.print(DBG_INFO, F("Disconnected from cellular network"));
     return NetworkConnectionState::DISCONNECTED;
   }
-  return NetworkConnectionState::CONNECTED;
+  else
+  {
+    Debug.print(DBG_VERBOSE, F("Connected to Cellular Network"));
+    return NetworkConnectionState::CONNECTED;
+  }
 }
 
-NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
+NetworkConnectionState NBConnectionHandler::update_handleDisconnecting()
 {
-  _gsm.shutdown();
+  Debug.print(DBG_VERBOSE, F("Disconnecting from Cellular Network"));
+  _nb.shutdown();
   return NetworkConnectionState::DISCONNECTED;
 }
 
-NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
+NetworkConnectionState NBConnectionHandler::update_handleDisconnected()
 {
   if (_keep_alive)
   {
@@ -141,8 +144,8 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
   }
   else
   {
-   return NetworkConnectionState::CLOSED;
+    return NetworkConnectionState::CLOSED;
   }
 }
 
-#endif /* #ifdef BOARD_HAS_GSM  */
+#endif /* #ifdef BOARD_HAS_NB  */

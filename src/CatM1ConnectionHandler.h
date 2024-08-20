@@ -15,27 +15,32 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef GSM_CONNECTION_MANAGER_H_
-#define GSM_CONNECTION_MANAGER_H_
+#ifndef ARDUINO_CATM1_CONNECTION_HANDLER_H_
+#define ARDUINO_CATM1_CONNECTION_HANDLER_H_
 
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "ConnectionHandlerInterface.h"
 
+#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_EDGE_CONTROL)
+  #include <GSM.h>
+#endif
 
-#ifdef BOARD_HAS_GSM /* Only compile if this is a board with GSM */
+#ifndef BOARD_HAS_CATM1_NBIOT
+  #error "Board doesn't support CATM1_NBIOT"
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class GSMConnectionHandler : public ConnectionHandler
+class CatM1ConnectionHandler : public ConnectionHandler
 {
   public:
 
-    GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
+    CatM1ConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, RadioAccessTechnologyType rat = CATM1, uint32_t band = BAND_3 | BAND_20 | BAND_19, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override;
@@ -59,12 +64,11 @@ class GSMConnectionHandler : public ConnectionHandler
     const char * _login;
     const char * _pass;
 
-    GSM _gsm;
-    GPRS _gprs;
+    RadioAccessTechnologyType _rat;
+    uint32_t _band;
+
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 };
 
-#endif /* #ifdef BOARD_HAS_GSM  */
-
-#endif /* #ifndef GSM_CONNECTION_MANAGER_H_ */
+#endif /* #ifndef ARDUINO_CATM1_CONNECTION_HANDLER_H_ */

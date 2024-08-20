@@ -19,9 +19,10 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_CatM1ConnectionHandler.h"
+#include "ConnectionHandlerDefinitions.h"
 
 #ifdef BOARD_HAS_CATM1_NBIOT /* Only compile if the board has CatM1 BN-IoT */
+#include "CatM1ConnectionHandler.h"
 
 /******************************************************************************
    CTOR/DTOR
@@ -96,7 +97,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnected()
   }
   else
   {
-   return NetworkConnectionState::CLOSED;
+    return NetworkConnectionState::CLOSED;
   }
 }
 

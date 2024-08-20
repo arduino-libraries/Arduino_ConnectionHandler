@@ -15,33 +15,37 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef NB_CONNECTION_MANAGER_H_
-#define NB_CONNECTION_MANAGER_H_
+#ifndef GSM_CONNECTION_MANAGER_H_
+#define GSM_CONNECTION_MANAGER_H_
 
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "ConnectionHandlerInterface.h"
 
-#ifdef BOARD_HAS_NB /* Only compile if this is a board with NB */
+#if defined(ARDUINO_SAMD_MKRGSM1400)
+  #include <MKRGSM.h>
+#endif
+
+#ifndef BOARD_HAS_GSM
+  #error "Board doesn't support GSM"
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class NBConnectionHandler : public ConnectionHandler
+class GSMConnectionHandler : public ConnectionHandler
 {
   public:
 
-    NBConnectionHandler(char const * pin, bool const keep_alive = true);
-    NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
-    NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
+    GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override;
-    virtual Client & getClient() override { return _nb_client; };
-    virtual UDP & getUDP() override { return _nb_udp; };
+    virtual Client & getClient() override { return _gsm_client; };
+    virtual UDP & getUDP() override { return _gsm_udp; };
 
 
   protected:
@@ -55,19 +59,15 @@ class NBConnectionHandler : public ConnectionHandler
 
   private:
 
-    void changeConnectionState(NetworkConnectionState _newState);
+    const char * _pin;
+    const char * _apn;
+    const char * _login;
+    const char * _pass;
 
-    char const * _pin;
-    char const * _apn;
-    char const * _login;
-    char const * _pass;
-
-    NB _nb;
-    GPRS _nb_gprs;
-    NBUDP _nb_udp;
-    NBClient _nb_client;
+    GSM _gsm;
+    GPRS _gprs;
+    GSMUDP _gsm_udp;
+    GSMClient _gsm_client;
 };
 
-#endif /* #ifdef BOARD_HAS_NB  */
-
-#endif /* #ifndef NB_CONNECTION_MANAGER_H_ */
+#endif /* #ifndef GSM_CONNECTION_MANAGER_H_ */

@@ -27,288 +27,34 @@
 #endif
 
 #include <Arduino.h>
-
-#ifdef ARDUINO_SAMD_MKR1000
-  #include <WiFi101.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
-#endif
-
-#if defined(ARDUINO_SAMD_MKRWIFI1010) || defined(ARDUINO_SAMD_NANO_33_IOT) || \
-  defined(ARDUINO_AVR_UNO_WIFI_REV2) || defined (ARDUINO_NANO_RP2040_CONNECT)
-  #include <WiFiNINA.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_MODULE
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
-#endif
-
-#if defined(ARDUINO_PORTENTA_H7_M7)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-  #include <Ethernet.h>
-  #include <PortentaEthernet.h>
-  #include <GSM.h>
-  #include <Arduino_Cellular.h>
-
-  #define BOARD_HAS_WIFI
-  #define BOARD_HAS_ETHERNET
-  #define BOARD_HAS_CATM1_NBIOT
-  #define BOARD_HAS_CELLULAR
-  #define BOARD_HAS_PORTENTA_CATM1_NBIOT_SHIELD
-  #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-#endif
-
-#if defined(ARDUINO_PORTENTA_C33)
-  #include <WiFiC3.h>
-  #include <WiFiUdp.h>
-  #include <EthernetC33.h>
-  #include <EthernetUdp.h>
-  #include <Arduino_Cellular.h>
-
-  #define BOARD_HAS_WIFI
-  #define BOARD_HAS_ETHERNET
-  #define BOARD_HAS_CELLULAR
-  #define BOARD_HAS_PORTENTA_VISION_SHIELD_ETHERNET
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-#endif
-
-#if defined(ARDUINO_NICLA_VISION)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-#endif
-
-#if defined(ARDUINO_OPTA)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-  #include <Ethernet.h>
-  #include <PortentaEthernet.h>
-
-  #define BOARD_HAS_WIFI
-  #define BOARD_HAS_ETHERNET
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-#endif
-
-#if defined(ARDUINO_GIGA)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-#endif
-
-#ifdef ARDUINO_SAMD_MKRGSM1400
-  #include <MKRGSM.h>
-  #define BOARD_HAS_GSM
-  #define NETWORK_HARDWARE_ERROR GPRS_PING_ERROR
-  #define NETWORK_IDLE_STATUS GSM3_NetworkStatus_t::IDLE
-  #define NETWORK_CONNECTED GSM3_NetworkStatus_t::GPRS_READY
-#endif
-
-#ifdef ARDUINO_SAMD_MKRNB1500
-  #include <MKRNB.h>
-  #define BOARD_HAS_NB
-  #define NETWORK_HARDWARE_ERROR
-  #define NETWORK_IDLE_STATUS NB_NetworkStatus_t::IDLE
-  #define NETWORK_CONNECTED NB_NetworkStatus_t::GPRS_READY
-#endif
-
-#if defined(ARDUINO_SAMD_MKRWAN1300) || defined(ARDUINO_SAMD_MKRWAN1310)
-  #include <MKRWAN.h>
-  #define BOARD_HAS_LORA
-#endif
-
-#if defined(ARDUINO_ARCH_ESP8266)
-  #include <ESP8266WiFi.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
-#endif
-
-#if defined(ARDUINO_ARCH_ESP32)
-  #include <WiFi.h>
-  #include <WiFiUdp.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_REQUIRED
-#endif
-
-#if defined(ARDUINO_UNOR4_WIFI)
-  #include <WiFiS3.h>
-
-  #define BOARD_HAS_WIFI
-  #define NETWORK_HARDWARE_ERROR WL_NO_SHIELD
-  #define NETWORK_IDLE_STATUS WL_IDLE_STATUS
-  #define NETWORK_CONNECTED WL_CONNECTED
-  #define WIFI_FIRMWARE_VERSION_REQUIRED WIFI_FIRMWARE_LATEST_VERSION
-#endif
-
-#ifdef ARDUINO_EDGE_CONTROL
-  #include <GSM.h>
-  #define BOARD_HAS_CATM1_NBIOT
-  #define BOARD_HAS_PORTENTA_CATM1_NBIOT_SHIELD
-  #define NETWORK_HARDWARE_ERROR
-#endif
-
-/******************************************************************************
-   TYPEDEFS
- ******************************************************************************/
-
-enum class NetworkConnectionState : unsigned int {
-  INIT          = 0,
-  CONNECTING    = 1,
-  CONNECTED     = 2,
-  DISCONNECTING = 3,
-  DISCONNECTED  = 4,
-  CLOSED        = 5,
-  ERROR         = 6
-};
-
-enum class NetworkConnectionEvent {
-  CONNECTED,
-  DISCONNECTED,
-  ERROR
-};
-
-enum class NetworkAdapter {
-  WIFI,
-  ETHERNET,
-  NB,
-  GSM,
-  LORA,
-  CATM1,
-  CELL
-};
-
-typedef void (*OnNetworkEventCallback)();
-
-/******************************************************************************
-   CONSTANTS
- ******************************************************************************/
-
-static unsigned int const CHECK_INTERVAL_TABLE[] =
-{
-  /* INIT          */ 100,
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  /* CONNECTING    */ 4000,
-#else
-  /* CONNECTING    */ 500,
-#endif
-  /* CONNECTED     */ 10000,
-  /* DISCONNECTING */ 100,
-  /* DISCONNECTED  */ 1000,
-  /* CLOSED        */ 1000,
-  /* ERROR         */ 1000
-};
-
-/******************************************************************************
-   CLASS DECLARATION
- ******************************************************************************/
-
-class ConnectionHandler {
-  public:
-
-    ConnectionHandler(bool const keep_alive, NetworkAdapter interface);
-
-
-    NetworkConnectionState check();
-
-    #if !defined(BOARD_HAS_LORA)
-      virtual unsigned long getTime() = 0;
-      virtual Client &getClient() = 0;
-      virtual UDP &getUDP() = 0;
-    #else
-      virtual int write(const uint8_t *buf, size_t size) = 0;
-      virtual int read() = 0;
-      virtual bool available() = 0;
-    #endif
-
-    NetworkConnectionState getStatus() __attribute__((deprecated)) {
-      return _current_net_connection_state;
-    }
-
-    NetworkAdapter getInterface() {
-      return _interface;
-    }
-
-    void connect();
-    void disconnect();
-
-    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
-    void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
-    void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
-    void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
-
-  protected:
-
-    bool _keep_alive;
-    NetworkAdapter _interface;
-
-    virtual NetworkConnectionState update_handleInit         () = 0;
-    virtual NetworkConnectionState update_handleConnecting   () = 0;
-    virtual NetworkConnectionState update_handleConnected    () = 0;
-    virtual NetworkConnectionState update_handleDisconnecting() = 0;
-    virtual NetworkConnectionState update_handleDisconnected () = 0;
-
-
-  private:
-
-    unsigned long _lastConnectionTickTime;
-    NetworkConnectionState _current_net_connection_state;
-    OnNetworkEventCallback  _on_connect_event_callback = NULL,
-                            _on_disconnect_event_callback = NULL,
-                            _on_error_event_callback = NULL;
-};
+#include "ConnectionHandlerDefinitions.h"
 
 #if defined(BOARD_HAS_WIFI)
-  #include "Arduino_WiFiConnectionHandler.h"
-#elif defined(BOARD_HAS_GSM)
-  #include "Arduino_GSMConnectionHandler.h"
-#elif defined(BOARD_HAS_NB)
-  #include "Arduino_NBConnectionHandler.h"
-#elif defined(BOARD_HAS_LORA)
-  #include "Arduino_LoRaConnectionHandler.h"
+  #include "WiFiConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_GSM)
+  #include "GSMConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_NB)
+  #include "NBConnectionHandler.h"
+#endif
+
+#if defined(BOARD_HAS_LORA)
+  #include "LoRaConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_ETHERNET)
-  #include "Arduino_EthernetConnectionHandler.h"
+  #include "EthernetConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_CATM1_NBIOT)
-  #include "Arduino_CatM1ConnectionHandler.h"
+  #include "CatM1ConnectionHandler.h"
 #endif
 
 #if defined(BOARD_HAS_CELLULAR)
-  #include "Arduino_CellularConnectionHandler.h"
+  #include "CellularConnectionHandler.h"
 #endif
 
 #endif /* CONNECTION_HANDLER_H_ */

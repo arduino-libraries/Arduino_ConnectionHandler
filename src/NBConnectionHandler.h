@@ -15,32 +15,39 @@
    a commercial license, send an email to license@arduino.cc.
 */
 
-#ifndef ARDUINO_CATM1_CONNECTION_HANDLER_H_
-#define ARDUINO_CATM1_CONNECTION_HANDLER_H_
+#ifndef NB_CONNECTION_MANAGER_H_
+#define NB_CONNECTION_MANAGER_H_
 
 /******************************************************************************
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
+#include "ConnectionHandlerInterface.h"
 
+#ifdef ARDUINO_SAMD_MKRNB1500
+  #include <MKRNB.h>
+#endif
 
-#ifdef BOARD_HAS_CATM1_NBIOT /* Only compile if the board has CatM1 BN-IoT */
+#ifndef BOARD_HAS_NB
+  #error "Board doesn't support NB"
+#endif
 
 /******************************************************************************
    CLASS DECLARATION
  ******************************************************************************/
 
-class CatM1ConnectionHandler : public ConnectionHandler
+class NBConnectionHandler : public ConnectionHandler
 {
   public:
 
-    CatM1ConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, RadioAccessTechnologyType rat = CATM1, uint32_t band = BAND_3 | BAND_20 | BAND_19, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
+    NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
 
 
     virtual unsigned long getTime() override;
-    virtual Client & getClient() override { return _gsm_client; };
-    virtual UDP & getUDP() override { return _gsm_udp; };
+    virtual Client & getClient() override { return _nb_client; };
+    virtual UDP & getUDP() override { return _nb_udp; };
 
 
   protected:
@@ -54,18 +61,17 @@ class CatM1ConnectionHandler : public ConnectionHandler
 
   private:
 
-    const char * _pin;
-    const char * _apn;
-    const char * _login;
-    const char * _pass;
+    void changeConnectionState(NetworkConnectionState _newState);
 
-    RadioAccessTechnologyType _rat;
-    uint32_t _band;
+    char const * _pin;
+    char const * _apn;
+    char const * _login;
+    char const * _pass;
 
-    GSMUDP _gsm_udp;
-    GSMClient _gsm_client;
+    NB _nb;
+    GPRS _nb_gprs;
+    NBUDP _nb_udp;
+    NBClient _nb_client;
 };
 
-#endif /* #ifdef BOARD_HAS_CATM1_NBIOT  */
-
-#endif /* #ifndef ARDUINO_CATM1_CONNECTION_HANDLER_H_ */
+#endif /* #ifndef NB_CONNECTION_MANAGER_H_ */
