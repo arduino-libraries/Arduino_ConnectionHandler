@@ -16,12 +16,7 @@
    INCLUDE
  ******************************************************************************/
 
-#include "Arduino_ConnectionHandler.h"
-
-
-/******************************************************************************
-   CLASS DECLARATION
- ******************************************************************************/
+#include "ConnectionHandlerInterface.h"
 
 #if defined(ARDUINO_PORTENTA_C33) || defined(ARDUINO_PORTENTA_H7_M7)
 #include <Arduino_Cellular.h>
@@ -30,6 +25,10 @@
 #ifndef BOARD_HAS_CELLULAR
   #error "Board doesn't support CELLULAR"
 #endif
+
+/******************************************************************************
+   CLASS DECLARATION
+ ******************************************************************************/
 
 class CellularConnectionHandler : public ConnectionHandler
 {
