@@ -48,16 +48,17 @@ class ConnectionHandler {
 
     NetworkConnectionState check();
 
-    #if defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET) || defined(BOARD_HAS_CATM1_NBIOT)
+    #if not defined(BOARD_HAS_LORA)
       virtual unsigned long getTime() = 0;
-      virtual Client &getClient() = 0;
-      virtual UDP &getUDP() = 0;
     #endif
 
-    #if defined(BOARD_HAS_LORA)
-      virtual int write(const uint8_t *buf, size_t size) = 0;
-      virtual int read() = 0;
+    #if defined(BOARD_HAS_NOTECARD) || defined(BOARD_HAS_LORA)
       virtual bool available() = 0;
+      virtual int read() = 0;
+      virtual int write(const uint8_t *buf, size_t size) = 0;
+    #else
+      virtual Client &getClient() = 0;
+      virtual UDP &getUDP() = 0;
     #endif
 
     NetworkConnectionState getStatus() __attribute__((deprecated)) {
@@ -86,7 +87,6 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleConnected    () = 0;
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
-
 
   private:
 
