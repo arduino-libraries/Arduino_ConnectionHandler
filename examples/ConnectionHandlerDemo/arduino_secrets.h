@@ -1,12 +1,12 @@
 // Required for WiFiConnectionHandler
-const char SECRET_SSID[] = "NETWORK NAME";
-const char SECRET_PASS[] = "NETWORK PASSWORD";
+const char SECRET_WIFI_SSID[] = "NETWORK NAME";
+const char SECRET_WIFI_PASS[] = "NETWORK PASSWORD";
 
 // Required for GSMConnectionHandler
-const char SECRET_APN[] 		= "MOBILE PROVIDER APN ADDRESS";
-const char SECRET_PIN[] 		= "0000";  // Required for NBConnectionHandler
-const char SECRET_GSM_USER[] 	= "GSM USERNAME";
-const char SECRET_GSM_PASS[]	= "GSM PASSWORD";
+const char SECRET_APN[]       = "MOBILE PROVIDER APN ADDRESS";
+const char SECRET_PIN[]       = "0000";  // Required for NBConnectionHandler
+const char SECRET_GSM_USER[]  = "GSM USERNAME";
+const char SECRET_GSM_PASS[]  = "GSM PASSWORD";
 
 // Required for LoRaConnectionHandler
 const char SECRET_APP_EUI[]  = "APP_EUI";
