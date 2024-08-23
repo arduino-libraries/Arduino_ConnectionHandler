@@ -21,7 +21,15 @@
    INCLUDES
  ******************************************************************************/
 
+#if defined __has_include
+  #if __has_include (<Notecard.h>)
+    #define BOARD_HAS_NOTECARD
+  #endif
+#endif
+
 #include <Arduino.h>
+
+#ifndef BOARD_HAS_NOTECARD
 
 #ifdef ARDUINO_SAMD_MKR1000
   #define BOARD_HAS_WIFI
@@ -136,6 +144,8 @@
   #define NETWORK_HARDWARE_ERROR
 #endif
 
+#endif // BOARD_HAS_NOTECARD
+
 /******************************************************************************
    TYPEDEFS
  ******************************************************************************/
@@ -163,7 +173,8 @@ enum class NetworkAdapter {
   GSM,
   LORA,
   CATM1,
-  CELL
+  CELL,
+  NOTECARD
 };
 
 /******************************************************************************
@@ -173,7 +184,7 @@ enum class NetworkAdapter {
 static unsigned int const CHECK_INTERVAL_TABLE[] =
 {
   /* INIT          */ 100,
-#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if defined(BOARD_HAS_NOTECARD) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
   /* CONNECTING    */ 4000,
 #else
   /* CONNECTING    */ 500,
