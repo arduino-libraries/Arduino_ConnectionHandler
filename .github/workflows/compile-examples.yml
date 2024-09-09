@@ -101,6 +101,9 @@ jobs:
           - fqbn: arduino:mbed_edge:edge_control
             platform-name: arduino:mbed_edge
             artifact-name-suffix: arduino-mbed_edge-edge_control
+          - fqbn: "rp2040:rp2040:rpipicow"
+            platform-name: rp2040:rp2040
+            artifact-name-suffix: rp2040-rp2040-rpipicow
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -179,6 +182,14 @@ jobs:
               # Install ESP32 platform via Boards Manager
               - name: esp32:esp32
                 source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+            sketch-paths: |
+              - examples/ConnectionHandlerDemo-Notecard
+          - board:
+              platform-name: rp2040:rp2040
+            platforms: |
+              # Install rp2040 platform via Boards Manager
+              - name: rp2040:rp2040
+                source-url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
             sketch-paths: |
               - examples/ConnectionHandlerDemo-Notecard
 
