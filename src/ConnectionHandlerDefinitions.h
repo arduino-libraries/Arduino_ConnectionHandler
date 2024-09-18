@@ -144,6 +144,10 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(ARDUINO_TEENSY41)
+  #define BOARD_HAS_ETHERNET
+#endif
+
 #endif // BOARD_HAS_NOTECARD
 
 /******************************************************************************

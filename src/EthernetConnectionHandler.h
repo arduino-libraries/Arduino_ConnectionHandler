@@ -26,6 +26,10 @@
 #elif defined(ARDUINO_OPTA)
   #include <Ethernet.h>
   #include <PortentaEthernet.h>
+#elif defined(ARDUINO_TEENSY41)
+  #include <QNEthernet.h>
+
+  using namespace qindesign::network;
 #endif
 
 #ifndef BOARD_HAS_ETHERNET
