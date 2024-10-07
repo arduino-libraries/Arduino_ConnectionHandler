@@ -31,13 +31,11 @@
 #define NOTEFILE_BASE_NAME "arduino_iot_cloud"
 
 // Notecard LoRa requires us to choose an arbitrary port between 1-99
-#define NOTEFILE_DATABASE_LORA_PORT 1
 #define NOTEFILE_INBOUND_LORA_PORT 2
 #define NOTEFILE_OUTBOUND_LORA_PORT 3
 
 // Note that we use "s" versions of the Notefile extensions to ensure that
 // traffic always happens on a secure transport
-#define NOTEFILE_SECURE_DATABASE NOTEFILE_BASE_NAME ".dbs"
 #define NOTEFILE_SECURE_INBOUND NOTEFILE_BASE_NAME ".qis"
 #define NOTEFILE_SECURE_OUTBOUND NOTEFILE_BASE_NAME ".qos"
 
@@ -422,41 +420,6 @@ NetworkConnectionState NotecardConnectionHandler::update_handleInit()
     }
   }
 #endif
-
-  // Set database template to support LoRa/Satellite Notecard
-  if (NetworkConnectionState::INIT == result) {
-    if (J *req = _notecard.newRequest("note.template")) {
-      JAddStringToObject(req, "file", NOTEFILE_SECURE_DATABASE);
-      JAddStringToObject(req, "format", "compact");               // Support LoRa/Satellite Notecards
-      JAddIntToObject(req, "port", NOTEFILE_DATABASE_LORA_PORT);  // Support LoRa/Satellite Notecards
-      if (J *body = JAddObjectToObject(req, "body")) {
-        JAddStringToObject(body, "text", TSTRINGV);
-        JAddNumberToObject(body, "value", TFLOAT64);
-        JAddBoolToObject(body, "flag", TBOOL);
-        if (J *rsp = _notecard.requestAndResponse(req)) {
-          // Check the response for errors
-          if (NoteResponseError(rsp)) {
-            const char *err = JGetString(rsp, "err");
-            Debug.print(DBG_ERROR, F("%s"), err);
-            result = NetworkConnectionState::ERROR;
-          } else {
-            result = NetworkConnectionState::INIT;
-          }
-          JDelete(rsp);
-        } else {
-          Debug.print(DBG_ERROR, F("Failed to receive response from Notecard."));
-          result = NetworkConnectionState::ERROR; // Assume the worst
-        }
-      } else {
-        Debug.print(DBG_ERROR, "Failed to allocate request: note.template:body");
-        JFree(req);
-        result = NetworkConnectionState::ERROR; // Assume the worst
-      }
-    } else {
-      Debug.print(DBG_ERROR, "Failed to allocate request: note.template");
-      result = NetworkConnectionState::ERROR; // Assume the worst
-    }
-  }
 
   // Set inbound template to support LoRa/Satellite Notecard
   if (NetworkConnectionState::INIT == result) {
