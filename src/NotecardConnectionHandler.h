@@ -261,6 +261,7 @@ class NotecardConnectionHandler final : public ConnectionHandler
      * @param interval_min[in] The inbound polling interval (in minutes)
      *
      * @note Set the interval to 0 to disable inbound polling.
+     * @note Must be set prior to initializing the connection to the Notecard.
      */
     inline void setNotehubPollingInterval (int32_t interval_min) {
       _inbound_polling_interval_min = (interval_min ? interval_min : -1);
