@@ -74,7 +74,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
     _settings.catm1.band))
   {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
-    return NetworkConnectionState::ERROR;
+    return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTING;
 }
