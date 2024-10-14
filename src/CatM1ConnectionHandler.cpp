@@ -123,6 +123,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnected()
 {
+  GSM.end();
   if (_keep_alive)
   {
     return NetworkConnectionState::INIT;
