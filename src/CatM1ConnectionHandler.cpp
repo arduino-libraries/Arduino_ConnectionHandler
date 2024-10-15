@@ -51,7 +51,10 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(
 
 unsigned long CatM1ConnectionHandler::getTime()
 {
-  return GSM.getTime();
+  /* It is not safe to call GSM.getTime() since we don't know if modem internal
+   * RTC is in sync with current time.
+   */
+  return 0;
 }
 
 /******************************************************************************
