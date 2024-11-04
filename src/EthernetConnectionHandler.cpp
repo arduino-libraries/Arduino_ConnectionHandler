@@ -88,13 +88,21 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
   if (_ip != INADDR_NONE) {
+#if defined(ARDUINO_TEENSY41)
+    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask) == 0) {
+#else
     if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask, _timeout, _response_timeout) == 0) {
+#endif
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
       return NetworkConnectionState::CONNECTING;
     }
   } else {
+#if defined(ARDUINO_TEENSY41)
+    if (Ethernet.begin(nullptr, _timeout) == 0) {
+#else
     if (Ethernet.begin(nullptr, _timeout, _response_timeout) == 0) {
+#endif
       Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
       return NetworkConnectionState::CONNECTING;
@@ -119,7 +127,11 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleDisconnecting()
 {
+#if defined(ARDUINO_TEENSY41)
+  Ethernet.end();
+#else
   Ethernet.disconnect();
+#endif
   return NetworkConnectionState::DISCONNECTED;
 }
 
