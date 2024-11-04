@@ -29,7 +29,7 @@
 
 #define NOTECARD_CONNECTION_HANDLER_VERSION_MAJOR 1
 #define NOTECARD_CONNECTION_HANDLER_VERSION_MINOR 0
-#define NOTECARD_CONNECTION_HANDLER_VERSION_PATCH 0
+#define NOTECARD_CONNECTION_HANDLER_VERSION_PATCH 1
 
 #define NOTECARD_CONNECTION_HANDLER_VERSION NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_MAJOR) "." NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_MINOR) "." NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_PATCH)
 
@@ -261,6 +261,7 @@ class NotecardConnectionHandler final : public ConnectionHandler
      * @param interval_min[in] The inbound polling interval (in minutes)
      *
      * @note Set the interval to 0 to disable inbound polling.
+     * @note Must be set prior to initializing the connection to the Notecard.
      */
     inline void setNotehubPollingInterval (int32_t interval_min) {
       _inbound_polling_interval_min = (interval_min ? interval_min : -1);
