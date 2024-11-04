@@ -130,7 +130,53 @@ void loop() {
    * which might not guarantee the correct functioning of the ConnectionHandler
    * object.
    */
-  conMan.check();
+  if (conMan.check() != NetworkConnectionState::CONNECTED) {
+    return;
+  }
+
+#if !defined(BOARD_HAS_LORA)
+  Client &client = conMan.getClient();
+  /* arduino.tips */
+  IPAddress ip = IPAddress(104, 21, 62, 246);
+  int port = 80;
+
+  Serial.println("\nStarting connection to server...");
+  /* if you get a connection, report back via serial: */
+  if (!client.connect(ip, port)) {
+    Serial.println("unable to connect to server");
+    return;
+  }
+
+  Serial.println("connected to server");
+  /* Make a HTTP request: */
+  size_t w = client.println("GET /asciilogo.txt HTTP/1.1");
+  w += client.println("Host: arduino.tips");
+  w += client.println("User-Agent: Arduino");
+  w += client.println("Connection: close");
+  w += client.println();
+  Serial.print("Write size is ");
+  Serial.println(w);
+
+  /* if there are incoming bytes available  from the server,
+   * read them and print them:
+   */
+  while (client.connected()) {
+    size_t len = client.available();
+    if (len) {
+      uint8_t buff[len];
+      client.read(buff, len);
+      Serial.write(buff, len);
+    }
+    delay(0);
+  }
+
+  /* if the server's disconnected, stop the client: */
+  Serial.println();
+  Serial.println("disconnecting from server.");
+  client.stop();
+  delay(1000);
+#endif
+
 }
 
 void onNetworkConnect() {

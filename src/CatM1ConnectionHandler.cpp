@@ -46,7 +46,10 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(const char * pin, const char * ap
 
 unsigned long CatM1ConnectionHandler::getTime()
 {
-  return GSM.getTime();
+  /* It is not safe to call GSM.getTime() since we don't know if modem internal
+   * RTC is in sync with current time.
+   */
+  return 0;
 }
 
 /******************************************************************************
@@ -56,6 +59,7 @@ unsigned long CatM1ConnectionHandler::getTime()
 NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
 {
 #if defined (ARDUINO_EDGE_CONTROL)
+  /* Power on module */
   pinMode(ON_MKR2, OUTPUT);
   digitalWrite(ON_MKR2, HIGH);
 #endif
@@ -67,7 +71,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
   if(!GSM.begin(_pin, _apn, _login, _pass, _rat, _band))
   {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
-    return NetworkConnectionState::ERROR;
+    return NetworkConnectionState::DISCONNECTED;
   }
   Debug.print(DBG_INFO, F("Connected to Network"));
   return NetworkConnectionState::CONNECTED;
@@ -91,6 +95,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnected()
 {
+  GSM.end();
   if (_keep_alive)
   {
     return NetworkConnectionState::INIT;
