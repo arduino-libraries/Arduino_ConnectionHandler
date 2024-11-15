@@ -37,6 +37,8 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(
 : ConnectionHandler{keep_alive, NetworkAdapter::CATM1}
 {
   _settings.type = NetworkAdapter::CATM1;
+  // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
+  _check_internet_availability = true;
   strncpy(_settings.catm1.pin, pin, sizeof(_settings.catm1.pin)-1);
   strncpy(_settings.catm1.apn, apn, sizeof(_settings.catm1.apn)-1);
   strncpy(_settings.catm1.login, login, sizeof(_settings.catm1.login)-1);
@@ -87,19 +89,21 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
 {
   if (!GSM.isConnected())
   {
-    return NetworkConnectionState::INIT;
+    Debug.print(DBG_ERROR, F("GSM connection not alive... disconnecting"));
+    return NetworkConnectionState::DISCONNECTED;
   }
 
   if(!_check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
-  int ping_result = GSM.ping("time.arduino.cc");
+  Debug.print(DBG_INFO, F("Sending PING to outer space..."));
+  int const ping_result = GSM.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("GSM.ping(): %d"), ping_result);
   if (ping_result < 0)
   {
     Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), 2 * CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
   else
@@ -114,6 +118,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnected()
   int const is_gsm_access_alive = GSM.isConnected();
   if (is_gsm_access_alive != 1)
   {
+    Debug.print(DBG_ERROR, F("GSM connection not alive... disconnecting"));
     return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTED;
