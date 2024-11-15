@@ -45,6 +45,7 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(
   strncpy(_settings.catm1.pass, pass, sizeof(_settings.catm1.pass)-1);
   _settings.catm1.rat  = static_cast<uint8_t>(rat);
   _settings.catm1.band = band;
+  _reset = false;
 }
 
 /******************************************************************************
@@ -77,11 +78,14 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
     _settings.catm1.login,
     _settings.catm1.pass,
     static_cast<RadioAccessTechnologyType>(_settings.catm1.rat) ,
-    _settings.catm1.band))
+    _settings.catm1.band,
+    _reset))
   {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
+    _reset = true;
     return NetworkConnectionState::DISCONNECTED;
   }
+  _reset = false;
   return NetworkConnectionState::CONNECTING;
 }
 

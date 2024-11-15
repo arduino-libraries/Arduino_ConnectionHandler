@@ -60,6 +60,8 @@ class CatM1ConnectionHandler : public ConnectionHandler
 
   private:
 
+    bool _reset;
+
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
 };
