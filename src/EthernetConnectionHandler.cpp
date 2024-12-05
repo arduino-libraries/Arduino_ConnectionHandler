@@ -25,51 +25,41 @@
    CTOR/DTOR
  ******************************************************************************/
 
-EthernetConnectionHandler::EthernetConnectionHandler(unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
-,_ip{INADDR_NONE}
-,_dns{INADDR_NONE}
-,_gateway{INADDR_NONE}
-,_netmask{INADDR_NONE}
-,_timeout{timeout}
-,_response_timeout{responseTimeout}
-{
-
+static inline void fromIPAddress(const IPAddress src, models::ip_addr& dst) {
+  if(src.type() == IPv4) {
+    dst.dword[IPADDRESS_V4_DWORD_INDEX] = (uint32_t)src;
+  } else if(src.type() == IPv6) {
+    for(uint8_t i=0; i<sizeof(dst.bytes); i++) {
+      dst.bytes[i] = src[i];
+    }
+  }
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask, unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(
+  unsigned long const timeout,
+  unsigned long const responseTimeout,
+  bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
-,_ip{ip}
-,_dns{dns}
-,_gateway{gateway}
-,_netmask{netmask}
-,_timeout{timeout}
-,_response_timeout{responseTimeout}
 {
-
+  memset(_settings.eth.ip.dword, 0, sizeof(_settings.eth.ip.dword));
+  memset(_settings.eth.dns.dword, 0, sizeof(_settings.eth.dns.dword));
+  memset(_settings.eth.gateway.dword, 0, sizeof(_settings.eth.gateway.dword));
+  memset(_settings.eth.netmask.dword, 0, sizeof(_settings.eth.netmask.dword));
+  _settings.eth.timeout = timeout;
+  _settings.eth.response_timeout = responseTimeout;
 }
 
-EthernetConnectionHandler::EthernetConnectionHandler(const char * ip, const char * dns, const char * gateway, const char * netmask, unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
+EthernetConnectionHandler::EthernetConnectionHandler(
+  const IPAddress ip, const IPAddress dns, const IPAddress gateway, const IPAddress netmask,
+  unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
-,_ip{INADDR_NONE}
-,_dns{INADDR_NONE}
-,_gateway{INADDR_NONE}
-,_netmask{INADDR_NONE}
-,_timeout{timeout}
-,_response_timeout{responseTimeout}
 {
-  if(!_ip.fromString(ip)) {
-    _ip = INADDR_NONE;
-  }
-  if(!_dns.fromString(dns)) {
-    _dns = INADDR_NONE;
-  }
-  if(!_gateway.fromString(gateway)) {
-    _gateway = INADDR_NONE;
-  }
-  if(!_netmask.fromString(netmask)) {
-    _netmask = INADDR_NONE;
-  }
+  fromIPAddress(ip, _settings.eth.ip);
+  fromIPAddress(dns, _settings.eth.dns);
+  fromIPAddress(gateway, _settings.eth.gateway);
+  fromIPAddress(netmask, _settings.eth.netmask);
+  _settings.eth.timeout = timeout;
+  _settings.eth.response_timeout = responseTimeout;
 }
 
 /******************************************************************************
@@ -87,16 +77,29 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
 {
-  if (_ip != INADDR_NONE) {
-    if (Ethernet.begin(nullptr, _ip, _dns, _gateway, _netmask, _timeout, _response_timeout) == 0) {
+  IPAddress ip(_settings.eth.ip.type, _settings.eth.ip.bytes);
+
+  // An ip address is provided -> static ip configuration
+  if (ip != INADDR_NONE) {
+    if (Ethernet.begin(nullptr, ip,
+        IPAddress(_settings.eth.dns.type, _settings.eth.dns.bytes),
+        IPAddress(_settings.eth.gateway.type, _settings.eth.gateway.bytes),
+        IPAddress(_settings.eth.netmask.type, _settings.eth.netmask.bytes),
+        _settings.eth.timeout,
+        _settings.eth.response_timeout) == 0) {
+
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
-      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
+      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
+        _settings.eth.timeout, _settings.eth.response_timeout);
       return NetworkConnectionState::CONNECTING;
     }
+  // An ip address is not provided -> dhcp configuration
   } else {
-    if (Ethernet.begin(nullptr, _timeout, _response_timeout) == 0) {
+    if (Ethernet.begin(nullptr, _settings.eth.timeout, _settings.eth.response_timeout) == 0) {
       Debug.print(DBG_ERROR, F("Waiting Ethernet configuration from DHCP server, check cable connection"));
-      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d", _timeout, _response_timeout);
+      Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
+        _settings.eth.timeout, _settings.eth.response_timeout);
+
       return NetworkConnectionState::CONNECTING;
     }
   }
