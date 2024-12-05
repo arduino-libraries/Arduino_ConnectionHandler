@@ -51,7 +51,7 @@ class ConnectionHandler {
 
     virtual ~ConnectionHandler() {}
 
-    NetworkConnectionState check();
+    virtual NetworkConnectionState check();
 
     #if not defined(BOARD_HAS_LORA)
       virtual unsigned long getTime() = 0;
