@@ -64,14 +64,6 @@ class EthernetConnectionHandler : public ConnectionHandler
 
   private:
 
-    IPAddress _ip;
-    IPAddress _dns;
-    IPAddress _gateway;
-    IPAddress _netmask;
-
-    unsigned long _timeout;
-    unsigned long _response_timeout;
-
     EthernetUDP _eth_udp;
     EthernetClient _eth_client;
 

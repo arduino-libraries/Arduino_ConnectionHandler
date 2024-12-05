@@ -73,11 +73,6 @@ class LoRaConnectionHandler : public ConnectionHandler
 
   private:
 
-    char const * _appeui;
-    char const * _appkey;
-    _lora_band _band;
-    char const * _channelMask;
-    _lora_class _device_class;
     LoRaModem _modem;
 };
 

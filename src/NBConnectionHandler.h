@@ -39,7 +39,7 @@
 class NBConnectionHandler : public ConnectionHandler
 {
   public:
-
+    NBConnectionHandler();
     NBConnectionHandler(char const * pin, bool const keep_alive = true);
     NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive = true);
     NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
@@ -62,11 +62,6 @@ class NBConnectionHandler : public ConnectionHandler
   private:
 
     void changeConnectionState(NetworkConnectionState _newState);
-
-    char const * _pin;
-    char const * _apn;
-    char const * _login;
-    char const * _pass;
 
     NB _nb;
     GPRS _nb_gprs;
