@@ -96,11 +96,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 #else
   WiFi.mode(WIFI_STA);
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
-  return NetworkConnectionState::CONNECTING;
-}
 
-NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
-{
   if (WiFi.status() != WL_CONNECTED)
   {
     WiFi.begin(_settings.wifi.ssid, _settings.wifi.pwd);
@@ -120,7 +116,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
     Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _settings.wifi.ssid);
     Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
 #endif
-    return NetworkConnectionState::CONNECTING;
+    return NetworkConnectionState::INIT;
   }
   else
   {
@@ -130,8 +126,28 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
   configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
-    return NetworkConnectionState::CONNECTED;
+    return NetworkConnectionState::CONNECTING;
   }
+}
+
+NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
+{
+  if (WiFi.status() != WL_CONNECTED){
+    return NetworkConnectionState::INIT;
+  }
+  #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
+  int ping_result = WiFi.ping("time.arduino.cc");
+  Debug.print(DBG_INFO, F("WiFi.ping(): %d"), ping_result);
+  if (ping_result < 0)
+  {
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+  #endif
+  Debug.print(DBG_INFO, F("Connected to Internet"));
+  return NetworkConnectionState::CONNECTED;
+
 }
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnected()

@@ -20,6 +20,7 @@
 
 #ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
 #include "EthernetConnectionHandler.h"
+#include <Udp.h>
 
 /******************************************************************************
    CTOR/DTOR
@@ -72,11 +73,6 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("Error, ethernet shield was not found."));
     return NetworkConnectionState::ERROR;
   }
-  return NetworkConnectionState::CONNECTING;
-}
-
-NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
-{
   IPAddress ip(_settings.eth.ip.type, _settings.eth.ip.bytes);
 
   // An ip address is provided -> static ip configuration
@@ -91,7 +87,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
         _settings.eth.timeout, _settings.eth.response_timeout);
-      return NetworkConnectionState::CONNECTING;
+      return NetworkConnectionState::INIT;
     }
   // An ip address is not provided -> dhcp configuration
   } else {
@@ -100,11 +96,33 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
         _settings.eth.timeout, _settings.eth.response_timeout);
 
-      return NetworkConnectionState::CONNECTING;
+      return NetworkConnectionState::INIT;
     }
   }
 
-  return NetworkConnectionState::CONNECTED;
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
+{
+  if (Ethernet.linkStatus() == LinkOFF) {
+    return NetworkConnectionState::INIT;
+  }
+
+  int ping_result = Ethernet.ping("time.arduino.cc");
+  Debug.print(DBG_INFO, F("Ethernet.ping(): %d"), ping_result);
+  if (ping_result < 0)
+  {
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+  else
+  {
+    Debug.print(DBG_INFO, F("Connected to Internet"));
+    return NetworkConnectionState::CONNECTED;
+  }
+
 }
 
 NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
