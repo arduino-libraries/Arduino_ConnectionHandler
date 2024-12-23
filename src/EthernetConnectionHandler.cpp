@@ -20,6 +20,7 @@
 
 #ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
 #include "EthernetConnectionHandler.h"
+#include <Udp.h>
 
 /******************************************************************************
    CTOR/DTOR
@@ -72,11 +73,6 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("Error, ethernet shield was not found."));
     return NetworkConnectionState::ERROR;
   }
-  return NetworkConnectionState::CONNECTING;
-}
-
-NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
-{
   IPAddress ip(_settings.eth.ip.type, _settings.eth.ip.bytes);
 
   // An ip address is provided -> static ip configuration
@@ -91,7 +87,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
       Debug.print(DBG_ERROR, F("Failed to configure Ethernet, check cable connection"));
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
         _settings.eth.timeout, _settings.eth.response_timeout);
-      return NetworkConnectionState::CONNECTING;
+      return NetworkConnectionState::INIT;
     }
   // An ip address is not provided -> dhcp configuration
   } else {
@@ -100,10 +96,53 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
       Debug.print(DBG_VERBOSE, "timeout: %d, response timeout: %d",
         _settings.eth.timeout, _settings.eth.response_timeout);
 
-      return NetworkConnectionState::CONNECTING;
+      return NetworkConnectionState::INIT;
     }
   }
 
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
+{
+  if (Ethernet.linkStatus() == LinkOFF) {
+    return NetworkConnectionState::INIT;
+  }
+  // Request time from NTP server for testing internet connection
+  UDP &udp = getUDP();
+  udp.begin(4001);
+  uint8_t ntp_packet_buf[48] = {0};
+  
+  ntp_packet_buf[0]  = 0b11100011;
+  ntp_packet_buf[1]  = 0;
+  ntp_packet_buf[2]  = 6;
+  ntp_packet_buf[3]  = 0xEC;
+  ntp_packet_buf[12] = 49;
+  ntp_packet_buf[13] = 0x4E;
+  ntp_packet_buf[14] = 49;
+  ntp_packet_buf[15] = 52;
+  
+  udp.beginPacket("time.arduino.cc", 123);
+  udp.write(ntp_packet_buf, 48);
+  udp.endPacket();
+
+  bool is_timeout = false;
+  unsigned long const start = millis();
+  do
+  {
+    is_timeout = (millis() - start) >= 1000;
+  } while(!is_timeout && !udp.parsePacket());
+
+  if(is_timeout) {
+    udp.stop();
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+  
+  udp.read(ntp_packet_buf, 48);
+  udp.stop();
+  Debug.print(DBG_INFO, F("Connected to Internet"));
   return NetworkConnectionState::CONNECTED;
 }
 

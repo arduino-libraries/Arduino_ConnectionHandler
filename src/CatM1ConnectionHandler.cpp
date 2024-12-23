@@ -64,11 +64,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
   pinMode(ON_MKR2, OUTPUT);
   digitalWrite(ON_MKR2, HIGH);
 #endif
-  return NetworkConnectionState::CONNECTING;
-}
 
-NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
-{
   if(!GSM.begin(
     _settings.catm1.pin,
     _settings.catm1.apn,
@@ -80,7 +76,25 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
-  Debug.print(DBG_INFO, F("Connected to Network"));
+  
+  
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
+{
+  if (!GSM.isConnected())
+  {
+    return NetworkConnectionState::INIT;
+  }
+
+  if(getTime() == 0){
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+
+  Debug.print(DBG_INFO, F("Connected to Internet"));
   return NetworkConnectionState::CONNECTED;
 }
 

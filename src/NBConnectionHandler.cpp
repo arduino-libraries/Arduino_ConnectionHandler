@@ -102,10 +102,6 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
-}
-
-NetworkConnectionState NBConnectionHandler::update_handleConnecting()
-{
   NB_NetworkStatus_t const network_status = _nb_gprs.attachGPRS(true);
   Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
   if (network_status == NB_NetworkStatus_t::NB_ERROR)
@@ -116,8 +112,24 @@ NetworkConnectionState NBConnectionHandler::update_handleConnecting()
   else
   {
     Debug.print(DBG_INFO, F("Connected to GPRS Network"));
-    return NetworkConnectionState::CONNECTED;
+    return NetworkConnectionState::CONNECTING;
   }
+
+}
+
+NetworkConnectionState NBConnectionHandler::update_handleConnecting()
+{
+  if(_nb.isAccessAlive() != 1){
+    return NetworkConnectionState::INIT;
+  }
+
+  if(getTime() == 0){
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+
+  return NetworkConnectionState::CONNECTED;
 }
 
 NetworkConnectionState NBConnectionHandler::update_handleConnected()
