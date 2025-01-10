@@ -132,53 +132,14 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
 {
-  if (WiFi.status() != NETWORK_CONNECTED){
+  if (WiFi.status() != WL_CONNECTED){
     return NetworkConnectionState::INIT;
   }
-  bool checkSuccess = false;
-#if defined(ARDUINO_PORTENTA_H7_M7) || defined(ARDUINO_PORTENTA_H7_M7) || \
-  defined(ARDUINO_NICLA_VISION) || defined(ARDUINO_OPTA) || defined(ARDUINO_GIGA)
-  // Request time from NTP server for testing internet connection
-  UDP &udp = getUDP();
-  udp.begin(4001);
-  uint8_t ntp_packet_buf[48] = {0};
   
-  ntp_packet_buf[0]  = 0b11100011;
-  ntp_packet_buf[1]  = 0;
-  ntp_packet_buf[2]  = 6;
-  ntp_packet_buf[3]  = 0xEC;
-  ntp_packet_buf[12] = 49;
-  ntp_packet_buf[13] = 0x4E;
-  ntp_packet_buf[14] = 49;
-  ntp_packet_buf[15] = 52;
-  udp.beginPacket("time.arduino.cc", 123);
-  udp.write(ntp_packet_buf, 48);
-  udp.endPacket();
-
-  bool is_timeout = false;
-  unsigned long const start = millis();
-  do
-  {
-    is_timeout = (millis() - start) >= 1000;
-  } while(!is_timeout && !udp.parsePacket());
-  if(is_timeout) {
-    udp.stop();
-  }
-  else
-  {
-    udp.read(ntp_packet_buf, 48);
-    udp.stop();
-    checkSuccess = true;
-  }
-#else
-  int const ping_result = WiFi.ping("time.arduino.cc");
+  int ping_result = WiFi.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("WiFi.ping(): %d"), ping_result);
-  if (ping_result > 0)
+  if (ping_result < 0)
   {
-    checkSuccess = true;
-  }
-#endif
-  if(!checkSuccess){
     Debug.print(DBG_ERROR, F("Internet check failed"));
     Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;

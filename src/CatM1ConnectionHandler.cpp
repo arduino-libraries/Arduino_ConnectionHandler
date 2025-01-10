@@ -87,15 +87,19 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
   {
     return NetworkConnectionState::INIT;
   }
-
-  if(getTime() == 0){
+  int ping_result = GSM.ping("time.arduino.cc");
+  Debug.print(DBG_INFO, F("GSM.ping(): %d"), ping_result);
+  if (ping_result < 0)
+  {
     Debug.print(DBG_ERROR, F("Internet check failed"));
     Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
     return NetworkConnectionState::CONNECTING;
   }
-
-  Debug.print(DBG_INFO, F("Connected to Internet"));
-  return NetworkConnectionState::CONNECTED;
+  else
+  {
+    Debug.print(DBG_INFO, F("Connected to Internet"));
+    return NetworkConnectionState::CONNECTED;
+  }
 }
 
 NetworkConnectionState CatM1ConnectionHandler::update_handleConnected()
