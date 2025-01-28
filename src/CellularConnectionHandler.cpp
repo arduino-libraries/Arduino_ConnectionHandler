@@ -54,9 +54,40 @@ UDP & CellularConnectionHandler::getUDP()
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
+#if defined(ARDUINO_OPTA) && defined(BOARD_HAS_CELLULAR)
+CellularExpansion ce;
+static void beginOptaCellular() {
+  static bool first_call = true;
+
+  if(first_call) {
+    first_call = false;
+    OptaController.registerCustomExpansion(CellularExpansion::getProduct(),
+                                          CellularExpansion::makeExpansion,
+                                          CellularExpansion::startUp);
+    OptaController.begin();
+    delay(500);
+    for (int i = 0; i < OptaController.getExpansionNum(); i++) {
+      ce = OptaController.getExpansion(i);
+      if(ce) {
+        ce.ctrlModem(true);
+        delay(100);
+        break;
+      }
+    }
+  }
+  else {
+    OptaController.update();
+  }
+}
+#endif
+
 NetworkConnectionState CellularConnectionHandler::update_handleInit()
 {
+#if defined(ARDUINO_OPTA) && defined(BOARD_HAS_CELLULAR)
+  beginOptaCellular();
+#else  
   _cellular.begin();
+#endif
   _cellular.setDebugStream(Serial);
   if (strlen(_settings.cell.pin) > 0 && !_cellular.unlockSIM(_settings.cell.pin)) {
     DEBUG_ERROR(F("SIM not present or wrong PIN"));
