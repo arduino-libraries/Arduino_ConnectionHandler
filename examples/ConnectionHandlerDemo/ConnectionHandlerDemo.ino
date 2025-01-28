@@ -35,7 +35,8 @@
 #define CONN_TOGGLE_MS 60000
 
 #if !(defined(BOARD_HAS_WIFI) || defined(BOARD_HAS_GSM) || defined(BOARD_HAS_LORA) || \
-      defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET) || defined(BOARD_HAS_CATM1_NBIOT))
+      defined(BOARD_HAS_NB) || defined(BOARD_HAS_ETHERNET) || defined(BOARD_HAS_CATM1_NBIOT) \
+      || defined(BOARD_HAS_CELLULAR))
   #error "Please check Arduino Connection Handler supported boards list: https://github.com/arduino-libraries/Arduino_ConnectionHandler/blob/master/README.md"
 #endif
 
