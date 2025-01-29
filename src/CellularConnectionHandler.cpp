@@ -54,7 +54,7 @@ UDP & CellularConnectionHandler::getUDP()
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
-#if defined(ARDUINO_OPTA) && defined(BOARD_HAS_CELLULAR)
+#if defined(ARDUINO_OPTA)
 CellularExpansion ce;
 static void beginOptaCellular() {
   static bool first_call = true;
