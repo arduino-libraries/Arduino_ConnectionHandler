@@ -80,16 +80,32 @@ static void beginOptaCellular() {
 
 NetworkConnectionState CellularConnectionHandler::update_handleInit()
 {
-#if defined(ARDUINO_OPTA) && defined(BOARD_HAS_CELLULAR)
+#if defined(ARDUINO_OPTA)
   beginOptaCellular();
 #else  
   _cellular.begin();
 #endif
   _cellular.setDebugStream(Serial);
+
+#if defined(ARDUINO_OPTA)
+  /* in case Opta Cellular is not wired this check on ce prevent the call
+     to unlockSIM that cause a crash in the Opta (deep due to the missing
+     communication with the modem) */
+  if(ce) {
+    if (String(_pin).length() > 0 && !_cellular.unlockSIM(_pin)) {
+      Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
+      return NetworkConnectionState::ERROR;
+    }
+  }
+  else {
+    return NetworkConnectionState::ERROR;
+  }
+#else
   if (String(_pin).length() > 0 && !_cellular.unlockSIM(_pin)) {
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
+#endif
   return NetworkConnectionState::CONNECTING;
 }
 
