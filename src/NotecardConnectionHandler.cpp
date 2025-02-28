@@ -774,9 +774,13 @@ bool NotecardConnectionHandler::updateUidCache (void)
       result = false;
     } else {
       _notecard_uid = JGetString(rsp, "device");
-      _device_id = JGetString(rsp, "sn");
-      _device_id = (_device_id.length() ? _device_id : "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx");
-      Debug.print(DBG_DEBUG, F("NotecardConnectionHandler::%s updated cache with Notecard UID: <%s> and Arduino Device ID: <%s>"), __FUNCTION__, _notecard_uid.c_str(), _device_id.c_str());
+      char device_id[] = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+      if (NoteGetEnv("_arduino_device_id", device_id, device_id, sizeof(device_id))) {
+        _device_id = device_id;
+      } else {
+        Debug.print(DBG_DEBUG, F("NotecardConnectionHandler::%s Arduino Device ID not cached on Notecard, using default value: <%s>"), __FUNCTION__, _device_id.c_str());
+      }
+      Debug.print(DBG_DEBUG, F("NotecardConnectionHandler::%s updated local cache with Notecard UID: <%s> and Arduino Device ID: <%s>"), __FUNCTION__, _notecard_uid.c_str(), _device_id.c_str());
       result = true;
     }
     JDelete(rsp);
