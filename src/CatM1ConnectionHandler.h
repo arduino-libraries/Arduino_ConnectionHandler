@@ -66,6 +66,7 @@ class CatM1ConnectionHandler : public ConnectionHandler
 
     RadioAccessTechnologyType _rat;
     uint32_t _band;
+    bool _reset;
 
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;
