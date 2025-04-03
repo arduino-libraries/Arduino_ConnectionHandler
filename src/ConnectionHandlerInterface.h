@@ -102,6 +102,9 @@ class ConnectionHandler {
 
   protected:
 
+    virtual NetworkConnectionState updateConnectionState();
+    virtual void updateCallback(NetworkConnectionState next_net_connection_state);
+
     bool _keep_alive;
     NetworkAdapter _interface;
 
