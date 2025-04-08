@@ -109,6 +109,10 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
+  if (!_check_internet_availability) {
+    return NetworkConnectionState::CONNECTED;
+  }
+
   int ping_result = Ethernet.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("Ethernet.ping(): %d"), ping_result);
   if (ping_result < 0)

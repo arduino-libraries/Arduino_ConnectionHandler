@@ -123,6 +123,10 @@ NetworkConnectionState NBConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
+  if(!_check_internet_availability){
+    return NetworkConnectionState::CONNECTED;
+  }
+
   int ping_result = _nb_gprs.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("GPRS.ping(): %d"), ping_result);
   if (ping_result < 0)

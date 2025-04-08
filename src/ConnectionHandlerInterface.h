@@ -76,6 +76,9 @@ class ConnectionHandler {
 
     virtual void connect();
     virtual void disconnect();
+    void enableCheckInternetAvailability(bool enable) {
+      _check_internet_availability = enable;
+    }
 
     virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
     void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
@@ -106,6 +109,7 @@ class ConnectionHandler {
     virtual void updateCallback(NetworkConnectionState next_net_connection_state);
 
     bool _keep_alive;
+    bool _check_internet_availability;
     NetworkAdapter _interface;
 
     virtual NetworkConnectionState update_handleInit         () = 0;

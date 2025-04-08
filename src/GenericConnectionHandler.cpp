@@ -37,6 +37,7 @@ bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
     if(_ch != nullptr) {
         _interface = s.type;
         _ch->setKeepAlive(_keep_alive);
+        _ch->enableCheckInternetAvailability(_check_internet_availability);
         return _ch->updateSetting(s);
     } else {
         _interface = NetworkAdapter::NONE;

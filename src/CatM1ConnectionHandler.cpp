@@ -76,8 +76,6 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
-  
-  
   return NetworkConnectionState::CONNECTING;
 }
 
@@ -87,6 +85,11 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
   {
     return NetworkConnectionState::INIT;
   }
+
+  if(!_check_internet_availability){
+    return NetworkConnectionState::CONNECTED;
+  }
+
   int ping_result = GSM.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("GSM.ping(): %d"), ping_result);
   if (ping_result < 0)

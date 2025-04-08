@@ -135,6 +135,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
   if (WiFi.status() != WL_CONNECTED){
     return NetworkConnectionState::INIT;
   }
+
+  if(!_check_internet_availability){
+    return NetworkConnectionState::CONNECTED;
+  }
+
   #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   int ping_result = WiFi.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("WiFi.ping(): %d"), ping_result);
