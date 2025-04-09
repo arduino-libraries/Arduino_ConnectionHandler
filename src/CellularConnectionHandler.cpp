@@ -46,7 +46,7 @@ unsigned long CellularConnectionHandler::getTime()
 
 UDP & CellularConnectionHandler::getUDP()
 {
-  Debug.print(DBG_ERROR, F("CellularConnectionHandler has no UDP support"));
+  DEBUG_ERROR(F("CellularConnectionHandler has no UDP support"));
   while(1) {};
 }
 
@@ -59,15 +59,15 @@ NetworkConnectionState CellularConnectionHandler::update_handleInit()
   _cellular.begin();
   _cellular.setDebugStream(Serial);
   if (strlen(_settings.cell.pin) > 0 && !_cellular.unlockSIM(_settings.cell.pin)) {
-    Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
+    DEBUG_ERROR(F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
 
   if (!_cellular.connect(String(_settings.cell.apn), String(_settings.cell.login), String(_settings.cell.pass))) {
-    Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
+    DEBUG_ERROR(F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
-  Debug.print(DBG_INFO, F("Connected to Network"));
+  DEBUG_INFO(F("Connected to Network"));
   return NetworkConnectionState::CONNECTING;
 }
 
@@ -82,8 +82,8 @@ NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
   }
 
   if(getTime() == 0){
-    Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
+    DEBUG_ERROR(F("Internet check failed"));
+    DEBUG_INFO(F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::CONNECTING;
   }
 

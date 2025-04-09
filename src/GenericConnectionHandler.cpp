@@ -154,7 +154,7 @@ static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter) {
         #endif
 
         default:
-            Debug.print(DBG_ERROR, "Network adapter not supported by this platform: %d", adapter);
+            DEBUG_ERROR("Network adapter not supported by this platform: %d", adapter);
             return nullptr;
     }
 }
