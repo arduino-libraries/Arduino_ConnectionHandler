@@ -102,6 +102,10 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
+}
+
+NetworkConnectionState NBConnectionHandler::update_handleConnecting()
+{
   NB_NetworkStatus_t const network_status = _nb_gprs.attachGPRS(true);
   Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
   if (network_status == NB_NetworkStatus_t::NB_ERROR)
@@ -112,32 +116,6 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
   else
   {
     Debug.print(DBG_INFO, F("Connected to GPRS Network"));
-    return NetworkConnectionState::CONNECTING;
-  }
-
-}
-
-NetworkConnectionState NBConnectionHandler::update_handleConnecting()
-{
-  if(_nb.isAccessAlive() != 1){
-    return NetworkConnectionState::INIT;
-  }
-
-  if(!_check_internet_availability){
-    return NetworkConnectionState::CONNECTED;
-  }
-
-  int ping_result = _nb_gprs.ping("time.arduino.cc");
-  Debug.print(DBG_INFO, F("GPRS.ping(): %d"), ping_result);
-  if (ping_result < 0)
-  {
-    Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
-    return NetworkConnectionState::CONNECTING;
-  }
-  else
-  {
-    Debug.print(DBG_INFO, F("Connected to Internet"));
     return NetworkConnectionState::CONNECTED;
   }
 }
