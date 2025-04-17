@@ -396,7 +396,7 @@ NetworkConnectionState NotecardConnectionHandler::update_handleInit()
   // for the Opta Wirelss Extension.
   if (NetworkConnectionState::INIT == result) {
     if (J *req = _notecard.newRequest("card.voltage")) {
-      JAddStringToObject(req, "mode", "lipo");
+      JAddStringToObject(req, "mode", "lic");
       JAddBoolToObject(req, "alert", true);
       JAddBoolToObject(req, "sync", true);
       JAddBoolToObject(req, "usb", true);
