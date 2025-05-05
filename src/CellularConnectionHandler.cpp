@@ -51,14 +51,61 @@ UDP & CellularConnectionHandler::getUDP()
    PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
+#if defined(ARDUINO_OPTA)
+CellularExpansion ce;
+static void beginOptaCellular() {
+  static bool first_call = true;
+
+  if(first_call) {
+    first_call = false;
+    OptaController.registerCustomExpansion(CellularExpansion::getProduct(),
+                                          CellularExpansion::makeExpansion,
+                                          CellularExpansion::startUp);
+    OptaController.begin();
+    delay(500);
+    for (int i = 0; i < OptaController.getExpansionNum(); i++) {
+      ce = OptaController.getExpansion(i);
+      if(ce) {
+        ce.ctrlModem(true);
+        delay(100);
+        break;
+      }
+    }
+  }
+  else {
+    OptaController.update();
+  }
+}
+#endif
+
 NetworkConnectionState CellularConnectionHandler::update_handleInit()
 {
+#if defined(ARDUINO_OPTA)
+  beginOptaCellular();
+#else  
   _cellular.begin();
+#endif
   _cellular.setDebugStream(Serial);
+
+#if defined(ARDUINO_OPTA)
+  /* in case Opta Cellular is not wired this check on ce prevent the call
+     to unlockSIM that cause a crash in the Opta (deep due to the missing
+     communication with the modem) */
+  if(ce) {
+    if (String(_pin).length() > 0 && !_cellular.unlockSIM(_pin)) {
+      Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
+      return NetworkConnectionState::ERROR;
+    }
+  }
+  else {
+    return NetworkConnectionState::ERROR;
+  }
+#else
   if (String(_pin).length() > 0 && !_cellular.unlockSIM(_pin)) {
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
+#endif
   return NetworkConnectionState::CONNECTING;
 }
 
