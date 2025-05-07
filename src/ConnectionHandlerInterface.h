@@ -29,6 +29,7 @@
 #include <Client.h>
 #include <Udp.h>
 #include "ConnectionHandlerDefinitions.h"
+#include "connectionHandlerModels/settings.h"
 
 /******************************************************************************
    TYPEDEFS
@@ -40,13 +41,17 @@ typedef void (*OnNetworkEventCallback)();
    CLASS DECLARATION
  ******************************************************************************/
 
+// forward declaration FIXME
+class GenericConnectionHandler;
+
 class ConnectionHandler {
   public:
 
-    ConnectionHandler(bool const keep_alive, NetworkAdapter interface);
+    ConnectionHandler(bool const keep_alive=true, NetworkAdapter interface=NetworkAdapter::NONE);
 
+    virtual ~ConnectionHandler() {}
 
-    NetworkConnectionState check();
+    virtual NetworkConnectionState check();
 
     #if not defined(BOARD_HAS_LORA)
       virtual unsigned long getTime() = 0;
@@ -69,15 +74,36 @@ class ConnectionHandler {
       return _interface;
     }
 
-    void connect();
-    void disconnect();
+    virtual void connect();
+    virtual void disconnect();
 
-    void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
+    virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
     void addConnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
     void addDisconnectCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
     void addErrorCallback(OnNetworkEventCallback callback) __attribute__((deprecated));
 
+    /**
+     * Update the interface settings. This can be performed only when the interface is
+     * in INIT state. otherwise nothing is performed. The type of the interface should match
+     * the type of the settings provided
+     *
+     * @return true if the update is successful, false otherwise
+     */
+    virtual bool updateSetting(const models::NetworkSetting& s) {
+      if(_current_net_connection_state == NetworkConnectionState::INIT && s.type == _interface) {
+        memcpy(&_settings, &s, sizeof(s));
+        return true;
+      }
+
+      return false;
+    }
+
+    virtual void setKeepAlive(bool keep_alive=true) { this->_keep_alive = keep_alive; }
+
   protected:
+
+    virtual NetworkConnectionState updateConnectionState();
+    virtual void updateCallback(NetworkConnectionState next_net_connection_state);
 
     bool _keep_alive;
     NetworkAdapter _interface;
@@ -88,6 +114,8 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
 
+    models::NetworkSetting _settings;
+
   private:
 
     unsigned long _lastConnectionTickTime;
@@ -95,5 +123,7 @@ class ConnectionHandler {
     OnNetworkEventCallback  _on_connect_event_callback = NULL,
                             _on_disconnect_event_callback = NULL,
                             _on_error_event_callback = NULL;
+
+    friend GenericConnectionHandler;
 };
 

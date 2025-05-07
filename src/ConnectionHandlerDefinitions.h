@@ -174,6 +174,7 @@ enum class NetworkConnectionEvent {
 };
 
 enum class NetworkAdapter {
+  NONE,
   WIFI,
   ETHERNET,
   NB,

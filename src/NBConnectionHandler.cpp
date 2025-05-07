@@ -45,6 +45,10 @@ __attribute__((weak)) void mkr_nb_feed_watchdog()
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
+
+NBConnectionHandler::NBConnectionHandler()
+: ConnectionHandler(true, NetworkAdapter::NB) {}
+
 NBConnectionHandler::NBConnectionHandler(char const * pin, bool const keep_alive)
 : NBConnectionHandler(pin, "", keep_alive)
 {
@@ -59,12 +63,12 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, boo
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::NB}
-, _pin(pin)
-, _apn(apn)
-, _login(login)
-, _pass(pass)
 {
-
+  _settings.type = NetworkAdapter::NB;
+  strncpy(_settings.nb.pin, pin, sizeof(_settings.nb.pin)-1);
+  strncpy(_settings.nb.apn, apn, sizeof(_settings.nb.apn)-1);
+  strncpy(_settings.nb.login, login, sizeof(_settings.nb.login)-1);
+  strncpy(_settings.nb.pass, pass, sizeof(_settings.nb.pass)-1);
 }
 
 /******************************************************************************
@@ -84,7 +88,10 @@ NetworkConnectionState NBConnectionHandler::update_handleInit()
 {
   mkr_nb_feed_watchdog();
 
-  if (_nb.begin(_pin, _apn, _login, _pass) == NB_READY)
+  if (_nb.begin(_settings.nb.pin,
+                _settings.nb.apn,
+                _settings.nb.login,
+                _settings.nb.pass) == NB_READY)
   {
     Debug.print(DBG_INFO, F("SIM card ok"));
     _nb.setTimeout(NB_TIMEOUT);

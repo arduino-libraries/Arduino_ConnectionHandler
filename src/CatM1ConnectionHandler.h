@@ -40,6 +40,7 @@ class CatM1ConnectionHandler : public ConnectionHandler
 {
   public:
 
+    CatM1ConnectionHandler();
     CatM1ConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, RadioAccessTechnologyType rat = CATM1, uint32_t band = BAND_3 | BAND_20 | BAND_19, bool const keep_alive = true);
 
 
@@ -58,14 +59,6 @@ class CatM1ConnectionHandler : public ConnectionHandler
 
 
   private:
-
-    const char * _pin;
-    const char * _apn;
-    const char * _login;
-    const char * _pass;
-
-    RadioAccessTechnologyType _rat;
-    uint32_t _band;
 
     GSMUDP _gsm_udp;
     GSMClient _gsm_client;

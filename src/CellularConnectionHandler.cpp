@@ -21,14 +21,17 @@
 /******************************************************************************
    CTOR/DTOR
  ******************************************************************************/
+CellularConnectionHandler::CellularConnectionHandler()
+: ConnectionHandler(true, NetworkAdapter::CELL) {}
 
 CellularConnectionHandler::CellularConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::CELL}
-, _pin(pin)
-, _apn(apn)
-, _login(login)
-, _pass(pass)
 {
+  _settings.type = NetworkAdapter::CELL;
+  strncpy(_settings.cell.pin, pin, sizeof(_settings.cell.pin)-1);
+  strncpy(_settings.cell.apn, apn, sizeof(_settings.cell.apn)-1);
+  strncpy(_settings.cell.login, login, sizeof(_settings.cell.login)-1);
+  strncpy(_settings.cell.pass, pass, sizeof(_settings.cell.pass)-1);
 
 }
 
@@ -55,7 +58,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleInit()
 {
   _cellular.begin();
   _cellular.setDebugStream(Serial);
-  if (String(_pin).length() > 0 && !_cellular.unlockSIM(_pin)) {
+  if (strlen(_settings.cell.pin) > 0 && !_cellular.unlockSIM(_settings.cell.pin)) {
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
@@ -64,7 +67,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleInit()
 
 NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
 {
-  if (!_cellular.connect(_apn, _login, _pass)) {
+  if (!_cellular.connect(String(_settings.cell.apn), String(_settings.cell.login), String(_settings.cell.pass))) {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
