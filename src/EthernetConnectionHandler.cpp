@@ -20,7 +20,6 @@
 
 #ifdef BOARD_HAS_ETHERNET /* Only compile if the board has ethernet */
 #include "EthernetConnectionHandler.h"
-#include <Udp.h>
 
 /******************************************************************************
    CTOR/DTOR
