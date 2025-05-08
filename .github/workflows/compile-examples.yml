@@ -38,6 +38,7 @@ jobs:
         - name: Blues Wireless Notecard
       SKETCH_PATHS: |
         - examples/ConnectionHandlerDemo
+        - examples/CheckInternetAvailabilityDemo
       ARDUINOCORE_MBED_STAGING_PATH: extras/ArduinoCore-mbed
       ARDUINOCORE_API_STAGING_PATH: extras/ArduinoCore-API
       SKETCHES_REPORTS_PATH: sketches-reports
