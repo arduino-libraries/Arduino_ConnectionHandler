@@ -114,7 +114,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   {
 #if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _settings.wifi.ssid);
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::INIT)]);
 #endif
     return NetworkConnectionState::INIT;
   }
