@@ -83,7 +83,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
 
   if(getTime() == 0){
     Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::CONNECTING;
   }
 
