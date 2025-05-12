@@ -53,6 +53,8 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 : ConnectionHandler{keep_alive, NetworkAdapter::GSM}
 {
   _settings.type = NetworkAdapter::GSM;
+  // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
+  _check_internet_availability = true;
   strncpy(_settings.gsm.pin, pin, sizeof(_settings.gsm.pin)-1);
   strncpy(_settings.gsm.apn, apn, sizeof(_settings.gsm.apn)-1);
   strncpy(_settings.gsm.login, login, sizeof(_settings.gsm.login)-1);
@@ -105,6 +107,10 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 {
+  if(!_check_internet_availability){
+    return NetworkConnectionState::CONNECTED;
+  }
+
   Debug.print(DBG_INFO, F("Sending PING to outer space..."));
   int const ping_result = _gprs.ping("time.arduino.cc");
   Debug.print(DBG_INFO, F("GPRS.ping(): %d"), ping_result);

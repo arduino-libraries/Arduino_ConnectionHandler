@@ -191,12 +191,12 @@ enum class NetworkAdapter {
 
 static unsigned int const CHECK_INTERVAL_TABLE[] =
 {
-  /* INIT          */ 100,
 #if defined(BOARD_HAS_NOTECARD) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  /* CONNECTING    */ 4000,
+  /* INIT    */ 4000,
 #else
-  /* CONNECTING    */ 500,
+  /* INIT          */ 500,
 #endif
+  /* CONNECTING    */ 500,
   /* CONNECTED     */ 10000,
   /* DISCONNECTING */ 100,
   /* DISCONNECTED  */ 1000,

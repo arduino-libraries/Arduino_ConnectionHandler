@@ -62,16 +62,31 @@ NetworkConnectionState CellularConnectionHandler::update_handleInit()
     Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
-  return NetworkConnectionState::CONNECTING;
-}
 
-NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
-{
   if (!_cellular.connect(String(_settings.cell.apn), String(_settings.cell.login), String(_settings.cell.pass))) {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
   Debug.print(DBG_INFO, F("Connected to Network"));
+  return NetworkConnectionState::CONNECTING;
+}
+
+NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
+{
+  if (!_cellular.isConnectedToInternet()) {
+    return NetworkConnectionState::INIT;
+  }
+
+  if (!_check_internet_availability) {
+    return NetworkConnectionState::CONNECTED;
+  }
+
+  if(getTime() == 0){
+    Debug.print(DBG_ERROR, F("Internet check failed"));
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    return NetworkConnectionState::CONNECTING;
+  }
+
   return NetworkConnectionState::CONNECTED;
 }
 
