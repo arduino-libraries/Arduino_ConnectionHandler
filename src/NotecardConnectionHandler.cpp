@@ -518,7 +518,7 @@ NetworkConnectionState NotecardConnectionHandler::update_handleConnecting()
   if (!conn_status.connected_to_notehub) {
     if ((::millis() - _conn_start_ms) > NOTEHUB_CONN_TIMEOUT_MS) {
       Debug.print(DBG_ERROR, F("Timeout exceeded, connection to the network failed."));
-      Debug.print(DBG_INFO, F("Retrying in \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+      Debug.print(DBG_INFO, F("Retrying in \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
       result = NetworkConnectionState::INIT;
     } else {
       // Continue awaiting the connection to Notehub

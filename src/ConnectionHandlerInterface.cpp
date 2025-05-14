@@ -31,6 +31,7 @@ ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter inter
 , _lastConnectionTickTime{millis()}
 , _check_internet_availability{false}
 , _current_net_connection_state{NetworkConnectionState::INIT}
+, _timeoutTable(DefaultTimeoutTable)
 {
 
 }
@@ -42,7 +43,8 @@ ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter inter
 NetworkConnectionState ConnectionHandler::check()
 {
   unsigned long const now = millis();
-  unsigned int const connectionTickTimeInterval = CHECK_INTERVAL_TABLE[static_cast<unsigned int>(_current_net_connection_state)];
+  unsigned int const connectionTickTimeInterval =
+    _timeoutTable.intervals[static_cast<unsigned int>(_current_net_connection_state)];
 
   if((now - _lastConnectionTickTime) > connectionTickTimeInterval)
   {

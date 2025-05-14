@@ -114,7 +114,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   {
 #if !defined(__AVR__)
     Debug.print(DBG_ERROR, F("Connection to \"%s\" failed"), _settings.wifi.ssid);
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::INIT)]);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.init);
 #endif
     return NetworkConnectionState::INIT;
   }
@@ -146,7 +146,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
   if (ping_result < 0)
   {
     Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::CONNECTING;
   }
   #endif

@@ -31,6 +31,8 @@
 #include "ConnectionHandlerDefinitions.h"
 #include "connectionHandlerModels/settings.h"
 
+#include <utility>
+
 /******************************************************************************
    TYPEDEFS
  ******************************************************************************/
@@ -103,6 +105,11 @@ class ConnectionHandler {
 
     virtual void setKeepAlive(bool keep_alive=true) { this->_keep_alive = keep_alive; }
 
+    inline void updateTimeoutTable(const TimeoutTable& t) { _timeoutTable = t; }
+    inline void updateTimeoutTable(TimeoutTable&& t)      { _timeoutTable = std::move(t); }
+    inline void updateTimeoutInterval(NetworkConnectionState state, uint32_t interval) {
+      _timeoutTable.intervals[static_cast<unsigned int>(state)] = interval;
+    }
   protected:
 
     virtual NetworkConnectionState updateConnectionState();
@@ -120,6 +127,7 @@ class ConnectionHandler {
 
     models::NetworkSetting _settings;
 
+    TimeoutTable _timeoutTable;
   private:
 
     unsigned long _lastConnectionTickTime;
