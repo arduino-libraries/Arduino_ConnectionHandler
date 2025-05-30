@@ -101,6 +101,11 @@ class ConnectionHandler {
       return false;
     }
 
+    virtual void getSetting(models::NetworkSetting& s) {
+      memcpy(&s, &_settings, sizeof(s));
+      return;
+    }
+
     virtual void setKeepAlive(bool keep_alive=true) { this->_keep_alive = keep_alive; }
 
   protected:
