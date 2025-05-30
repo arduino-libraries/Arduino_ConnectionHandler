@@ -46,6 +46,14 @@ bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
     }
 }
 
+void GenericConnectionHandler::getSetting(models::NetworkSetting& s) {
+    if(_ch != nullptr) {
+        _ch->getSetting(s);
+    } else {
+        s.type = NetworkAdapter::NONE;
+    }
+}
+
 NetworkConnectionState GenericConnectionHandler::updateConnectionState() {
     return _ch != nullptr ? _ch->updateConnectionState() : NetworkConnectionState::INIT;
 }
