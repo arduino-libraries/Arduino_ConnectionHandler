@@ -49,6 +49,7 @@ class GenericConnectionHandler : public ConnectionHandler
     #endif
 
     bool updateSetting(const models::NetworkSetting& s) override;
+    void getSetting(models::NetworkSetting& s) override;
 
     void connect() override;
     void disconnect() override;
