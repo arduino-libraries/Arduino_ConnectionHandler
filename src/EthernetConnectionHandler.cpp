@@ -41,6 +41,7 @@ EthernetConnectionHandler::EthernetConnectionHandler(
   bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 {
+  _settings.type = NetworkAdapter::ETHERNET;
   memset(_settings.eth.ip.dword, 0, sizeof(_settings.eth.ip.dword));
   memset(_settings.eth.dns.dword, 0, sizeof(_settings.eth.dns.dword));
   memset(_settings.eth.gateway.dword, 0, sizeof(_settings.eth.gateway.dword));
@@ -54,6 +55,7 @@ EthernetConnectionHandler::EthernetConnectionHandler(
   unsigned long const timeout, unsigned long const responseTimeout, bool const keep_alive)
 : ConnectionHandler{keep_alive, NetworkAdapter::ETHERNET}
 {
+  _settings.type = NetworkAdapter::ETHERNET;
   fromIPAddress(ip, _settings.eth.ip);
   fromIPAddress(dns, _settings.eth.dns);
   fromIPAddress(gateway, _settings.eth.gateway);
