@@ -23,7 +23,7 @@ namespace models {
   inline NetworkSetting settingsDefault(NetworkAdapter type) {
   #endif
 
-    NetworkSetting res = {type};
+    NetworkSetting res = {type, {}};
 
     switch(type) {
     #if defined(BOARD_HAS_ETHERNET)
