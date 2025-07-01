@@ -27,9 +27,9 @@
 
 ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface)
 : _keep_alive{keep_alive}
+, _check_internet_availability{false}
 , _interface{interface}
 , _lastConnectionTickTime{millis()}
-, _check_internet_availability{false}
 , _current_net_connection_state{NetworkConnectionState::INIT}
 {
 
