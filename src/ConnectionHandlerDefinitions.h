@@ -185,21 +185,35 @@ enum class NetworkAdapter {
   NOTECARD
 };
 
+union TimeoutTable {
+  struct {
+    // Note: order of the following values must be preserved
+    // and match against NetworkConnectionState values
+    uint32_t init;
+    uint32_t connecting;
+    uint32_t connected;
+    uint32_t disconnecting;
+    uint32_t disconnected;
+    uint32_t closed;
+    uint32_t error;
+  } timeout;
+  uint32_t intervals[sizeof(timeout) / sizeof(uint32_t)];
+};
+
 /******************************************************************************
    CONSTANTS
  ******************************************************************************/
 
-static unsigned int const CHECK_INTERVAL_TABLE[] =
-{
+constexpr TimeoutTable DefaultTimeoutTable {
 #if defined(BOARD_HAS_NOTECARD) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  /* INIT    */ 4000,
+  4000,   // init
 #else
-  /* INIT          */ 500,
+  500,    // init
 #endif
-  /* CONNECTING    */ 500,
-  /* CONNECTED     */ 10000,
-  /* DISCONNECTING */ 100,
-  /* DISCONNECTED  */ 1000,
-  /* CLOSED        */ 1000,
-  /* ERROR         */ 1000
+  500,    // connecting
+  10000,  // connected
+  100,    // disconnecting
+  1000,   // disconnected
+  1000,   // closed
+  1000,   // error
 };

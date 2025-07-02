@@ -126,7 +126,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnecting()
   if (network_status != true)
   {
     Debug.print(DBG_ERROR, F("Connection to the network failed"));
-    Debug.print(DBG_INFO, F("Retrying in \"%d\" milliseconds"), CHECK_INTERVAL_TABLE[static_cast<unsigned int>(NetworkConnectionState::CONNECTING)]);
+    Debug.print(DBG_INFO, F("Retrying in \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::INIT;
   }
   else
