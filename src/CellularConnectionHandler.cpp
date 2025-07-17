@@ -41,7 +41,7 @@ CellularConnectionHandler::CellularConnectionHandler(const char * pin, const cha
 
 unsigned long CellularConnectionHandler::getTime()
 {
-  return _cellular.getCellularTime().getUNIXTimestamp();
+  return _cellular.getCellularTime(false).getUNIXTimestamp();
 }
 
 UDP & CellularConnectionHandler::getUDP()
