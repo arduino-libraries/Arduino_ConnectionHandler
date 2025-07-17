@@ -41,7 +41,7 @@ CellularConnectionHandler::CellularConnectionHandler(const char * pin, const cha
 
 unsigned long CellularConnectionHandler::getTime()
 {
-  return _cellular.getCellularTime().getUNIXTimestamp();
+  return _cellular.getCellularTime(false).getUNIXTimestamp();
 }
 
 UDP & CellularConnectionHandler::getUDP()
@@ -63,7 +63,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleInit()
     return NetworkConnectionState::ERROR;
   }
 
-  if (!_cellular.connect(String(_settings.cell.apn), String(_settings.cell.login), String(_settings.cell.pass))) {
+  if (!_cellular.connect(String(_settings.cell.apn), String(_settings.cell.login), String(_settings.cell.pass), false)) {
     Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
     return NetworkConnectionState::ERROR;
   }
