@@ -80,13 +80,13 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
   if (_gsm.begin(_settings.gsm.pin) != GSM_READY)
   {
-    Debug.print(DBG_ERROR, F("SIM not present or wrong PIN"));
+    DEBUG_ERROR(F("SIM not present or wrong PIN"));
     return NetworkConnectionState::ERROR;
   }
 
   mkr_gsm_feed_watchdog();
 
-  Debug.print(DBG_INFO, F("SIM card ok"));
+  DEBUG_INFO(F("SIM card ok"));
   _gsm.setTimeout(GSM_TIMEOUT);
   _gprs.setTimeout(GPRS_TIMEOUT);
 
@@ -94,11 +94,11 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
   GSM3_NetworkStatus_t const network_status = _gprs.attachGPRS(
     _settings.gsm.apn, _settings.gsm.login, _settings.gsm.pass, true);
-  Debug.print(DBG_DEBUG, F("GPRS.attachGPRS(): %d"), network_status);
+  DEBUG_DEBUG(F("GPRS.attachGPRS(): %d"), network_status);
   if (network_status == GSM3_NetworkStatus_t::ERROR)
   {
-    Debug.print(DBG_ERROR, F("GPRS attach failed"));
-    Debug.print(DBG_ERROR, F("Make sure the antenna is connected and reset your board."));
+    DEBUG_ERROR(F("GPRS attach failed"));
+    DEBUG_ERROR(F("Make sure the antenna is connected and reset your board."));
     return NetworkConnectionState::ERROR;
   }
 
@@ -111,18 +111,18 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::CONNECTED;
   }
 
-  Debug.print(DBG_INFO, F("Sending PING to outer space..."));
+  DEBUG_INFO(F("Sending PING to outer space..."));
   int const ping_result = _gprs.ping("time.arduino.cc");
-  Debug.print(DBG_INFO, F("GPRS.ping(): %d"), ping_result);
+  DEBUG_INFO(F("GPRS.ping(): %d"), ping_result);
   if (ping_result < 0)
   {
-    Debug.print(DBG_ERROR, F("PING failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
+    DEBUG_ERROR(F("PING failed"));
+    DEBUG_INFO(F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::CONNECTING;
   }
   else
   {
-    Debug.print(DBG_INFO, F("Connected to GPRS Network"));
+    DEBUG_INFO(F("Connected to GPRS Network"));
     return NetworkConnectionState::CONNECTED;
   }
 }

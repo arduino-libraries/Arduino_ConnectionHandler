@@ -81,7 +81,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleInit()
     _settings.catm1.band,
     _reset))
   {
-    Debug.print(DBG_ERROR, F("The board was not able to register to the network..."));
+    DEBUG_ERROR(F("The board was not able to register to the network..."));
     _reset = true;
     return NetworkConnectionState::DISCONNECTED;
   }
@@ -93,7 +93,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
 {
   if (!GSM.isConnected())
   {
-    Debug.print(DBG_ERROR, F("GSM connection not alive... disconnecting"));
+    DEBUG_ERROR(F("GSM connection not alive... disconnecting"));
     return NetworkConnectionState::DISCONNECTED;
   }
 
@@ -101,18 +101,18 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::CONNECTED;
   }
 
-  Debug.print(DBG_INFO, F("Sending PING to outer space..."));
+  DEBUG_INFO(F("Sending PING to outer space..."));
   int const ping_result = GSM.ping("time.arduino.cc");
-  Debug.print(DBG_INFO, F("GSM.ping(): %d"), ping_result);
+  DEBUG_INFO(F("GSM.ping(): %d"), ping_result);
   if (ping_result < 0)
   {
-    Debug.print(DBG_ERROR, F("Internet check failed"));
-    Debug.print(DBG_INFO, F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
+    DEBUG_ERROR(F("Internet check failed"));
+    DEBUG_INFO(F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.connecting);
     return NetworkConnectionState::CONNECTING;
   }
   else
   {
-    Debug.print(DBG_INFO, F("Connected to Internet"));
+    DEBUG_INFO(F("Connected to Internet"));
     return NetworkConnectionState::CONNECTED;
   }
 }
@@ -122,7 +122,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnected()
   int const is_gsm_access_alive = GSM.isConnected();
   if (is_gsm_access_alive != 1)
   {
-    Debug.print(DBG_ERROR, F("GSM connection not alive... disconnecting"));
+    DEBUG_ERROR(F("GSM connection not alive... disconnecting"));
     return NetworkConnectionState::DISCONNECTED;
   }
   return NetworkConnectionState::CONNECTED;
