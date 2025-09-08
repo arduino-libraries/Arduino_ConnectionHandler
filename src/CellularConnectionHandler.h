@@ -13,7 +13,7 @@
 #define ARDUINO_CELLULAR_CONNECTION_HANDLER_H_
 
 /******************************************************************************
-   INCLUDE
+  INCLUDE
  ******************************************************************************/
 
 #include "ConnectionHandlerInterface.h"
@@ -27,7 +27,7 @@
 #endif
 
 /******************************************************************************
-   CLASS DECLARATION
+  CLASS DECLARATION
  ******************************************************************************/
 
 class CellularConnectionHandler : public ConnectionHandler
