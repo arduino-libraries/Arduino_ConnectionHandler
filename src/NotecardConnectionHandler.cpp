@@ -9,7 +9,7 @@
 */
 
 /******************************************************************************
-   INCLUDE
+  INCLUDE
  ******************************************************************************/
 
 #include "ConnectionHandlerDefinitions.h"
@@ -23,7 +23,7 @@
 #include <Wire.h>
 
 /******************************************************************************
-   DEFINES
+  DEFINES
  ******************************************************************************/
 
 #define NO_INBOUND_POLLING -1
@@ -40,7 +40,7 @@
 #define NOTEFILE_SECURE_OUTBOUND NOTEFILE_BASE_NAME ".qos"
 
 /******************************************************************************
-   STLINK DEBUG OUTPUT
+  STLINK DEBUG OUTPUT
  ******************************************************************************/
 
 // Provide Notehub debug output via STLINK serial port when available
@@ -50,7 +50,7 @@
 #endif
 
 /******************************************************************************
-   TYPEDEF
+  TYPEDEF
  ******************************************************************************/
 
 struct NotecardConnectionStatus
@@ -78,7 +78,7 @@ struct NotecardConnectionStatus
 static_assert(sizeof(NotecardConnectionStatus) == sizeof(uint_fast8_t));
 
 /******************************************************************************
-   CTOR/DTOR
+  CTOR/DTOR
  ******************************************************************************/
 
 NotecardConnectionHandler::NotecardConnectionHandler(
@@ -133,7 +133,7 @@ NotecardConnectionHandler::NotecardConnectionHandler(
 { }
 
 /******************************************************************************
-   PUBLIC MEMBER FUNCTIONS
+  PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
 int NotecardConnectionHandler::initiateNotehubSync (SyncType type_) const
@@ -208,7 +208,7 @@ int NotecardConnectionHandler::setWiFiCredentials (const String & ssid_, const S
 }
 
 /******************************************************************************
-   PUBLIC INTERFACE MEMBER FUNCTIONS
+  PUBLIC INTERFACE MEMBER FUNCTIONS
  ******************************************************************************/
 
 bool NotecardConnectionHandler::available()
@@ -337,15 +337,15 @@ int NotecardConnectionHandler::write(const uint8_t * buf_, size_t size_)
 }
 
 /******************************************************************************
-   PROTECTED STATE MACHINE FUNCTIONS
+  PROTECTED STATE MACHINE FUNCTIONS
  ******************************************************************************/
 
 NetworkConnectionState NotecardConnectionHandler::update_handleInit()
 {
   NetworkConnectionState result = NetworkConnectionState::INIT;
 
- // Configure Hardware
-///////////////////////
+  // Configure Hardware
+  ///////////////////////
 
 #if defined(STLINK_DEBUG)
   // Output Notecard logs to the STLINK serial port
@@ -363,7 +363,7 @@ NetworkConnectionState NotecardConnectionHandler::update_handleInit()
     _notecard.begin(_i2c_address, _i2c_max, *_wire);
   }
 
-   // Configure `note-c`
+  // Configure `note-c`
   ///////////////////////
 
   // Set the user agent
@@ -377,7 +377,7 @@ NetworkConnectionState NotecardConnectionHandler::update_handleInit()
     JDelete(note);
   }
 
-   // Configure the Notecard
+  // Configure the Notecard
   ///////////////////////////
 
   // Set the project UID
@@ -593,7 +593,7 @@ NetworkConnectionState NotecardConnectionHandler::update_handleDisconnected()
 }
 
 /******************************************************************************
-   PRIVATE MEMBER FUNCTIONS
+  PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
 
 bool NotecardConnectionHandler::armInterrupt (void) const

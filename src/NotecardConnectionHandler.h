@@ -12,7 +12,7 @@
 #define ARDUINO_NOTECARD_CONNECTION_HANDLER_H_
 
 /******************************************************************************
-   INCLUDE
+  INCLUDE
  ******************************************************************************/
 
 #include <stdint.h>
@@ -24,7 +24,7 @@
 #include "ConnectionHandlerInterface.h"
 
 /******************************************************************************
-   DEFINES
+  DEFINES
  ******************************************************************************/
 
 #define NOTECARD_CONNECTION_HANDLER_VERSION_MAJOR 1
@@ -34,7 +34,7 @@
 #define NOTECARD_CONNECTION_HANDLER_VERSION NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_MAJOR) "." NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_MINOR) "." NOTE_C_STRINGIZE(NOTECARD_CONNECTION_HANDLER_VERSION_PATCH)
 
 /******************************************************************************
-   CLASS DECLARATION
+  CLASS DECLARATION
  ******************************************************************************/
 
 /**

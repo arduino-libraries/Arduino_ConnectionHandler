@@ -10,7 +10,7 @@
 
 
 /******************************************************************************
-   INCLUDE
+  INCLUDE
  ******************************************************************************/
 
 #include "ConnectionHandlerDefinitions.h"
@@ -19,7 +19,7 @@
 #include "CellularConnectionHandler.h"
 
 /******************************************************************************
-   CTOR/DTOR
+  CTOR/DTOR
  ******************************************************************************/
 CellularConnectionHandler::CellularConnectionHandler()
 : ConnectionHandler(true, NetworkAdapter::CELL) {}
@@ -36,7 +36,7 @@ CellularConnectionHandler::CellularConnectionHandler(const char * pin, const cha
 }
 
 /******************************************************************************
-   PUBLIC MEMBER FUNCTIONS
+  PUBLIC MEMBER FUNCTIONS
  ******************************************************************************/
 
 unsigned long CellularConnectionHandler::getTime()
@@ -51,7 +51,7 @@ UDP & CellularConnectionHandler::getUDP()
 }
 
 /******************************************************************************
-   PROTECTED MEMBER FUNCTIONS
+  PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
 NetworkConnectionState CellularConnectionHandler::update_handleInit()
