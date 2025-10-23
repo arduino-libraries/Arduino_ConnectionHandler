@@ -35,7 +35,6 @@ jobs:
         - name: MKRNB
         - name: MKRWAN
         - name: Arduino_Cellular
-        - name: Blues Wireless Notecard
       SKETCH_PATHS: |
         - examples/ConnectionHandlerDemo
         - examples/CheckInternetAvailabilityDemo
@@ -113,8 +112,6 @@ jobs:
             platforms: |
               # Install Arduino SAMD Boards via Boards Manager
               - name: arduino:samd
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: arduino:mbed
             platforms: |
@@ -123,53 +120,21 @@ jobs:
               # Overwrite the Arduino mbed-Enabled Boards release version with version from the tip of the default branch (located in local path because of the need to first install ArduinoCore-API)
               - source-path: extras/ArduinoCore-mbed
                 name: arduino:mbed
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_portenta
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_nano
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_nicla
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_opta
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_giga
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
-          - board:
-              platform-name: arduino:mbed_edge
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: arduino:renesas_portenta
             platforms: |
               # Install Arduino Renesas portenta Boards via Boards Manager
               - name: arduino:renesas_portenta
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: arduino:renesas_uno
             platforms: |
               # Install Arduino Renesas uno Boards via Boards Manager
               - name: arduino:renesas_uno
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: arduino:esp32
             platforms: |
               # Install Arduino ESP32 Boards via Boards Manager
               - name: arduino:esp32
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: esp8266:esp8266
             platforms: |
@@ -183,16 +148,12 @@ jobs:
               # Install ESP32 platform via Boards Manager
               - name: esp32:esp32
                 source-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
           - board:
               platform-name: rp2040:rp2040
             platforms: |
               # Install rp2040 platform via Boards Manager
               - name: rp2040:rp2040
                 source-url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-            sketch-paths: |
-              - examples/ConnectionHandlerDemo-Notecard
 
     steps:
       - uses: actions/checkout@v5
