@@ -20,6 +20,8 @@
 
 #if defined(ARDUINO_PORTENTA_C33) || defined(ARDUINO_PORTENTA_H7_M7)
 #include <Arduino_Cellular.h>
+#elif defined(ARDUINO_OPTA)
+#include <Arduino_OptaCellular.h>
 #endif
 
 #ifndef BOARD_HAS_CELLULAR
@@ -53,7 +55,16 @@ class CellularConnectionHandler : public ConnectionHandler
 
   private:
 
+    const char * _pin;
+    const char * _apn;
+    const char * _login;
+    const char * _pass;
+    
+    #if defined(ARDUINO_OPTA)
+    ArduinoCellular &_cellular = CellularExpansion::getCellular();
+    #else
     ArduinoCellular _cellular;
+    #endif
     TinyGsmClient _gsm_client = _cellular.getNetworkClient();
 };
 
