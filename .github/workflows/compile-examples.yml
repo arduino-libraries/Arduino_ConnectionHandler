@@ -36,6 +36,7 @@ jobs:
         - name: MKRWAN
         - name: Arduino_Cellular
         - name: Blues Wireless Notecard
+        - name: QNEthernet
       SKETCH_PATHS: |
         - examples/ConnectionHandlerDemo
         - examples/CheckInternetAvailabilityDemo
@@ -105,6 +106,9 @@ jobs:
           - fqbn: "rp2040:rp2040:rpipicow"
             platform-name: rp2040:rp2040
             artifact-name-suffix: rp2040-rp2040-rpipicow
+          - fqbn: "teensy:avr:teensy41"
+            platform-name: teensy:avr
+            artifact-name-suffix: teensy-avr-teensy41
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -193,6 +197,14 @@ jobs:
                 source-url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
             sketch-paths: |
               - examples/ConnectionHandlerDemo-Notecard
+          - board:
+              platform-name: teensy:avr
+            platforms: |
+              # Install Teensy platform via Boards Manager
+              - name: teensy:avr
+                source-url: https://www.pjrc.com/teensy/package_teensy_index.json
+            sketch-paths: |
+              - examples/ConnectionHandlerDemo
 
     steps:
       - uses: actions/checkout@v5

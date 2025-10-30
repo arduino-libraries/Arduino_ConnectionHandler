@@ -74,12 +74,19 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
 
   // An ip address is provided -> static ip configuration
   if (ip != INADDR_NONE) {
+#if defined(ARDUINO_TEENSY41)
+    if (Ethernet.begin(nullptr, ip,
+        IPAddress(_settings.eth.dns.type, _settings.eth.dns.bytes),
+        IPAddress(_settings.eth.gateway.type, _settings.eth.gateway.bytes),
+        IPAddress(_settings.eth.netmask.type, _settings.eth.netmask.bytes)) == 0) {
+#else
     if (Ethernet.begin(nullptr, ip,
         IPAddress(_settings.eth.dns.type, _settings.eth.dns.bytes),
         IPAddress(_settings.eth.gateway.type, _settings.eth.gateway.bytes),
         IPAddress(_settings.eth.netmask.type, _settings.eth.netmask.bytes),
         _settings.eth.timeout,
         _settings.eth.response_timeout) == 0) {
+#endif  // ARDUINO_TEENSY41
 
       DEBUG_ERROR(F("Failed to configure Ethernet, check cable connection"));
       DEBUG_VERBOSE("timeout: %d, response timeout: %d",
@@ -88,7 +95,11 @@ NetworkConnectionState EthernetConnectionHandler::update_handleInit()
     }
   // An ip address is not provided -> dhcp configuration
   } else {
+#if defined(ARDUINO_TEENSY41)
+    if (Ethernet.begin(nullptr, _settings.eth.timeout) == 0) {
+#else
     if (Ethernet.begin(nullptr, _settings.eth.timeout, _settings.eth.response_timeout) == 0) {
+#endif  // ARDUINO_TEENSY41
       DEBUG_ERROR(F("Waiting Ethernet configuration from DHCP server, check cable connection"));
       DEBUG_VERBOSE("timeout: %d, response timeout: %d",
         _settings.eth.timeout, _settings.eth.response_timeout);
@@ -110,6 +121,10 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::CONNECTED;
   }
 
+#if defined(ARDUINO_TEENSY41)
+  DEBUG_INFO(F("Connected to network"));
+  return NetworkConnectionState::CONNECTED;
+#else
   int ping_result = Ethernet.ping("time.arduino.cc");
   DEBUG_INFO(F("Ethernet.ping(): %d"), ping_result);
   if (ping_result < 0)
@@ -123,6 +138,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
     DEBUG_INFO(F("Connected to Internet"));
     return NetworkConnectionState::CONNECTED;
   }
+#endif  // ARDUINO_TEENSY41
 
 }
 
@@ -141,7 +157,11 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleDisconnecting()
 {
+#if defined(ARDUINO_TEENSY41)
+  Ethernet.end();
+#else
   Ethernet.disconnect();
+#endif
   return NetworkConnectionState::DISCONNECTED;
 }
 
