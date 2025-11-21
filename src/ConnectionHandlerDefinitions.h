@@ -14,15 +14,7 @@
   INCLUDES
  ******************************************************************************/
 
-#if defined __has_include
-  #if __has_include (<Notecard.h>)
-    #define BOARD_HAS_NOTECARD
-  #endif
-#endif
-
 #include <Arduino.h>
-
-#ifndef BOARD_HAS_NOTECARD
 
 #ifdef ARDUINO_SAMD_MKR1000
   #define BOARD_HAS_WIFI
@@ -144,8 +136,6 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
-#endif // BOARD_HAS_NOTECARD
-
 /******************************************************************************
   TYPEDEFS
  ******************************************************************************/
@@ -174,8 +164,7 @@ enum class NetworkAdapter {
   GSM,
   LORA,
   CATM1,
-  CELL,
-  NOTECARD
+  CELL
 };
 
 union TimeoutTable {
@@ -198,7 +187,7 @@ union TimeoutTable {
  ******************************************************************************/
 
 constexpr TimeoutTable DefaultTimeoutTable {
-#if defined(BOARD_HAS_NOTECARD) || defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
+#if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
   4000,   // init
 #else
   500,    // init

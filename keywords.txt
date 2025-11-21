@@ -12,7 +12,6 @@ NBConnectionHandler	KEYWORD1
 LoRaConnectionHandler	KEYWORD1
 EthernetConnectionHandler	KEYWORD1
 CatM1ConnectionHandler	KEYWORD1
-NotecardConnectionHandler	KEYWORD1
 
 ####################################################
 # Methods and Functions (KEYWORD2)
@@ -29,10 +28,6 @@ addCallback	KEYWORD2
 getTime	KEYWORD2
 getClient	KEYWORD2
 getUDP	KEYWORD2
-
-# NotecardConnectionHandler.h
-initiateNotehubSync	KEYWORD2
-setWiFiCredentials	KEYWORD2
 
 ####################################################
 # Constants (LITERAL1)
