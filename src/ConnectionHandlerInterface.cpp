@@ -23,7 +23,7 @@ ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter inter
 : _flags{keep_alive, false, settings_required, false}
 , _interface{interface}
 , _lastConnectionTickTime{millis()}
-, _current_net_connection_state{NetworkConnectionState::INIT}
+, _current_net_connection_state{NetworkConnectionState::CHECK}
 , _timeoutTable(DefaultTimeoutTable)
 {
 
@@ -73,6 +73,7 @@ NetworkConnectionState ConnectionHandler::updateConnectionState() {
    */
   switch (_current_net_connection_state)
   {
+    case NetworkConnectionState::CHECK:         next_net_connection_state = update_handleCheck        (); break;
     case NetworkConnectionState::INIT:          next_net_connection_state = update_handleInit         (); break;
     case NetworkConnectionState::CONNECTING:    next_net_connection_state = update_handleConnecting   (); break;
     case NetworkConnectionState::CONNECTED:     next_net_connection_state = update_handleConnected    (); break;
@@ -138,4 +139,12 @@ void ConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
 }
 void ConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
   _on_error_event_callback = callback;
+}
+
+NetworkConnectionState ConnectionHandler::update_handleCheck() {
+  if(_flags.settings_required && !_flags.settings_provided) {
+    return NetworkConnectionState::CHECK;
+  } else {
+    return NetworkConnectionState::INIT;
+  }
 }

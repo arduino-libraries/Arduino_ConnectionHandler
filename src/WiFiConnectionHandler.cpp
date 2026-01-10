@@ -57,7 +57,7 @@ unsigned long WiFiConnectionHandler::getTime()
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
-NetworkConnectionState WiFiConnectionHandler::update_handleInit()
+NetworkConnectionState WiFiConnectionHandler::update_handleCheck()
 {
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
@@ -82,6 +82,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   WiFi.mode(WIFI_STA);
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
+  return ConnectionHandler::update_handleCheck();
+}
+
+NetworkConnectionState WiFiConnectionHandler::update_handleInit()
+{
   if(!_flags.settings_provided) {
     return NetworkConnectionState::INIT;
   }

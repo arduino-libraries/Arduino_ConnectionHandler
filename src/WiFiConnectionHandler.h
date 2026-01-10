@@ -66,6 +66,7 @@ class WiFiConnectionHandler : public ConnectionHandler
 
   protected:
 
+    NetworkConnectionState update_handleCheck        () override;
     NetworkConnectionState update_handleInit         () override;
     NetworkConnectionState update_handleConnecting   () override;
     NetworkConnectionState update_handleConnected    () override;

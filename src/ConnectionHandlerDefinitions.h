@@ -163,13 +163,14 @@
  ******************************************************************************/
 
 enum class NetworkConnectionState : unsigned int {
-  INIT          = 0,
-  CONNECTING    = 1,
-  CONNECTED     = 2,
-  DISCONNECTING = 3,
-  DISCONNECTED  = 4,
-  CLOSED        = 5,
-  ERROR         = 6
+  CHECK         = 0,
+  INIT          = 1,
+  CONNECTING    = 2,
+  CONNECTED     = 3,
+  DISCONNECTING = 4,
+  DISCONNECTED  = 5,
+  CLOSED        = 6,
+  ERROR         = 7
 };
 
 enum class NetworkConnectionEvent {

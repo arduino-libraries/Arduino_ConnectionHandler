@@ -60,6 +60,7 @@ class GenericConnectionHandler : public ConnectionHandler
 
     NetworkConnectionState updateConnectionState() override;
 
+    NetworkConnectionState update_handleCheck        () override;
     NetworkConnectionState update_handleInit         () override;
     NetworkConnectionState update_handleConnecting   () override;
     NetworkConnectionState update_handleConnected    () override;

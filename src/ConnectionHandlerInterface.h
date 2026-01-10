@@ -90,7 +90,7 @@ class ConnectionHandler {
      * @return true if the update is successful, false otherwise
      */
     virtual bool updateSetting(const models::NetworkSetting& s) {
-      if(_current_net_connection_state == NetworkConnectionState::INIT && s.type == _interface) {
+      if(_current_net_connection_state <= NetworkConnectionState::INIT && s.type == _interface) {
         memcpy(&_settings, &s, sizeof(s));
         _flags.settings_provided = true;
         return true;
@@ -125,6 +125,7 @@ class ConnectionHandler {
 
     NetworkAdapter _interface;
 
+    virtual NetworkConnectionState update_handleCheck        ();
     virtual NetworkConnectionState update_handleInit         () = 0;
     virtual NetworkConnectionState update_handleConnecting   () = 0;
     virtual NetworkConnectionState update_handleConnected    () = 0;
