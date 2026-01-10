@@ -129,7 +129,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
-  if(!_check_internet_availability){
+  if(!_flags.check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -156,7 +156,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
     DEBUG_VERBOSE(F("WiFi.status(): %d"), WiFi.status());
     DEBUG_ERROR(F("Connection to \"%s\" lost."), _settings.wifi.ssid);
 #endif
-    if (_keep_alive)
+    if (_flags.keep_alive)
     {
 #if !defined(__AVR__)
       DEBUG_INFO(F("Attempting reconnection"));
@@ -179,7 +179,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   WiFi.end();
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

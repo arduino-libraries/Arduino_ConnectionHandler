@@ -153,7 +153,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
   if (network_status != true)
   {
     DEBUG_ERROR(F("Connection to the network lost."));
-    if (_keep_alive)
+    if (_flags.keep_alive)
     {
       DEBUG_ERROR(F("Attempting reconnection"));
     }
@@ -165,7 +165,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 {
   DEBUG_ERROR(F("Connection to the network lost."));
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     DEBUG_ERROR(F("Attempting reconnection"));
   }
@@ -174,7 +174,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

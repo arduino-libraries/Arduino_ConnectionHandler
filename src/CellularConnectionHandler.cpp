@@ -77,7 +77,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
-  if (!_check_internet_availability) {
+  if (!_flags.check_internet_availability) {
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -105,7 +105,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState CellularConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive) {
+  if (_flags.keep_alive) {
     return NetworkConnectionState::INIT;
   }
   return NetworkConnectionState::CLOSED;

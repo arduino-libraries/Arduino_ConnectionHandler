@@ -23,6 +23,7 @@
 #include <Udp.h>
 #include "ConnectionHandlerDefinitions.h"
 #include "connectionHandlerModels/settings.h"
+#include <stdint.h>
 
 #include <utility>
 
@@ -72,7 +73,7 @@ class ConnectionHandler {
     virtual void connect();
     virtual void disconnect();
     void enableCheckInternetAvailability(bool enable) {
-      _check_internet_availability = enable;
+      _flags.check_internet_availability = enable;
     }
 
     virtual void addCallback(NetworkConnectionEvent const event, OnNetworkEventCallback callback);
@@ -101,7 +102,7 @@ class ConnectionHandler {
       return;
     }
 
-    virtual void setKeepAlive(bool keep_alive=true) { this->_keep_alive = keep_alive; }
+    virtual void setKeepAlive(bool keep_alive=true) { this->_flags.keep_alive = keep_alive; }
 
     inline void updateTimeoutTable(const TimeoutTable& t) { _timeoutTable = t; }
     inline void updateTimeoutTable(TimeoutTable&& t)      { _timeoutTable = std::move(t); }
@@ -113,8 +114,11 @@ class ConnectionHandler {
     virtual NetworkConnectionState updateConnectionState();
     virtual void updateCallback(NetworkConnectionState next_net_connection_state);
 
-    bool _keep_alive;
-    bool _check_internet_availability;
+    struct Flags {
+      bool keep_alive: 1;
+      bool check_internet_availability: 1;
+    } _flags;
+
     NetworkAdapter _interface;
 
     virtual NetworkConnectionState update_handleInit         () = 0;

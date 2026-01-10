@@ -31,7 +31,7 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(
 {
   _settings.type = NetworkAdapter::CATM1;
   // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
-  _check_internet_availability = true;
+  _flags.check_internet_availability = true;
   strncpy(_settings.catm1.pin, pin, sizeof(_settings.catm1.pin)-1);
   strncpy(_settings.catm1.apn, apn, sizeof(_settings.catm1.apn)-1);
   strncpy(_settings.catm1.login, login, sizeof(_settings.catm1.login)-1);
@@ -90,7 +90,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::DISCONNECTED;
   }
 
-  if(!_check_internet_availability){
+  if(!_flags.check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -130,7 +130,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnecting()
 NetworkConnectionState CatM1ConnectionHandler::update_handleDisconnected()
 {
   GSM.end();
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

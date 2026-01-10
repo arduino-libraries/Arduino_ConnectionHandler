@@ -47,7 +47,7 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
 {
   _settings.type = NetworkAdapter::GSM;
   // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
-  _check_internet_availability = true;
+  _flags.check_internet_availability = true;
   strncpy(_settings.gsm.pin, pin, sizeof(_settings.gsm.pin)-1);
   strncpy(_settings.gsm.apn, apn, sizeof(_settings.gsm.apn)-1);
   strncpy(_settings.gsm.login, login, sizeof(_settings.gsm.login)-1);
@@ -100,7 +100,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 {
-  if(!_check_internet_availability){
+  if(!_flags.check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -138,7 +138,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

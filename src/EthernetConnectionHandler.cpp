@@ -106,7 +106,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
-  if (!_check_internet_availability) {
+  if (!_flags.check_internet_availability) {
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -130,7 +130,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnected()
 {
   if (Ethernet.linkStatus() == LinkOFF) {
     DEBUG_ERROR(F("Ethernet link OFF, connection lost."));
-    if (_keep_alive)
+    if (_flags.keep_alive)
     {
       DEBUG_ERROR(F("Attempting reconnection"));
     }
@@ -147,7 +147,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState EthernetConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

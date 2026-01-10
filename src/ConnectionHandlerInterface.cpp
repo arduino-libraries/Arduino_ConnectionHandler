@@ -19,8 +19,7 @@
  ******************************************************************************/
 
 ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface)
-: _keep_alive{keep_alive}
-, _check_internet_availability{false}
+: _flags{keep_alive, false}
 , _interface{interface}
 , _lastConnectionTickTime{millis()}
 , _current_net_connection_state{NetworkConnectionState::INIT}
@@ -109,14 +108,14 @@ void ConnectionHandler::connect()
 {
   if (_current_net_connection_state != NetworkConnectionState::INIT && _current_net_connection_state != NetworkConnectionState::CONNECTING)
   {
-    _keep_alive = true;
+    _flags.keep_alive = true;
     _current_net_connection_state = NetworkConnectionState::INIT;
   }
 }
 
 void ConnectionHandler::disconnect()
 {
-  _keep_alive = false;
+  _flags.keep_alive = false;
   _current_net_connection_state = NetworkConnectionState::DISCONNECTING;
 }
 

@@ -138,7 +138,7 @@ NetworkConnectionState NBConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState NBConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

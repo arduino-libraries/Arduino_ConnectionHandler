@@ -36,8 +36,8 @@ bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
 
     if(_ch != nullptr) {
         _interface = s.type;
-        _ch->setKeepAlive(_keep_alive);
-        _ch->enableCheckInternetAvailability(_check_internet_availability);
+        _ch->setKeepAlive(_flags.keep_alive);
+        _ch->enableCheckInternetAvailability(_flags.check_internet_availability); // TODO update this->flags
         return _ch->updateSetting(s);
     } else {
         _interface = NetworkAdapter::NONE;
@@ -108,7 +108,7 @@ void GenericConnectionHandler::disconnect() {
 }
 
 void GenericConnectionHandler::setKeepAlive(bool keep_alive) {
-    _keep_alive = keep_alive;
+    _flags.keep_alive = keep_alive;
 
     if(_ch!=nullptr) {
         _ch->setKeepAlive(keep_alive);
