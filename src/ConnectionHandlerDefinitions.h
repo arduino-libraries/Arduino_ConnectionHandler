@@ -136,6 +136,28 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(__AVR__)
+#ifndef DEBUG_ERROR
+#  define DEBUG_ERROR(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_WARNING
+#  define DEBUG_WARNING(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_INFO
+#  define DEBUG_INFO(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_DEBUG
+#  define DEBUG_DEBUG(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_VERBOSE
+#  define DEBUG_VERBOSE(fmt, ...) (void)0
+#endif
+#endif // defined(__AVR__)
+
 /******************************************************************************
   TYPEDEFS
  ******************************************************************************/

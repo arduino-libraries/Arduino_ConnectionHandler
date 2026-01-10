@@ -59,30 +59,20 @@ unsigned long WiFiConnectionHandler::getTime()
 
 NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 {
-#if !defined(__AVR__)
-  DEBUG_INFO(F("WiFi.status(): %d"), WiFi.status());
-#endif
-
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
     DEBUG_ERROR(F("Then reset and retry."));
-#endif
     return NetworkConnectionState::ERROR;
   }
-#if !defined(__AVR__)
   DEBUG_INFO(F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
-#endif
 
 #if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
   if (String(WiFi.firmwareVersion()) < String(WIFI_FIRMWARE_VERSION_REQUIRED))
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
     DEBUG_ERROR(F("Please update to the latest version for best performance."));
-#endif
     delay(5000);
   }
 #endif
@@ -93,6 +83,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
   if(!_flags.settings_provided) {
     return NetworkConnectionState::INIT;
   }
+
+  DEBUG_INFO(F("WiFi.status(): %d"), WiFi.status());
 
   if (WiFi.status() != WL_CONNECTED)
   {
@@ -109,17 +101,13 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("Connection to \"%s\" failed"), _settings.wifi.ssid);
     DEBUG_INFO(F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.init);
-#endif
     return NetworkConnectionState::INIT;
   }
   else
   {
-#if !defined(__AVR__)
     DEBUG_INFO(F("Connected to \"%s\""), _settings.wifi.ssid);
-#endif
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
     configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
@@ -156,15 +144,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-#if !defined(__AVR__)
     DEBUG_VERBOSE(F("WiFi.status(): %d"), WiFi.status());
     DEBUG_ERROR(F("Connection to \"%s\" lost."), _settings.wifi.ssid);
-#endif
     if (_flags.keep_alive)
     {
-#if !defined(__AVR__)
       DEBUG_INFO(F("Attempting reconnection"));
-#endif
     }
 
     return NetworkConnectionState::DISCONNECTED;
