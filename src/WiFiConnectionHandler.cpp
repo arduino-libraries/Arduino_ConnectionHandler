@@ -117,7 +117,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
     DEBUG_INFO(F("Connected to \"%s\""), _settings.wifi.ssid);
 #endif
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
+    configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
     return NetworkConnectionState::CONNECTING;
   }

@@ -144,7 +144,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
   }
   else
   {
-   return NetworkConnectionState::CLOSED;
+    return NetworkConnectionState::CLOSED;
   }
 }
 
