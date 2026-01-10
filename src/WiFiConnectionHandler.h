@@ -59,18 +59,18 @@ class WiFiConnectionHandler : public ConnectionHandler
     WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
 
-    virtual unsigned long getTime() override;
-    virtual Client & getClient() override { return _wifi_client; }
-    virtual UDP & getUDP() override { return _wifi_udp; }
+    unsigned long getTime() override;
+    Client & getClient() override { return _wifi_client; }
+    UDP & getUDP() override { return _wifi_udp; }
 
 
   protected:
 
-    virtual NetworkConnectionState update_handleInit         () override;
-    virtual NetworkConnectionState update_handleConnecting   () override;
-    virtual NetworkConnectionState update_handleConnected    () override;
-    virtual NetworkConnectionState update_handleDisconnecting() override;
-    virtual NetworkConnectionState update_handleDisconnected () override;
+    NetworkConnectionState update_handleInit         () override;
+    NetworkConnectionState update_handleConnecting   () override;
+    NetworkConnectionState update_handleConnected    () override;
+    NetworkConnectionState update_handleDisconnecting() override;
+    NetworkConnectionState update_handleDisconnected () override;
 
   private:
     WiFiUDP _wifi_udp;

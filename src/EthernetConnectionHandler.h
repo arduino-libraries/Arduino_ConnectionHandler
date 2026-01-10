@@ -54,17 +54,17 @@ class EthernetConnectionHandler : public ConnectionHandler
       unsigned long const responseTimeout = 4000,
       bool const keep_alive = true);
 
-    virtual unsigned long getTime() override { return 0; }
-    virtual Client & getClient() override{ return _eth_client; }
-    virtual UDP & getUDP() override { return _eth_udp; }
+    unsigned long getTime() override { return 0; }
+    Client & getClient() override{ return _eth_client; }
+    UDP & getUDP() override { return _eth_udp; }
 
   protected:
 
-    virtual NetworkConnectionState update_handleInit         () override;
-    virtual NetworkConnectionState update_handleConnecting   () override;
-    virtual NetworkConnectionState update_handleConnected    () override;
-    virtual NetworkConnectionState update_handleDisconnecting() override;
-    virtual NetworkConnectionState update_handleDisconnected () override;
+    NetworkConnectionState update_handleInit         () override;
+    NetworkConnectionState update_handleConnecting   () override;
+    NetworkConnectionState update_handleConnected    () override;
+    NetworkConnectionState update_handleDisconnecting() override;
+    NetworkConnectionState update_handleDisconnected () override;
 
   private:
 
