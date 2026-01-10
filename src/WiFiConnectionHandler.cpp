@@ -95,6 +95,13 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
   if (WiFi.status() != WL_CONNECTED)
   {
+    if (strlen(_settings.wifi.ssid) == 0) {
+      DEBUG_WARNING("Provided empty ssid, please provide a valid one");
+      _flags.settings_provided = false;
+
+      return NetworkConnectionState::INIT;
+    }
+
     WiFi.begin(_settings.wifi.ssid, _settings.wifi.pwd);
 #if defined(ARDUINO_ARCH_ESP8266)
     /* Wait connection otherwise board won't connect */
