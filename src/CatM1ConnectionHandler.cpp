@@ -22,12 +22,12 @@
  ******************************************************************************/
 
 CatM1ConnectionHandler::CatM1ConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::CATM1) { }
+: ConnectionHandler(true, NetworkAdapter::CATM1, true) { }
 
 CatM1ConnectionHandler::CatM1ConnectionHandler(
   const char * pin, const char * apn, const char * login, const char * pass,
   RadioAccessTechnologyType rat, uint32_t band, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::CATM1}
+: ConnectionHandler{keep_alive, NetworkAdapter::CATM1, true}
 {
   _settings.type = NetworkAdapter::CATM1;
   // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
@@ -39,6 +39,8 @@ CatM1ConnectionHandler::CatM1ConnectionHandler(
   _settings.catm1.rat  = static_cast<uint8_t>(rat);
   _settings.catm1.band = band;
   _reset = false;
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************

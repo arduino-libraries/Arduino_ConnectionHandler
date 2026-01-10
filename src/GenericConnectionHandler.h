@@ -29,7 +29,7 @@ class GenericConnectionHandler : public ConnectionHandler
 {
   public:
 
-    GenericConnectionHandler(bool const keep_alive=true): ConnectionHandler(keep_alive), _ch(nullptr) {}
+    GenericConnectionHandler(bool const keep_alive=true);
 
     #if defined(BOARD_HAS_NOTECARD) || defined(BOARD_HAS_LORA)
       virtual bool available() = 0;

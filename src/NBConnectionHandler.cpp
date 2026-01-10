@@ -40,12 +40,12 @@ __attribute__((weak)) void mkr_nb_feed_watchdog()
  ******************************************************************************/
 
 NBConnectionHandler::NBConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::NB) {}
+: ConnectionHandler(true, NetworkAdapter::NB, true) {}
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, bool const keep_alive)
 : NBConnectionHandler(pin, "", keep_alive)
 {
-
+  _flags.settings_provided = true;
 }
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, bool const keep_alive)
@@ -55,13 +55,15 @@ NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, boo
 }
 
 NBConnectionHandler::NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::NB}
+: ConnectionHandler{keep_alive, NetworkAdapter::NB, true}
 {
   _settings.type = NetworkAdapter::NB;
   strncpy(_settings.nb.pin, pin, sizeof(_settings.nb.pin)-1);
   strncpy(_settings.nb.apn, apn, sizeof(_settings.nb.apn)-1);
   strncpy(_settings.nb.login, login, sizeof(_settings.nb.login)-1);
   strncpy(_settings.nb.pass, pass, sizeof(_settings.nb.pass)-1);
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************

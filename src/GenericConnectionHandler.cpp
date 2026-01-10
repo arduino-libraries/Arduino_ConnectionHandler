@@ -17,6 +17,9 @@
 
 static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter);
 
+GenericConnectionHandler::GenericConnectionHandler(bool const keep_alive)
+: ConnectionHandler(keep_alive, NetworkAdapter::NONE, true), _ch(nullptr) { }
+
 bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
     if(_ch != nullptr && _ch->_current_net_connection_state != NetworkConnectionState::INIT) {
         // If the internal connection handler is already being used and not in INIT phase we cannot update the settings
@@ -36,8 +39,7 @@ bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
 
     if(_ch != nullptr) {
         _interface = s.type;
-        _ch->setKeepAlive(_flags.keep_alive);
-        _ch->enableCheckInternetAvailability(_flags.check_internet_availability); // TODO update this->flags
+        _ch->_flags = _flags;
         return _ch->updateSetting(s);
     } else {
         _interface = NetworkAdapter::NONE;

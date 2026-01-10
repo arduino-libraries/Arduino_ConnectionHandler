@@ -18,8 +18,9 @@
   CONSTRUCTOR/DESTRUCTOR
  ******************************************************************************/
 
-ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface)
-: _flags{keep_alive, false}
+ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface,
+  bool settings_required)
+: _flags{keep_alive, false, settings_required, false}
 , _interface{interface}
 , _lastConnectionTickTime{millis()}
 , _current_net_connection_state{NetworkConnectionState::INIT}

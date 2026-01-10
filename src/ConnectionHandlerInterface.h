@@ -43,7 +43,8 @@ class GenericConnectionHandler;
 class ConnectionHandler {
   public:
 
-    ConnectionHandler(bool const keep_alive=true, NetworkAdapter interface=NetworkAdapter::NONE);
+    ConnectionHandler(bool const keep_alive=true, NetworkAdapter interface=NetworkAdapter::NONE,
+                      bool settings_required = false);
 
     virtual ~ConnectionHandler() {}
 
@@ -91,6 +92,7 @@ class ConnectionHandler {
     virtual bool updateSetting(const models::NetworkSetting& s) {
       if(_current_net_connection_state == NetworkConnectionState::INIT && s.type == _interface) {
         memcpy(&_settings, &s, sizeof(s));
+        _flags.settings_provided = true;
         return true;
       }
 
@@ -117,6 +119,8 @@ class ConnectionHandler {
     struct Flags {
       bool keep_alive: 1;
       bool check_internet_availability: 1;
+      bool settings_required: 1;
+      bool settings_provided: 1;
     } _flags;
 
     NetworkAdapter _interface;

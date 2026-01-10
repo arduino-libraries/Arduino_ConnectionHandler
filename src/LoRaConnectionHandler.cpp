@@ -38,7 +38,7 @@ typedef enum
   CTOR/DTOR
  ******************************************************************************/
 LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, char const * channelMask, _lora_class const device_class)
-: ConnectionHandler{false, NetworkAdapter::LORA}
+: ConnectionHandler{false, NetworkAdapter::LORA, true}
 {
   _settings.type = NetworkAdapter::LORA;
   strncpy(_settings.lora.appeui, appeui, sizeof(_settings.lora.appeui)-1);
@@ -46,6 +46,8 @@ LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * a
   _settings.lora.band = band;
   strncpy(_settings.lora.channelMask, channelMask, sizeof(_settings.lora.channelMask)-1);
   _settings.lora.deviceClass = device_class;
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************

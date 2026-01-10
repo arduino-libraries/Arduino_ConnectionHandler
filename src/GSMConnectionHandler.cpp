@@ -40,10 +40,10 @@ __attribute__((weak)) void mkr_gsm_feed_watchdog()
   CTOR/DTOR
  ******************************************************************************/
 GSMConnectionHandler::GSMConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::GSM) {}
+: ConnectionHandler(true, NetworkAdapter::GSM, true) { }
 
 GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::GSM}
+: ConnectionHandler(keep_alive, NetworkAdapter::GSM, true)
 {
   _settings.type = NetworkAdapter::GSM;
   // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
@@ -52,6 +52,8 @@ GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, c
   strncpy(_settings.gsm.apn, apn, sizeof(_settings.gsm.apn)-1);
   strncpy(_settings.gsm.login, login, sizeof(_settings.gsm.login)-1);
   strncpy(_settings.gsm.pass, pass, sizeof(_settings.gsm.pass)-1);
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************

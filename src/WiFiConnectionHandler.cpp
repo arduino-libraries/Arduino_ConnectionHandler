@@ -29,15 +29,15 @@ static int const ESP_WIFI_CONNECTION_TIMEOUT = 3000;
  ******************************************************************************/
 
 WiFiConnectionHandler::WiFiConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::WIFI) {
-}
+: ConnectionHandler(true, NetworkAdapter::WIFI, true) { }
 
 WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::WIFI}
+: ConnectionHandler(keep_alive, NetworkAdapter::WIFI, true)
 {
   _settings.type = NetworkAdapter::WIFI;
   strncpy(_settings.wifi.ssid, ssid, sizeof(_settings.wifi.ssid)-1);
   strncpy(_settings.wifi.pwd, pass, sizeof(_settings.wifi.pwd)-1);
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
@@ -89,6 +89,10 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 #else
   WiFi.mode(WIFI_STA);
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
+
+  if(!_flags.settings_provided) {
+    return NetworkConnectionState::INIT;
+  }
 
   if (WiFi.status() != WL_CONNECTED)
   {

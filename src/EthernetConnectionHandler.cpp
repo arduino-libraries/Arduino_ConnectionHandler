@@ -44,6 +44,8 @@ EthernetConnectionHandler::EthernetConnectionHandler(
   memset(_settings.eth.netmask.dword, 0, sizeof(_settings.eth.netmask.dword));
   _settings.eth.timeout = timeout;
   _settings.eth.response_timeout = responseTimeout;
+
+  _flags.settings_provided = true;
 }
 
 EthernetConnectionHandler::EthernetConnectionHandler(
@@ -58,6 +60,8 @@ EthernetConnectionHandler::EthernetConnectionHandler(
   fromIPAddress(netmask, _settings.eth.netmask);
   _settings.eth.timeout = timeout;
   _settings.eth.response_timeout = responseTimeout;
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
