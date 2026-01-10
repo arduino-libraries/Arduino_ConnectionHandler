@@ -74,6 +74,8 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
     DEBUG_ERROR(F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
     DEBUG_ERROR(F("Please update to the latest version for best performance."));
     delay(5000);
+
+    return NetworkConnectionState::ERROR;
   }
 #endif
 #else
