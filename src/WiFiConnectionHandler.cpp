@@ -46,7 +46,9 @@ WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pas
 
 unsigned long WiFiConnectionHandler::getTime()
 {
-#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
+#if defined(ARDUINO_ARCH_ZEPHYR)
+  return time(NULL);
+#elif !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   return WiFi.getTime();
 #else
   return 0;
