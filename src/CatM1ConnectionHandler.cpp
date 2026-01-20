@@ -53,6 +53,19 @@ unsigned long CatM1ConnectionHandler::getTime()
   return 0;
 }
 
+int CatM1ConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+  return GSM.ping(ip);
+}
+
+int CatM1ConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+  return GSM.ping(hostname);
+}
+
+int CatM1ConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+  return GSM.ping(host);
+}
+
+
 /******************************************************************************
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
@@ -95,7 +108,7 @@ NetworkConnectionState CatM1ConnectionHandler::update_handleConnecting()
   }
 
   DEBUG_INFO(F("Sending PING to outer space..."));
-  int const ping_result = GSM.ping("time.arduino.cc");
+  int const ping_result = ping("time.arduino.cc");
   DEBUG_INFO(F("GSM.ping(): %d"), ping_result);
   if (ping_result < 0)
   {

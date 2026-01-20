@@ -63,6 +63,18 @@ unsigned long GSMConnectionHandler::getTime()
   return _gsm.getTime();
 }
 
+int GSMConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+  return _gprs.ping(ip);
+}
+
+int GSMConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+  return _gprs.ping(hostname);
+}
+
+int GSMConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+  return _gprs.ping(host);
+}
+
 /******************************************************************************
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
@@ -105,7 +117,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
   }
 
   DEBUG_INFO(F("Sending PING to outer space..."));
-  int const ping_result = _gprs.ping("time.arduino.cc");
+  int const ping_result = ping("time.arduino.cc");
   DEBUG_INFO(F("GPRS.ping(): %d"), ping_result);
   if (ping_result < 0)
   {
@@ -144,7 +156,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
   }
   else
   {
-   return NetworkConnectionState::CLOSED;
+    return NetworkConnectionState::CLOSED;
   }
 }
 

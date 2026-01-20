@@ -109,6 +109,18 @@ unsigned long GenericConnectionHandler::getTime() {
     return _ch != nullptr ? _ch->getTime() : 0;
 }
 
+int GenericConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+    return _ch != nullptr ? _ch->ping(ip, ttl, count) : 0;
+}
+
+int GenericConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+    return _ch != nullptr ? _ch->ping(hostname, ttl, count) : 0;
+}
+
+int GenericConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+    return _ch != nullptr ? _ch->ping(host, ttl, count) : 0;
+}
+
 Client & GenericConnectionHandler::getClient() {
     return _ch->getClient(); // NOTE _ch may be nullptr
 }

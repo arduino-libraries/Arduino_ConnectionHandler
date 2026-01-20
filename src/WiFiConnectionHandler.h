@@ -58,11 +58,13 @@ class WiFiConnectionHandler : public ConnectionHandler
     WiFiConnectionHandler();
     WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive = true);
 
+    int ping(IPAddress ip, uint8_t ttl = 128, uint8_t count = 1) override;
+    int ping(const String &hostname, uint8_t ttl = 128, uint8_t count = 1) override;
+    int ping(const char* host, uint8_t ttl = 128, uint8_t count = 1) override;
 
     virtual unsigned long getTime() override;
     virtual Client & getClient() override { return _wifi_client; }
     virtual UDP & getUDP() override { return _wifi_udp; }
-
 
   protected:
 
