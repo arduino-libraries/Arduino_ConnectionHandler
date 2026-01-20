@@ -104,6 +104,18 @@ jobs:
           - fqbn: "rp2040:rp2040:rpipicow"
             platform-name: rp2040:rp2040
             artifact-name-suffix: rp2040-rp2040-rpipicow
+          - fqbn: "arduino:zephyr_main:portentah7"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-portentah7
+          - fqbn: "arduino:zephyr_main:portentac33"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-portentac33
+          - fqbn: "arduino:zephyr_main:giga"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-giga
+          - fqbn: "arduino:zephyr_main:opta"
+            platform-name: arduino:zephyr_main
+            artifact-name-suffix: arduino-zephyr_main-opta
 
         # Make board type-specific customizations to the matrix jobs
         include:
@@ -154,7 +166,11 @@ jobs:
               # Install rp2040 platform via Boards Manager
               - name: rp2040:rp2040
                 source-url: https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
-
+          - board:
+              platform-name: arduino:zephyr_main
+            platforms: |
+              # Install Arduino Zephyr Boards via Boards Manager
+              - name: arduino:zephyr_main
     steps:
       - uses: actions/checkout@v6
 
