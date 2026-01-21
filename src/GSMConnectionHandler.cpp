@@ -40,18 +40,20 @@ __attribute__((weak)) void mkr_gsm_feed_watchdog()
   CTOR/DTOR
  ******************************************************************************/
 GSMConnectionHandler::GSMConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::GSM) {}
+: ConnectionHandler(true, NetworkAdapter::GSM, true) { }
 
 GSMConnectionHandler::GSMConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::GSM}
+: ConnectionHandler(keep_alive, NetworkAdapter::GSM, true)
 {
   _settings.type = NetworkAdapter::GSM;
   // To keep the backward compatibility, the user can call enableCheckInternetAvailability(false) for disabling the check
-  _check_internet_availability = true;
+  _flags.check_internet_availability = true;
   strncpy(_settings.gsm.pin, pin, sizeof(_settings.gsm.pin)-1);
   strncpy(_settings.gsm.apn, apn, sizeof(_settings.gsm.apn)-1);
   strncpy(_settings.gsm.login, login, sizeof(_settings.gsm.login)-1);
   strncpy(_settings.gsm.pass, pass, sizeof(_settings.gsm.pass)-1);
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
@@ -100,7 +102,7 @@ NetworkConnectionState GSMConnectionHandler::update_handleInit()
 
 NetworkConnectionState GSMConnectionHandler::update_handleConnecting()
 {
-  if(!_check_internet_availability){
+  if(!_flags.check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -138,13 +140,13 @@ NetworkConnectionState GSMConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState GSMConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }
   else
   {
-   return NetworkConnectionState::CLOSED;
+    return NetworkConnectionState::CLOSED;
   }
 }
 

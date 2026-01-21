@@ -17,11 +17,14 @@
 
 static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter);
 
+GenericConnectionHandler::GenericConnectionHandler(bool const keep_alive)
+: ConnectionHandler(keep_alive, NetworkAdapter::NONE, true), _ch(nullptr) { }
+
 bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
-    if(_ch != nullptr && _ch->_current_net_connection_state != NetworkConnectionState::INIT) {
+    if(_ch != nullptr && _ch->_current_net_connection_state > NetworkConnectionState::INIT) {
         // If the internal connection handler is already being used and not in INIT phase we cannot update the settings
         return false;
-    } else if(_ch != nullptr && _ch->_current_net_connection_state == NetworkConnectionState::INIT && _interface != s.type) {
+    } else if(_ch != nullptr && _ch->_current_net_connection_state <= NetworkConnectionState::INIT && _interface != s.type) {
         // If the internal connection handler is already being used and in INIT phase and the interface type is being changed
         // -> we need to deallocate the previously allocated handler
 
@@ -36,8 +39,7 @@ bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
 
     if(_ch != nullptr) {
         _interface = s.type;
-        _ch->setKeepAlive(_keep_alive);
-        _ch->enableCheckInternetAvailability(_check_internet_availability);
+        _ch->_flags = _flags;
         return _ch->updateSetting(s);
     } else {
         _interface = NetworkAdapter::NONE;
@@ -55,27 +57,31 @@ void GenericConnectionHandler::getSetting(models::NetworkSetting& s) {
 }
 
 NetworkConnectionState GenericConnectionHandler::updateConnectionState() {
-    return _ch != nullptr ? _ch->updateConnectionState() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->updateConnectionState() : NetworkConnectionState::CHECK;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleCheck() {
+    return _ch != nullptr ? _ch->update_handleCheck() : NetworkConnectionState::CHECK;
 }
 
 NetworkConnectionState GenericConnectionHandler::update_handleInit() {
-    return _ch != nullptr ? _ch->update_handleInit() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->update_handleInit() : NetworkConnectionState::CHECK;
 }
 
 NetworkConnectionState GenericConnectionHandler::update_handleConnecting() {
-    return _ch != nullptr ? _ch->update_handleConnecting() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->update_handleConnecting() : NetworkConnectionState::CHECK;
 }
 
 NetworkConnectionState GenericConnectionHandler::update_handleConnected() {
-    return _ch != nullptr ? _ch->update_handleConnected() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->update_handleConnected() : NetworkConnectionState::CHECK;
 }
 
 NetworkConnectionState GenericConnectionHandler::update_handleDisconnecting() {
-    return _ch != nullptr ? _ch->update_handleDisconnecting() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->update_handleDisconnecting() : NetworkConnectionState::CHECK;
 }
 
 NetworkConnectionState GenericConnectionHandler::update_handleDisconnected() {
-    return _ch != nullptr ? _ch->update_handleDisconnected() : NetworkConnectionState::INIT;
+    return _ch != nullptr ? _ch->update_handleDisconnected() : NetworkConnectionState::CHECK;
 }
 
 #if !defined(BOARD_HAS_LORA)
@@ -108,7 +114,7 @@ void GenericConnectionHandler::disconnect() {
 }
 
 void GenericConnectionHandler::setKeepAlive(bool keep_alive) {
-    _keep_alive = keep_alive;
+    _flags.keep_alive = keep_alive;
 
     if(_ch!=nullptr) {
         _ch->setKeepAlive(keep_alive);

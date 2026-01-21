@@ -36,9 +36,9 @@ class LoRaConnectionHandler : public ConnectionHandler
 
     LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band = _lora_band::EU868, char const * channelMask = NULL, _lora_class const device_class = _lora_class::CLASS_A);
 
-    virtual int write(const uint8_t *buf, size_t size) override;
-    virtual int read() override;
-    virtual bool available() override;
+    int write(const uint8_t *buf, size_t size) override;
+    int read() override;
+    bool available() override;
 
     inline String getVersion() { return _modem.version(); }
     inline String getDeviceEUI() { return _modem.deviceEUI(); }
@@ -57,11 +57,11 @@ class LoRaConnectionHandler : public ConnectionHandler
 
   protected:
 
-    virtual NetworkConnectionState update_handleInit         () override;
-    virtual NetworkConnectionState update_handleConnecting   () override;
-    virtual NetworkConnectionState update_handleConnected    () override;
-    virtual NetworkConnectionState update_handleDisconnecting() override;
-    virtual NetworkConnectionState update_handleDisconnected () override;
+    NetworkConnectionState update_handleInit         () override;
+    NetworkConnectionState update_handleConnecting   () override;
+    NetworkConnectionState update_handleConnected    () override;
+    NetworkConnectionState update_handleDisconnecting() override;
+    NetworkConnectionState update_handleDisconnected () override;
 
 
   private:

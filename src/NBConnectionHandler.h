@@ -38,18 +38,18 @@ class NBConnectionHandler : public ConnectionHandler
     NBConnectionHandler(char const * pin, char const * apn, char const * login, char const * pass, bool const keep_alive = true);
 
 
-    virtual unsigned long getTime() override;
-    virtual Client & getClient() override { return _nb_client; };
-    virtual UDP & getUDP() override { return _nb_udp; };
+    unsigned long getTime() override;
+    Client & getClient() override { return _nb_client; };
+    UDP & getUDP() override { return _nb_udp; };
 
 
   protected:
 
-    virtual NetworkConnectionState update_handleInit         () override;
-    virtual NetworkConnectionState update_handleConnecting   () override;
-    virtual NetworkConnectionState update_handleConnected    () override;
-    virtual NetworkConnectionState update_handleDisconnecting() override;
-    virtual NetworkConnectionState update_handleDisconnected () override;
+    NetworkConnectionState update_handleInit         () override;
+    NetworkConnectionState update_handleConnecting   () override;
+    NetworkConnectionState update_handleConnected    () override;
+    NetworkConnectionState update_handleDisconnecting() override;
+    NetworkConnectionState update_handleDisconnected () override;
 
 
   private:

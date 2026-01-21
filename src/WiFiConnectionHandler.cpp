@@ -29,15 +29,15 @@ static int const ESP_WIFI_CONNECTION_TIMEOUT = 3000;
  ******************************************************************************/
 
 WiFiConnectionHandler::WiFiConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::WIFI) {
-}
+: ConnectionHandler(true, NetworkAdapter::WIFI, true) { }
 
 WiFiConnectionHandler::WiFiConnectionHandler(char const * ssid, char const * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::WIFI}
+: ConnectionHandler(keep_alive, NetworkAdapter::WIFI, true)
 {
   _settings.type = NetworkAdapter::WIFI;
   strncpy(_settings.wifi.ssid, ssid, sizeof(_settings.wifi.ssid)-1);
   strncpy(_settings.wifi.pwd, pass, sizeof(_settings.wifi.pwd)-1);
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
@@ -57,41 +57,51 @@ unsigned long WiFiConnectionHandler::getTime()
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
-NetworkConnectionState WiFiConnectionHandler::update_handleInit()
+NetworkConnectionState WiFiConnectionHandler::update_handleCheck()
 {
-#if !defined(__AVR__)
-  DEBUG_INFO(F("WiFi.status(): %d"), WiFi.status());
-#endif
-
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   if (WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
     DEBUG_ERROR(F("Then reset and retry."));
-#endif
     return NetworkConnectionState::ERROR;
   }
-#if !defined(__AVR__)
   DEBUG_INFO(F("Current WiFi Firmware: %s"), WiFi.firmwareVersion());
-#endif
 
 #if defined(WIFI_FIRMWARE_VERSION_REQUIRED)
   if (String(WiFi.firmwareVersion()) < String(WIFI_FIRMWARE_VERSION_REQUIRED))
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("Latest WiFi Firmware: %s"), WIFI_FIRMWARE_VERSION_REQUIRED);
     DEBUG_ERROR(F("Please update to the latest version for best performance."));
-#endif
     delay(5000);
+
+    return NetworkConnectionState::ERROR;
   }
 #endif
 #else
   WiFi.mode(WIFI_STA);
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
 
+  return ConnectionHandler::update_handleCheck();
+}
+
+NetworkConnectionState WiFiConnectionHandler::update_handleInit()
+{
+  if(!_flags.settings_provided) {
+    return NetworkConnectionState::INIT;
+  }
+
+  DEBUG_INFO(F("WiFi.status(): %d"), WiFi.status());
+
   if (WiFi.status() != WL_CONNECTED)
   {
+    if (strlen(_settings.wifi.ssid) == 0) {
+      DEBUG_WARNING("Provided empty ssid, please provide a valid one");
+      _flags.settings_provided = false;
+
+      return NetworkConnectionState::INIT;
+    }
+
     WiFi.begin(_settings.wifi.ssid, _settings.wifi.pwd);
 #if defined(ARDUINO_ARCH_ESP8266)
     /* Wait connection otherwise board won't connect */
@@ -105,19 +115,15 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 
   if (WiFi.status() != NETWORK_CONNECTED)
   {
-#if !defined(__AVR__)
     DEBUG_ERROR(F("Connection to \"%s\" failed"), _settings.wifi.ssid);
     DEBUG_INFO(F("Retrying in  \"%d\" milliseconds"), _timeoutTable.timeout.init);
-#endif
     return NetworkConnectionState::INIT;
   }
   else
   {
-#if !defined(__AVR__)
     DEBUG_INFO(F("Connected to \"%s\""), _settings.wifi.ssid);
-#endif
 #if defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
-  configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
+    configTime(0, 0, "time.arduino.cc", "pool.ntp.org", "time.nist.gov");
 #endif
     return NetworkConnectionState::CONNECTING;
   }
@@ -129,7 +135,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
-  if(!_check_internet_availability){
+  if(!_flags.check_internet_availability){
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -152,15 +158,11 @@ NetworkConnectionState WiFiConnectionHandler::update_handleConnected()
 {
   if (WiFi.status() != WL_CONNECTED)
   {
-#if !defined(__AVR__)
     DEBUG_VERBOSE(F("WiFi.status(): %d"), WiFi.status());
     DEBUG_ERROR(F("Connection to \"%s\" lost."), _settings.wifi.ssid);
-#endif
-    if (_keep_alive)
+    if (_flags.keep_alive)
     {
-#if !defined(__AVR__)
       DEBUG_INFO(F("Attempting reconnection"));
-#endif
     }
 
     return NetworkConnectionState::DISCONNECTED;
@@ -179,7 +181,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleDisconnected()
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
   WiFi.end();
 #endif /* #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) */
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }

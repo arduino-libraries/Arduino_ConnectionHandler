@@ -22,10 +22,10 @@
   CTOR/DTOR
  ******************************************************************************/
 CellularConnectionHandler::CellularConnectionHandler()
-: ConnectionHandler(true, NetworkAdapter::CELL) {}
+: ConnectionHandler(true, NetworkAdapter::CELL, true) { }
 
 CellularConnectionHandler::CellularConnectionHandler(const char * pin, const char * apn, const char * login, const char * pass, bool const keep_alive)
-: ConnectionHandler{keep_alive, NetworkAdapter::CELL}
+: ConnectionHandler{keep_alive, NetworkAdapter::CELL, true}
 {
   _settings.type = NetworkAdapter::CELL;
   strncpy(_settings.cell.pin, pin, sizeof(_settings.cell.pin)-1);
@@ -33,6 +33,7 @@ CellularConnectionHandler::CellularConnectionHandler(const char * pin, const cha
   strncpy(_settings.cell.login, login, sizeof(_settings.cell.login)-1);
   strncpy(_settings.cell.pass, pass, sizeof(_settings.cell.pass)-1);
 
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
@@ -77,7 +78,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::INIT;
   }
 
-  if (!_check_internet_availability) {
+  if (!_flags.check_internet_availability) {
     return NetworkConnectionState::CONNECTED;
   }
 
@@ -105,7 +106,7 @@ NetworkConnectionState CellularConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState CellularConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive) {
+  if (_flags.keep_alive) {
     return NetworkConnectionState::INIT;
   }
   return NetworkConnectionState::CLOSED;

@@ -18,12 +18,12 @@
   CONSTRUCTOR/DESTRUCTOR
  ******************************************************************************/
 
-ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface)
-: _keep_alive{keep_alive}
-, _check_internet_availability{false}
+ConnectionHandler::ConnectionHandler(bool const keep_alive, NetworkAdapter interface,
+  bool settings_required)
+: _flags{keep_alive, false, settings_required, false}
 , _interface{interface}
 , _lastConnectionTickTime{millis()}
-, _current_net_connection_state{NetworkConnectionState::INIT}
+, _current_net_connection_state{NetworkConnectionState::CHECK}
 , _timeoutTable(DefaultTimeoutTable)
 {
 
@@ -73,6 +73,7 @@ NetworkConnectionState ConnectionHandler::updateConnectionState() {
    */
   switch (_current_net_connection_state)
   {
+    case NetworkConnectionState::CHECK:         next_net_connection_state = update_handleCheck        (); break;
     case NetworkConnectionState::INIT:          next_net_connection_state = update_handleInit         (); break;
     case NetworkConnectionState::CONNECTING:    next_net_connection_state = update_handleConnecting   (); break;
     case NetworkConnectionState::CONNECTED:     next_net_connection_state = update_handleConnected    (); break;
@@ -109,14 +110,14 @@ void ConnectionHandler::connect()
 {
   if (_current_net_connection_state != NetworkConnectionState::INIT && _current_net_connection_state != NetworkConnectionState::CONNECTING)
   {
-    _keep_alive = true;
+    _flags.keep_alive = true;
     _current_net_connection_state = NetworkConnectionState::INIT;
   }
 }
 
 void ConnectionHandler::disconnect()
 {
-  _keep_alive = false;
+  _flags.keep_alive = false;
   _current_net_connection_state = NetworkConnectionState::DISCONNECTING;
 }
 
@@ -138,4 +139,12 @@ void ConnectionHandler::addDisconnectCallback(OnNetworkEventCallback callback) {
 }
 void ConnectionHandler::addErrorCallback(OnNetworkEventCallback callback) {
   _on_error_event_callback = callback;
+}
+
+NetworkConnectionState ConnectionHandler::update_handleCheck() {
+  if(_flags.settings_required && !_flags.settings_provided) {
+    return NetworkConnectionState::CHECK;
+  } else {
+    return NetworkConnectionState::INIT;
+  }
 }

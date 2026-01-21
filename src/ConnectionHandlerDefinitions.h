@@ -136,18 +136,41 @@
   #define NETWORK_CONNECTED WL_CONNECTED
 #endif
 
+#if defined(__AVR__)
+#ifndef DEBUG_ERROR
+#  define DEBUG_ERROR(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_WARNING
+#  define DEBUG_WARNING(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_INFO
+#  define DEBUG_INFO(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_DEBUG
+#  define DEBUG_DEBUG(fmt, ...) (void)0
+#endif
+
+#ifndef DEBUG_VERBOSE
+#  define DEBUG_VERBOSE(fmt, ...) (void)0
+#endif
+#endif // defined(__AVR__)
+
 /******************************************************************************
   TYPEDEFS
  ******************************************************************************/
 
 enum class NetworkConnectionState : unsigned int {
-  INIT          = 0,
-  CONNECTING    = 1,
-  CONNECTED     = 2,
-  DISCONNECTING = 3,
-  DISCONNECTED  = 4,
-  CLOSED        = 5,
-  ERROR         = 6
+  CHECK         = 0,
+  INIT          = 1,
+  CONNECTING    = 2,
+  CONNECTED     = 3,
+  DISCONNECTING = 4,
+  DISCONNECTED  = 5,
+  CLOSED        = 6,
+  ERROR         = 7
 };
 
 enum class NetworkConnectionEvent {

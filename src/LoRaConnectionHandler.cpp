@@ -38,7 +38,7 @@ typedef enum
   CTOR/DTOR
  ******************************************************************************/
 LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * appkey, _lora_band const band, char const * channelMask, _lora_class const device_class)
-: ConnectionHandler{false, NetworkAdapter::LORA}
+: ConnectionHandler{false, NetworkAdapter::LORA, true}
 {
   _settings.type = NetworkAdapter::LORA;
   strncpy(_settings.lora.appeui, appeui, sizeof(_settings.lora.appeui)-1);
@@ -46,6 +46,8 @@ LoRaConnectionHandler::LoRaConnectionHandler(char const * appeui, char const * a
   _settings.lora.band = band;
   strncpy(_settings.lora.channelMask, channelMask, sizeof(_settings.lora.channelMask)-1);
   _settings.lora.deviceClass = device_class;
+
+  _flags.settings_provided = true;
 }
 
 /******************************************************************************
@@ -153,7 +155,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
   if (network_status != true)
   {
     DEBUG_ERROR(F("Connection to the network lost."));
-    if (_keep_alive)
+    if (_flags.keep_alive)
     {
       DEBUG_ERROR(F("Attempting reconnection"));
     }
@@ -165,7 +167,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleConnected()
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 {
   DEBUG_ERROR(F("Connection to the network lost."));
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     DEBUG_ERROR(F("Attempting reconnection"));
   }
@@ -174,7 +176,7 @@ NetworkConnectionState LoRaConnectionHandler::update_handleDisconnecting()
 
 NetworkConnectionState LoRaConnectionHandler::update_handleDisconnected()
 {
-  if (_keep_alive)
+  if (_flags.keep_alive)
   {
     return NetworkConnectionState::INIT;
   }
