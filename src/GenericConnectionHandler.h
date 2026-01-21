@@ -31,7 +31,7 @@ class GenericConnectionHandler : public ConnectionHandler
 
     GenericConnectionHandler(bool const keep_alive=true): ConnectionHandler(keep_alive), _ch(nullptr) {}
 
-    #if defined(BOARD_HAS_NOTECARD) || defined(BOARD_HAS_LORA)
+    #if defined(BOARD_HAS_LORA)
       virtual bool available() = 0;
       virtual int read() = 0;
       virtual int write(const uint8_t *buf, size_t size) = 0;
