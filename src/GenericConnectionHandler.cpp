@@ -18,30 +18,32 @@
 static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter);
 
 bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
-    if(_ch != nullptr && _ch->_current_net_connection_state != NetworkConnectionState::INIT) {
-        // If the internal connection handler is already being used and not in INIT phase we cannot update the settings
-        return false;
-    } else if(_ch != nullptr && _ch->_current_net_connection_state == NetworkConnectionState::INIT && _interface != s.type) {
-        // If the internal connection handler is already being used and in INIT phase and the interface type is being changed
-        // -> we need to deallocate the previously allocated handler
-
+    if (_ch != nullptr) {
+        if (_ch->_current_net_connection_state == NetworkConnectionState::CONNECTING ||
+            _ch->_current_net_connection_state == NetworkConnectionState::CONNECTED ||
+            _ch->_current_net_connection_state == NetworkConnectionState::DISCONNECTING) {
+            // If the internal connection handler is already being used and active we cannot update the settings
+            return false;
+        } else if(_interface != s.type) {
+            // If the internal connection handler is not active and the interface type is being changed
+            // -> we need to deallocate the previously allocated handler
+            delete _ch;
+            _ch = nullptr;
+        }
         // if interface type is not being changed -> we just need to call updateSettings
-        delete _ch;
-        _ch = nullptr;
     }
 
-    if(_ch == nullptr) {
+    if (_ch == nullptr) {
         _ch = instantiate_handler(s.type);
     }
 
-    if(_ch != nullptr) {
+    if (_ch != nullptr) {
         _interface = s.type;
         _ch->setKeepAlive(_keep_alive);
         _ch->enableCheckInternetAvailability(_check_internet_availability);
         return _ch->updateSetting(s);
     } else {
         _interface = NetworkAdapter::NONE;
-
         return false;
     }
 }
