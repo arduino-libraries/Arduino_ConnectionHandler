@@ -15,105 +15,9 @@
 #include "GenericConnectionHandler.h"
 #include "Arduino_ConnectionHandler.h"
 
-static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter);
-
-bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
-    if(_ch != nullptr && _ch->_current_net_connection_state != NetworkConnectionState::INIT) {
-        // If the internal connection handler is already being used and not in INIT phase we cannot update the settings
-        return false;
-    } else if(_ch != nullptr && _ch->_current_net_connection_state == NetworkConnectionState::INIT && _interface != s.type) {
-        // If the internal connection handler is already being used and in INIT phase and the interface type is being changed
-        // -> we need to deallocate the previously allocated handler
-
-        // if interface type is not being changed -> we just need to call updateSettings
-        delete _ch;
-        _ch = nullptr;
-    }
-
-    if(_ch == nullptr) {
-        _ch = instantiate_handler(s.type);
-    }
-
-    if(_ch != nullptr) {
-        _interface = s.type;
-        _ch->setKeepAlive(_keep_alive);
-        _ch->enableCheckInternetAvailability(_check_internet_availability);
-        return _ch->updateSetting(s);
-    } else {
-        _interface = NetworkAdapter::NONE;
-
-        return false;
-    }
-}
-
-void GenericConnectionHandler::getSetting(models::NetworkSetting& s) {
-    if(_ch != nullptr) {
-        _ch->getSetting(s);
-    } else {
-        s.type = NetworkAdapter::NONE;
-    }
-}
-
-NetworkConnectionState GenericConnectionHandler::updateConnectionState() {
-    return _ch != nullptr ? _ch->updateConnectionState() : NetworkConnectionState::INIT;
-}
-
-NetworkConnectionState GenericConnectionHandler::update_handleInit() {
-    return _ch != nullptr ? _ch->update_handleInit() : NetworkConnectionState::INIT;
-}
-
-NetworkConnectionState GenericConnectionHandler::update_handleConnecting() {
-    return _ch != nullptr ? _ch->update_handleConnecting() : NetworkConnectionState::INIT;
-}
-
-NetworkConnectionState GenericConnectionHandler::update_handleConnected() {
-    return _ch != nullptr ? _ch->update_handleConnected() : NetworkConnectionState::INIT;
-}
-
-NetworkConnectionState GenericConnectionHandler::update_handleDisconnecting() {
-    return _ch != nullptr ? _ch->update_handleDisconnecting() : NetworkConnectionState::INIT;
-}
-
-NetworkConnectionState GenericConnectionHandler::update_handleDisconnected() {
-    return _ch != nullptr ? _ch->update_handleDisconnected() : NetworkConnectionState::INIT;
-}
-
-#if !defined(BOARD_HAS_LORA)
-unsigned long GenericConnectionHandler::getTime() {
-    return _ch != nullptr ? _ch->getTime() : 0;
-}
-
-Client & GenericConnectionHandler::getClient() {
-    return _ch->getClient(); // NOTE _ch may be nullptr
-}
-
-UDP & GenericConnectionHandler::getUDP() {
-    return _ch->getUDP(); // NOTE _ch may be nullptr
-}
-
-#endif // defined(BOARD_HAS_LORA)
-
-void GenericConnectionHandler::connect() {
-    if(_ch!=nullptr) {
-        _ch->connect();
-    }
-    ConnectionHandler::connect();
-}
-
-void GenericConnectionHandler::disconnect() {
-    if(_ch!=nullptr) {
-        _ch->disconnect();
-    }
-    ConnectionHandler::disconnect();
-}
-
-void GenericConnectionHandler::setKeepAlive(bool keep_alive) {
-    _keep_alive = keep_alive;
-
-    if(_ch!=nullptr) {
-        _ch->setKeepAlive(keep_alive);
-    }
-}
+/******************************************************************************
+  LOCAL MODULE FUNCTIONS
+ ******************************************************************************/
 
 static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter) {
     switch(adapter) {
@@ -157,4 +61,110 @@ static inline ConnectionHandler* instantiate_handler(NetworkAdapter adapter) {
             DEBUG_ERROR("Network adapter not supported by this platform: %d", adapter);
             return nullptr;
     }
+}
+
+/******************************************************************************
+  PUBLIC MEMBER FUNCTIONS
+ ******************************************************************************/
+
+bool GenericConnectionHandler::updateSetting(const models::NetworkSetting& s) {
+    if(_ch != nullptr && _ch->_current_net_connection_state != NetworkConnectionState::INIT) {
+        // If the internal connection handler is already being used and not in INIT phase we cannot update the settings
+        return false;
+    } else if(_ch != nullptr && _ch->_current_net_connection_state == NetworkConnectionState::INIT && _interface != s.type) {
+        // If the internal connection handler is already being used and in INIT phase and the interface type is being changed
+        // -> we need to deallocate the previously allocated handler
+
+        // if interface type is not being changed -> we just need to call updateSettings
+        delete _ch;
+        _ch = nullptr;
+    }
+
+    if(_ch == nullptr) {
+        _ch = instantiate_handler(s.type);
+    }
+
+    if(_ch != nullptr) {
+        _interface = s.type;
+        _ch->setKeepAlive(_keep_alive);
+        _ch->enableCheckInternetAvailability(_check_internet_availability);
+        return _ch->updateSetting(s);
+    } else {
+        _interface = NetworkAdapter::NONE;
+
+        return false;
+    }
+}
+
+void GenericConnectionHandler::getSetting(models::NetworkSetting& s) {
+    if(_ch != nullptr) {
+        _ch->getSetting(s);
+    } else {
+        s.type = NetworkAdapter::NONE;
+    }
+}
+
+#if !defined(BOARD_HAS_LORA)
+unsigned long GenericConnectionHandler::getTime() {
+    return _ch != nullptr ? _ch->getTime() : 0;
+}
+
+Client & GenericConnectionHandler::getClient() {
+    return _ch->getClient(); // NOTE _ch may be nullptr
+}
+
+UDP & GenericConnectionHandler::getUDP() {
+    return _ch->getUDP(); // NOTE _ch may be nullptr
+}
+
+#endif // !defined(BOARD_HAS_LORA)
+
+void GenericConnectionHandler::connect() {
+    if(_ch!=nullptr) {
+        _ch->connect();
+    }
+    ConnectionHandler::connect();
+}
+
+void GenericConnectionHandler::disconnect() {
+    if(_ch!=nullptr) {
+        _ch->disconnect();
+    }
+    ConnectionHandler::disconnect();
+}
+
+void GenericConnectionHandler::setKeepAlive(bool keep_alive) {
+    _keep_alive = keep_alive;
+
+    if(_ch!=nullptr) {
+        _ch->setKeepAlive(keep_alive);
+    }
+}
+
+/******************************************************************************
+  PROTECTED MEMBER FUNCTIONS
+ ******************************************************************************/
+
+NetworkConnectionState GenericConnectionHandler::updateConnectionState() {
+    return _ch != nullptr ? _ch->updateConnectionState() : NetworkConnectionState::INIT;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleInit() {
+    return _ch != nullptr ? _ch->update_handleInit() : NetworkConnectionState::INIT;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleConnecting() {
+    return _ch != nullptr ? _ch->update_handleConnecting() : NetworkConnectionState::INIT;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleConnected() {
+    return _ch != nullptr ? _ch->update_handleConnected() : NetworkConnectionState::INIT;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleDisconnecting() {
+    return _ch != nullptr ? _ch->update_handleDisconnecting() : NetworkConnectionState::INIT;
+}
+
+NetworkConnectionState GenericConnectionHandler::update_handleDisconnected() {
+    return _ch != nullptr ? _ch->update_handleDisconnected() : NetworkConnectionState::INIT;
 }
