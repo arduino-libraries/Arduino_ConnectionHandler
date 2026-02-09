@@ -61,6 +61,35 @@ EthernetConnectionHandler::EthernetConnectionHandler(
 }
 
 /******************************************************************************
+  PUBLIC MEMBER FUNCTIONS
+ ******************************************************************************/
+
+int EthernetConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+#if defined(ARDUINO_ARCH_ZEPHYR)
+  return 0;
+#else
+  return Ethernet.ping(ip);
+#endif // ARDUINO_ARCH_ZEPHYR
+}
+
+int EthernetConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+#if defined(ARDUINO_ARCH_ZEPHYR)
+  return 0;
+#else
+  return Ethernet.ping(hostname);
+#endif // ARDUINO_ARCH_ZEPHYR
+}
+
+int EthernetConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+#if defined(ARDUINO_ARCH_ZEPHYR)
+  return 0;
+#else
+  return Ethernet.ping(host);
+#endif // ARDUINO_ARCH_ZEPHYR
+}
+
+
+/******************************************************************************
   PROTECTED MEMBER FUNCTIONS
  ******************************************************************************/
 
@@ -110,7 +139,7 @@ NetworkConnectionState EthernetConnectionHandler::update_handleConnecting()
     return NetworkConnectionState::CONNECTED;
   }
 
-  int ping_result = Ethernet.ping("time.arduino.cc");
+  int ping_result = ping("time.arduino.cc");
   DEBUG_INFO(F("Ethernet.ping(): %d"), ping_result);
   if (ping_result < 0)
   {

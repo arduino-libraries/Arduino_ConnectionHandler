@@ -44,6 +44,18 @@ unsigned long CellularConnectionHandler::getTime()
   return _cellular.getCellularTime().getUNIXTimestamp();
 }
 
+int CellularConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
+int CellularConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
+int CellularConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
 UDP & CellularConnectionHandler::getUDP()
 {
   DEBUG_ERROR(F("CellularConnectionHandler has no UDP support"));

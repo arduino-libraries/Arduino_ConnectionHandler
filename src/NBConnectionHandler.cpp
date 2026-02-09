@@ -73,6 +73,18 @@ unsigned long NBConnectionHandler::getTime()
   return _nb.getTime();
 }
 
+int NBConnectionHandler::ping(IPAddress ip, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
+int NBConnectionHandler::ping(const String &hostname, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
+int NBConnectionHandler::ping(const char* host, uint8_t ttl, uint8_t count) {
+  return 0;
+}
+
 /******************************************************************************
   PRIVATE MEMBER FUNCTIONS
  ******************************************************************************/
