@@ -17,7 +17,14 @@
 
 #include "ConnectionHandlerInterface.h"
 
-#if defined(ARDUINO_PORTENTA_H7_M7)
+#if defined(ARDUINO_ARCH_ZEPHYR)
+  #include <Ethernet.h>
+  #include <ZephyrClient.h>
+  #include <ZephyrUDP.h>
+
+  using EthernetClient = ZephyrClient;
+  using EthernetUDP = ZephyrUDP;
+#elif defined(ARDUINO_PORTENTA_H7_M7)
   #include <Ethernet.h>
   #include <PortentaEthernet.h>
 #elif defined(ARDUINO_PORTENTA_C33)
