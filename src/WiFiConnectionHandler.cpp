@@ -16,6 +16,7 @@
 
 #ifdef BOARD_HAS_WIFI /* Only compile if the board has WiFi */
 #include "WiFiConnectionHandler.h"
+#include "connectionHandlerUtils/wifiSupport.h"
 
 /******************************************************************************
   CONSTANTS
@@ -90,7 +91,7 @@ NetworkConnectionState WiFiConnectionHandler::update_handleInit()
 #endif
 
 #if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32)
-  if (WiFi.status() == NETWORK_HARDWARE_ERROR)
+  if (!isWifiModulePresent() || WiFi.status() == NETWORK_HARDWARE_ERROR)
   {
 #if !defined(__AVR__)
     DEBUG_ERROR(F("WiFi Hardware failure.\nMake sure you are using a WiFi enabled board/shield."));
