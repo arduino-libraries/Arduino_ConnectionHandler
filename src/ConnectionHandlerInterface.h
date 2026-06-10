@@ -124,6 +124,7 @@ class ConnectionHandler {
     virtual NetworkConnectionState update_handleConnected    () = 0;
     virtual NetworkConnectionState update_handleDisconnecting() = 0;
     virtual NetworkConnectionState update_handleDisconnected () = 0;
+    virtual NetworkConnectionState update_handleError        ();
 
     models::NetworkSetting _settings;
 
