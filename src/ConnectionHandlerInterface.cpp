@@ -78,7 +78,7 @@ NetworkConnectionState ConnectionHandler::updateConnectionState() {
     case NetworkConnectionState::CONNECTED:     next_net_connection_state = update_handleConnected    (); break;
     case NetworkConnectionState::DISCONNECTING: next_net_connection_state = update_handleDisconnecting(); break;
     case NetworkConnectionState::DISCONNECTED:  next_net_connection_state = update_handleDisconnected (); break;
-    case NetworkConnectionState::ERROR:                                                                   break;
+    case NetworkConnectionState::ERROR:         next_net_connection_state = update_handleError        (); break;
     case NetworkConnectionState::CLOSED:                                                                  break;
   }
 
@@ -86,6 +86,15 @@ NetworkConnectionState ConnectionHandler::updateConnectionState() {
   _current_net_connection_state = next_net_connection_state;
 
   return next_net_connection_state;
+}
+
+NetworkConnectionState ConnectionHandler::update_handleError()
+{
+  if (_keep_alive)  {
+    return NetworkConnectionState::INIT;
+  }
+
+  return NetworkConnectionState::ERROR;
 }
 
 void ConnectionHandler::updateCallback(NetworkConnectionState next_net_connection_state) {

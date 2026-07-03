@@ -180,3 +180,7 @@ NetworkConnectionState GenericConnectionHandler::update_handleDisconnecting() {
 NetworkConnectionState GenericConnectionHandler::update_handleDisconnected() {
     return _ch != nullptr ? _ch->update_handleDisconnected() : NetworkConnectionState::INIT;
 }
+
+NetworkConnectionState GenericConnectionHandler::update_handleError() {
+    return _ch != nullptr ? _ch->update_handleError() : NetworkConnectionState::INIT;
+}
